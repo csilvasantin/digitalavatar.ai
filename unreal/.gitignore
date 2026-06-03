@@ -1,0 +1,23 @@
+# Unreal Engine 5 — artefactos generados (no versionar)
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vs/
+*.VC.db
+*.opensdf
+*.opendb
+*.sdf
+*.sln
+*.suo
+*.xcodeproj
+*.xcworkspace
+
+# Plugins de terceros con binarios (Audio2Face/ACE, etc.) → instalar aparte
+Plugins/**/Binaries/
+Plugins/**/Intermediate/
+
+# Assets pesados: usar Git LFS si se versionan (.uasset/.umap grandes)
+# *.uasset filter=lfs diff=lfs merge=lfs -text
+# *.umap   filter=lfs diff=lfs merge=lfs -text

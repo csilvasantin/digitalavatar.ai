@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DigitalAvatar.ai · Tester del MetaHuman</title>
+<style>
+  :root { --bg:#05101a; --panel:#0a1925; --line:#1d3a4a; --txt:#dff3ff; --muted:#7fa8bb; --accent:#5fd0ff; --ok:#6ce6a2; --warn:#ffce6b; --err:#ff8a7a; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; background:radial-gradient(circle at 30% -10%, #0c2840, var(--bg) 55%); color:var(--txt); font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; display:flex; align-items:center; justify-content:center; padding:24px; }
+  .card { width:min(640px,100%); background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:0 24px 60px rgba(0,0,0,.5); }
+  h1 { font-size:1.15rem; margin:0 0 2px; letter-spacing:.04em; }
+  h1 b { color:var(--accent); }
+  .sub { color:var(--muted); font-size:.78rem; margin:0 0 20px; }
+  label { display:block; font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin:14px 0 5px; }
+  select, textarea { width:100%; background:#06121c; color:var(--txt); border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-family:inherit; font-size:.9rem; }
+  textarea { resize:vertical; min-height:64px; }
+  select:focus, textarea:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(95,208,255,.12); }
+  .row { display:flex; gap:10px; align-items:center; margin-top:16px; }
+  button { background:linear-gradient(180deg,#0e3550,#0a2335); color:var(--accent); border:1px solid #2a7fa6; border-radius:10px; padding:11px 20px; font-family:inherit; font-size:.9rem; font-weight:600; cursor:pointer; letter-spacing:.03em; }
+  button:hover:not(:disabled) { border-color:var(--accent); box-shadow:0 0 14px rgba(95,208,255,.25); }
+  button:disabled { opacity:.45; cursor:default; }
+  .chip { font-size:.72rem; color:var(--muted); }
+  .out { margin-top:20px; border-top:1px solid var(--line); padding-top:16px; min-height:40px; }
+  .answer { font-size:1.02rem; line-height:1.5; }
+  .speaker { color:var(--accent); }
+  .status { font-size:.76rem; margin-top:10px; }
+  .status.ok { color:var(--ok); } .status.warn { color:var(--warn); } .status.err { color:var(--err); }
+  .ctx { margin-top:14px; font-size:.72rem; color:var(--muted); background:#06121c; border:1px dashed var(--line); border-radius:8px; padding:9px 11px; white-space:pre-wrap; }
+  .foot { margin-top:18px; font-size:.68rem; color:var(--muted); }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1><b>DigitalAvatar</b>.ai · Tester del MetaHuman</h1>
+  <p class="sub">Cerebro (Grok) + voz (ElevenLabs) del avatar, sin Unreal. Elige un punto, pregunta y escucha.</p>
+
+  <label for="loc">Xpacio (punto de Admira.app)</label>
+  <select id="loc"><option value="">— cargando puntos… —</option></select>
+
+  <label for="q">Pregunta al avatar</label>
+  <textarea id="q" placeholder="¿Tenéis tabaco de liar? ¿Quién está hoy en caja?">¿Tenéis tabaco de liar?</textarea>
+
+  <div class="row">
+    <button id="ask">🗣 Preguntar</button>
+    <span class="chip" id="hint"></span>
+  </div>
+
+  <div class="out">
+    <div class="answer" id="answer">—</div>
+    <div class="status" id="status"></div>
+    <div class="ctx" id="ctx" style="display:none"></div>
+  </div>
+
+  <p class="foot">Endpoint: <code>/metahuman/ask</code> · worker omnipublicity-api. El audio que oyes es el mismo que en Unreal alimentará Audio2Face para el lip-sync.</p>
+</div>
+
+<script>
+const API = 'https://omnipublicity-api.csilvasantin.workers.dev';
+const $ = id => document.getElementById(id);
+let audio = null;
+
+// Poblar puntos desde el KV (misma fuente que admira.app y el gemelo)
+fetch(API + '/locations', { cache:'no-store' })
+  .then(r => r.json())
+  .then(d => {
+    const list = (d && d.locations) || [];
+    const sel = $('loc');
+    sel.innerHTML = '';
+    if (!list.length) { sel.innerHTML = '<option value="">(no hay puntos en el KV)</option>'; return; }
+    list.forEach(l => {
+      const o = document.createElement('option');
+      o.value = l.id; o.textContent = (l.name || l.id) + (l.addr ? ' · ' + l.addr : '');
+      sel.appendChild(o);
+    });
+  })
+  .catch(() => { $('loc').innerHTML = '<option value="">(error cargando puntos)</option>'; });
+
+async function ask() {
+  const loc = $('loc').value;
+  const question = $('q').value.trim();
+  if (!question) { setStatus('Escribe una pregunta.', 'warn'); return; }
+  $('ask').disabled = true;
+  $('answer').textContent = '…';
+  setStatus('Pensando…', '');
+  $('ctx').style.display = 'none';
+  if (audio) { try { audio.pause(); } catch(e){} }
+
+  try {
+    const res = await fetch(API + '/metahuman/ask', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ loc, question, lang:'es', voice:true })
+    });
+    const j = await res.json().catch(() => ({}));
+
+    if (j.ok) {
+      $('answer').innerHTML = '<span class="speaker">🤖 </span>' + escapeHtml(j.answer || '');
+      if (j.audioBase64) {
+        audio = new Audio('data:' + (j.mime || 'audio/mpeg') + ';base64,' + j.audioBase64);
+        audio.play().catch(() => {});
+        setStatus('✓ Respuesta con voz', 'ok');
+      } else {
+        setStatus('✓ Respuesta (sin voz: ' + (j.voiceNote || 'TTS no disponible') + ')', 'warn');
+      }
+    } else if (j.error === 'xai_key_not_set') {
+      $('answer').textContent = '—';
+      setStatus('⚠️ Falta la clave xAI. En workers/omnipublicity-api: npx wrangler secret put XAI_API_KEY', 'err');
+      if (j.context) { $('ctx').style.display = 'block'; $('ctx').textContent = 'Contexto que ya conoce del punto:\n' + j.context; }
+    } else {
+      $('answer').textContent = '—';
+      setStatus('❌ ' + (j.error || ('HTTP ' + res.status)) + (j.detail ? ' · ' + j.detail : ''), 'err');
+    }
+  } catch (e) {
+    setStatus('❌ Error de red: ' + (e && e.message || e), 'err');
+  } finally {
+    $('ask').disabled = false;
+  }
+}
+function setStatus(msg, cls) { const s = $('status'); s.textContent = msg; s.className = 'status' + (cls ? ' ' + cls : ''); }
+function escapeHtml(s) { return String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+$('ask').addEventListener('click', ask);
+$('q').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) ask(); });
+</script>
+</body>
+</html>
