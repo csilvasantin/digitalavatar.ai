@@ -8,11 +8,13 @@
   :root { --bg:#05101a; --panel:#0a1925; --line:#1d3a4a; --txt:#dff3ff; --muted:#7fa8bb; --accent:#5fd0ff; --ok:#6ce6a2; --warn:#ffce6b; --err:#ff8a7a; }
   * { box-sizing:border-box; }
   body { margin:0; min-height:100vh; background:radial-gradient(circle at 30% -10%, #0c2840, var(--bg) 55%); color:var(--txt); font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; padding:28px 24px; }
-  .lang-toggle { position:fixed; top:14px; right:16px; display:flex; gap:4px; z-index:10; }
-  .lang-toggle button { padding:5px 11px; font-size:.72rem; border-radius:8px; border:1px solid var(--line); background:#06121c; color:var(--muted); }
-  .lang-toggle button.on { border-color:var(--accent); color:var(--accent); background:#0e2a3a; }
+  .toggles { position:fixed; top:14px; right:16px; display:flex; gap:10px; z-index:10; }
+  .seg { display:flex; gap:4px; }
+  .seg button { padding:5px 11px; font-size:.72rem; border-radius:8px; border:1px solid var(--line); background:#06121c; color:var(--muted); }
+  .seg button.on { border-color:var(--accent); color:var(--accent); background:#0e2a3a; }
   .hero { display:flex; flex-direction:column; align-items:center; gap:10px; }
-  .hero video { width:auto; height:min(46vh,360px); aspect-ratio:448/672; border-radius:18px; border:1px solid var(--line); box-shadow:0 18px 50px rgba(0,0,0,.55), 0 0 0 1px rgba(95,208,255,.10); background:#000; object-fit:cover; display:block; }
+  .hero video { width:auto; height:min(46vh,360px); max-width:92vw; border-radius:18px; border:1px solid var(--line); box-shadow:0 18px 50px rgba(0,0,0,.55), 0 0 0 1px rgba(95,208,255,.10); background:#000; display:block; }
+  .hero-note { color:var(--warn); font-size:.68rem; margin:0; }
   .hero-tag { color:var(--accent); font-size:.92rem; margin:0; letter-spacing:.05em; font-weight:600; text-align:center; }
   .hero-tag span { color:var(--muted); font-weight:400; }
   .hero-sound { font-size:.72rem; padding:7px 14px; }
@@ -40,14 +42,21 @@
 </style>
 </head>
 <body>
-<div class="lang-toggle">
-  <button id="langEs" type="button">ES</button>
-  <button id="langEn" type="button">EN</button>
+<div class="toggles">
+  <div class="seg" id="genderSeg">
+    <button id="genF" type="button">♀</button>
+    <button id="genM" type="button">♂</button>
+  </div>
+  <div class="seg" id="langSeg">
+    <button id="langEs" type="button">ES</button>
+    <button id="langEn" type="button">EN</button>
+  </div>
 </div>
 
 <div class="hero">
   <video id="heroVid" autoplay muted loop playsinline preload="metadata"></video>
   <p class="hero-tag"><b id="heroTag"></b> <span id="heroTagSub"></span></p>
+  <p class="hero-note" id="heroNote" style="display:none"></p>
   <button id="heroSound" class="hero-sound" type="button"></button>
 </div>
 
@@ -99,6 +108,7 @@ const T = {
     noVoice: n => '✓ Respuesta (sin voz: ' + n + ')',
     xai: '⚠️ Falta la clave xAI en el worker.', ctxLead: 'Contexto que ya conoce del punto:\n',
     net: '❌ Error de red: ', speechLang: 'es-ES',
+    videoPending: '(vídeo de hombre en inglés en preparación — mostrando la versión en castellano)',
   },
   en: {
     htmlLang: 'en', title: 'DigitalAvatar.ai',
@@ -117,11 +127,47 @@ const T = {
     noVoice: n => '✓ Reply (no voice: ' + n + ')',
     xai: '⚠️ The worker is missing the xAI key.', ctxLead: 'What it already knows about this location:\n',
     net: '❌ Network error: ', speechLang: 'en-US',
+    videoPending: '(male English video coming soon — showing the Spanish version)',
   },
 };
 let LANG = (localStorage.getItem('da_lang') === 'en' || localStorage.getItem('da_lang') === 'es')
   ? localStorage.getItem('da_lang')
   : ((navigator.language || 'es').toLowerCase().startsWith('en') ? 'en' : 'es');
+let GENDER = (localStorage.getItem('da_gender') === 'male') ? 'male' : 'female';
+// Voz de ElevenLabs por sexo. female = Cristina. male: pendiente de un voice id
+// (cuando lo des, lo pongo aquí); mientras, '' → el worker usa el de por defecto.
+const VOICES = { female: 'dNjJKg63Fr5AXwIdkATa', male: '' };
+// Vídeos disponibles (sexo-idioma). 'male-en' aún no existe → fallback.
+const VIDEO_AVAILABLE = { 'female-es': 1, 'female-en': 1, 'male-es': 1 };
+function videoKey() {
+  const k = GENDER + '-' + LANG;
+  if (VIDEO_AVAILABLE[k]) return { key: k, fallback: false };
+  if (VIDEO_AVAILABLE[GENDER + '-es']) return { key: GENDER + '-es', fallback: true };
+  return { key: 'female-' + LANG, fallback: true };
+}
+
+function setHeroVideo() {
+  const t = T[LANG];
+  const hv = $('heroVid');
+  const vk = videoKey();
+  const want = 'assets/avatar-' + vk.key + '.mp4';
+  if (!hv.src || !hv.src.endsWith(want)) {
+    hv.src = want; hv.poster = 'assets/avatar-' + vk.key + '-poster.jpg';
+    hv.muted = true; hv.load(); hv.play().catch(() => {});
+  }
+  $('heroSound').textContent = hv.muted ? t.soundOn : t.soundOff;
+  const note = $('heroNote');
+  if (vk.fallback) { note.style.display = ''; note.textContent = t.videoPending; }
+  else { note.style.display = 'none'; }
+  $('genF').classList.toggle('on', GENDER === 'female');
+  $('genM').classList.toggle('on', GENDER === 'male');
+}
+
+function setGender(g) {
+  GENDER = (g === 'male') ? 'male' : 'female';
+  try { localStorage.setItem('da_gender', GENDER); } catch (e) {}
+  setHeroVideo();
+}
 
 function applyLang(lang) {
   LANG = (lang === 'en') ? 'en' : 'es';
@@ -129,14 +175,6 @@ function applyLang(lang) {
   try { localStorage.setItem('da_lang', LANG); } catch (e) {}
   document.documentElement.lang = t.htmlLang;
   document.title = t.title;
-  // Hero video por idioma (EN = vídeo anterior, ES = castellano)
-  const hv = $('heroVid');
-  const wantSrc = 'assets/avatar-hero-' + LANG + '.mp4';
-  if (!hv.src || !hv.src.endsWith(wantSrc)) {
-    hv.src = wantSrc; hv.poster = 'assets/avatar-hero-' + LANG + '-poster.jpg';
-    hv.muted = true; hv.load(); hv.play().catch(() => {});
-  }
-  $('heroSound').textContent = hv.muted ? t.soundOn : t.soundOff;
   $('heroTag').textContent = t.heroTag;
   $('heroTagSub').textContent = t.heroTagSub;
   $('appTitle').innerHTML = '<b>DigitalAvatar</b>.ai · ' + t.titleSuffix;
@@ -150,6 +188,7 @@ function applyLang(lang) {
   $('foot').innerHTML = t.foot;
   $('langEs').classList.toggle('on', LANG === 'es');
   $('langEn').classList.toggle('on', LANG === 'en');
+  setHeroVideo();
 }
 
 // Hero sound toggle
@@ -163,6 +202,8 @@ function applyLang(lang) {
 })();
 $('langEs').addEventListener('click', () => applyLang('es'));
 $('langEn').addEventListener('click', () => applyLang('en'));
+$('genF').addEventListener('click', () => setGender('female'));
+$('genM').addEventListener('click', () => setGender('male'));
 
 // Poblar puntos desde el KV (misma fuente que admira.app y el gemelo)
 fetch(API + '/locations', { cache:'no-store' })
@@ -194,7 +235,7 @@ async function ask() {
   try {
     const res = await fetch(API + '/metahuman/ask', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ loc, question, lang: LANG, voice:true })
+      body: JSON.stringify({ loc, question, lang: LANG, voice:true, voiceId: VOICES[GENDER] || '' })
     });
     const j = await res.json().catch(() => ({}));
 
