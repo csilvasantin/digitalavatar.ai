@@ -46,12 +46,12 @@ datos (KV) que ya alimentan el gemelo 2D. Identifica el punto por `?loc=<id>`.
 | Carpeta | Qué hay |
 |---|---|
 | [`docs/`](docs/) | `integration-UE.md` — spec ejecutable para el dev/artista UE (contrato, plan 6 días, checklist). |
-| [`web-tester/`](web-tester/) | Tester web del cerebro+voz: eliges un punto, escribes una pregunta y oyes la respuesta del MetaHuman. Sin Unreal. |
+| [`index.html`](index.html) | Tester web del cerebro+voz (la home del sitio): eliges un punto, escribes una pregunta y oyes la respuesta del MetaHuman. Sin Unreal. Servido en GitHub Pages → `digitalavatar.ai`. |
 | [`unreal/`](unreal/) | Proyecto Unreal Engine 5 (lo añade el dev UE). `.gitignore` de UE listo. |
 
 ## Probar el cerebro + voz (sin Unreal)
 
-Abre `web-tester/index.html` (doble clic o sírvelo). Elige un punto, escribe una pregunta
+Abre `index.html` (doble clic o sírvelo), o vía la web publicada en `digitalavatar.ai`. Elige un punto, escribe una pregunta
 ("¿tenéis tabaco de liar?") y pulsa **Preguntar** → verás la respuesta y oirás la voz.
 
 > **Requisito (1 vez):** la clave de xAI debe estar como secret del worker. En
