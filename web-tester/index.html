@@ -99,9 +99,12 @@ async function ask() {
       if (j.audioBase64) {
         audio = new Audio('data:' + (j.mime || 'audio/mpeg') + ';base64,' + j.audioBase64);
         audio.play().catch(() => {});
-        setStatus('✓ Respuesta con voz', 'ok');
+        setStatus('✓ Respuesta con voz (ElevenLabs)', 'ok');
       } else {
-        setStatus('✓ Respuesta (sin voz: ' + (j.voiceNote || 'TTS no disponible') + ')', 'warn');
+        // Fallback: voz del navegador (Web Speech) mientras el TTS premium no esté listo.
+        const spoke = speakBrowser(j.answer);
+        setStatus(spoke ? '✓ Respuesta · voz del navegador (fallback; ElevenLabs: ' + (j.voiceNote || 'no disp.') + ')'
+                        : '✓ Respuesta (sin voz: ' + (j.voiceNote || 'TTS no disponible') + ')', 'warn');
       }
     } else if (j.error === 'xai_key_not_set') {
       $('answer').textContent = '—';
@@ -116,6 +119,18 @@ async function ask() {
   } finally {
     $('ask').disabled = false;
   }
+}
+function speakBrowser(text) {
+  try {
+    if (!('speechSynthesis' in window) || !text) return false;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'es-ES'; u.rate = 1.02; u.pitch = 1;
+    const es = speechSynthesis.getVoices().find(v => /es(-|_)/i.test(v.lang));
+    if (es) u.voice = es;
+    speechSynthesis.speak(u);
+    return true;
+  } catch (e) { return false; }
 }
 function setStatus(msg, cls) { const s = $('status'); s.textContent = msg; s.className = 'status' + (cls ? ' ' + cls : ''); }
 function escapeHtml(s) { return String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
