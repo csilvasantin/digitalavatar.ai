@@ -3,11 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DigitalAvatar.ai · Tester del MetaHuman</title>
+<title>DigitalAvatar.ai</title>
 <style>
   :root { --bg:#05101a; --panel:#0a1925; --line:#1d3a4a; --txt:#dff3ff; --muted:#7fa8bb; --accent:#5fd0ff; --ok:#6ce6a2; --warn:#ffce6b; --err:#ff8a7a; }
   * { box-sizing:border-box; }
   body { margin:0; min-height:100vh; background:radial-gradient(circle at 30% -10%, #0c2840, var(--bg) 55%); color:var(--txt); font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; padding:28px 24px; }
+  .lang-toggle { position:fixed; top:14px; right:16px; display:flex; gap:4px; z-index:10; }
+  .lang-toggle button { padding:5px 11px; font-size:.72rem; border-radius:8px; border:1px solid var(--line); background:#06121c; color:var(--muted); }
+  .lang-toggle button.on { border-color:var(--accent); color:var(--accent); background:#0e2a3a; }
   .hero { display:flex; flex-direction:column; align-items:center; gap:10px; }
   .hero video { width:auto; height:min(46vh,360px); aspect-ratio:448/672; border-radius:18px; border:1px solid var(--line); box-shadow:0 18px 50px rgba(0,0,0,.55), 0 0 0 1px rgba(95,208,255,.10); background:#000; object-fit:cover; display:block; }
   .hero-tag { color:var(--accent); font-size:.92rem; margin:0; letter-spacing:.05em; font-weight:600; text-align:center; }
@@ -37,23 +40,29 @@
 </style>
 </head>
 <body>
-<div class="hero">
-  <video id="heroVid" src="assets/avatar-hero.mp4" poster="assets/avatar-hero-poster.jpg" autoplay muted loop playsinline preload="metadata"></video>
-  <p class="hero-tag">Tu tienda, con cara y voz. <span>· Pregúntale abajo 👇</span></p>
-  <button id="heroSound" class="hero-sound" type="button" title="Activar o silenciar el sonido">🔊 Sonido</button>
+<div class="lang-toggle">
+  <button id="langEs" type="button">ES</button>
+  <button id="langEn" type="button">EN</button>
 </div>
+
+<div class="hero">
+  <video id="heroVid" autoplay muted loop playsinline preload="metadata"></video>
+  <p class="hero-tag"><b id="heroTag"></b> <span id="heroTagSub"></span></p>
+  <button id="heroSound" class="hero-sound" type="button"></button>
+</div>
+
 <div class="card">
-  <h1><b>DigitalAvatar</b>.ai · Tester del MetaHuman</h1>
-  <p class="sub">Cerebro (Grok) + voz (ElevenLabs) del avatar, sin Unreal. Elige un punto, pregunta y escucha.</p>
+  <h1 id="appTitle"></h1>
+  <p class="sub" id="sub"></p>
 
-  <label for="loc">Xpacio (punto de Admira.app)</label>
-  <select id="loc"><option value="">— cargando puntos… —</option></select>
+  <label for="loc" id="locLabel"></label>
+  <select id="loc"></select>
 
-  <label for="q">Pregunta al avatar</label>
-  <textarea id="q" placeholder="¿Tenéis tabaco de liar? ¿Quién está hoy en caja?">¿Tenéis tabaco de liar?</textarea>
+  <label for="q" id="qLabel"></label>
+  <textarea id="q"></textarea>
 
   <div class="row">
-    <button id="ask">🗣 Preguntar</button>
+    <button id="ask"></button>
     <span class="chip" id="hint"></span>
   </div>
 
@@ -63,7 +72,7 @@
     <div class="ctx" id="ctx" style="display:none"></div>
   </div>
 
-  <p class="foot">Endpoint: <code>/metahuman/ask</code> · worker omnipublicity-api. El audio que oyes es el mismo que en Unreal alimentará Audio2Face para el lip-sync.</p>
+  <p class="foot" id="foot"></p>
 </div>
 
 <script>
@@ -71,17 +80,89 @@ const API = 'https://omnipublicity-api.csilvasantin.workers.dev';
 const $ = id => document.getElementById(id);
 let audio = null;
 
-// Hero: el vídeo arranca en bucle y muteado (autoplay permitido); el botón
-// activa el sonido (la voz de Cristina) reiniciando el clip desde el principio.
+// ── i18n ──────────────────────────────────────────────────────────
+const T = {
+  es: {
+    htmlLang: 'es', title: 'DigitalAvatar.ai',
+    titleSuffix: 'Tester del MetaHuman',
+    sub: 'Cerebro (Grok) + voz (ElevenLabs) del avatar, sin Unreal. Elige un punto, pregunta y escucha.',
+    heroTag: 'Tu tienda, con cara y voz.', heroTagSub: '· Pregúntale abajo 👇',
+    soundOn: '🔊 Sonido', soundOff: '🔇 Silenciar',
+    locLabel: 'Xpacio (punto de Admira.app)', qLabel: 'Pregunta al avatar',
+    qPlaceholder: '¿Tenéis tabaco de liar? ¿Quién está hoy en caja?',
+    qDefault: '¿Tenéis tabaco de liar?', ask: '🗣 Preguntar',
+    foot: 'Endpoint: <code>/metahuman/ask</code> · worker omnipublicity-api. El audio que oyes es el mismo que en Unreal alimentará Audio2Face para el lip-sync.',
+    loadingPts: '— cargando puntos… —', noPts: '(no hay puntos en el KV)', errPts: '(error cargando puntos)',
+    writeQ: 'Escribe una pregunta.', thinking: 'Pensando…',
+    okVoice: '✓ Respuesta con voz (ElevenLabs)',
+    browserVoice: n => '✓ Respuesta · voz del navegador (fallback; ElevenLabs: ' + n + ')',
+    noVoice: n => '✓ Respuesta (sin voz: ' + n + ')',
+    xai: '⚠️ Falta la clave xAI en el worker.', ctxLead: 'Contexto que ya conoce del punto:\n',
+    net: '❌ Error de red: ', speechLang: 'es-ES',
+  },
+  en: {
+    htmlLang: 'en', title: 'DigitalAvatar.ai',
+    titleSuffix: 'MetaHuman Tester',
+    sub: "The avatar's brain (Grok) + voice (ElevenLabs), no Unreal. Pick a location, ask and listen.",
+    heroTag: 'Your store, with a face and a voice.', heroTagSub: '· Ask it below 👇',
+    soundOn: '🔊 Sound', soundOff: '🔇 Mute',
+    locLabel: 'Xpacio (Admira.app location)', qLabel: 'Ask the avatar',
+    qPlaceholder: "Do you sell rolling tobacco? Who's at the till today?",
+    qDefault: 'Do you sell rolling tobacco?', ask: '🗣 Ask',
+    foot: 'Endpoint: <code>/metahuman/ask</code> · omnipublicity-api worker. The audio you hear is the same one that feeds Audio2Face for lip-sync in Unreal.',
+    loadingPts: '— loading locations… —', noPts: '(no locations in KV)', errPts: '(error loading locations)',
+    writeQ: 'Type a question.', thinking: 'Thinking…',
+    okVoice: '✓ Reply with voice (ElevenLabs)',
+    browserVoice: n => '✓ Reply · browser voice (fallback; ElevenLabs: ' + n + ')',
+    noVoice: n => '✓ Reply (no voice: ' + n + ')',
+    xai: '⚠️ The worker is missing the xAI key.', ctxLead: 'What it already knows about this location:\n',
+    net: '❌ Network error: ', speechLang: 'en-US',
+  },
+};
+let LANG = (localStorage.getItem('da_lang') === 'en' || localStorage.getItem('da_lang') === 'es')
+  ? localStorage.getItem('da_lang')
+  : ((navigator.language || 'es').toLowerCase().startsWith('en') ? 'en' : 'es');
+
+function applyLang(lang) {
+  LANG = (lang === 'en') ? 'en' : 'es';
+  const t = T[LANG];
+  try { localStorage.setItem('da_lang', LANG); } catch (e) {}
+  document.documentElement.lang = t.htmlLang;
+  document.title = t.title;
+  // Hero video por idioma (EN = vídeo anterior, ES = castellano)
+  const hv = $('heroVid');
+  const wantSrc = 'assets/avatar-hero-' + LANG + '.mp4';
+  if (!hv.src || !hv.src.endsWith(wantSrc)) {
+    hv.src = wantSrc; hv.poster = 'assets/avatar-hero-' + LANG + '-poster.jpg';
+    hv.muted = true; hv.load(); hv.play().catch(() => {});
+  }
+  $('heroSound').textContent = hv.muted ? t.soundOn : t.soundOff;
+  $('heroTag').textContent = t.heroTag;
+  $('heroTagSub').textContent = t.heroTagSub;
+  $('appTitle').innerHTML = '<b>DigitalAvatar</b>.ai · ' + t.titleSuffix;
+  $('sub').textContent = t.sub;
+  $('locLabel').textContent = t.locLabel;
+  $('qLabel').textContent = t.qLabel;
+  const q = $('q');
+  q.placeholder = t.qPlaceholder;
+  if (!q.value.trim() || q.value === T.es.qDefault || q.value === T.en.qDefault) q.value = t.qDefault;
+  $('ask').textContent = t.ask;
+  $('foot').innerHTML = t.foot;
+  $('langEs').classList.toggle('on', LANG === 'es');
+  $('langEn').classList.toggle('on', LANG === 'en');
+}
+
+// Hero sound toggle
 (function () {
   const hv = $('heroVid'), hs = $('heroSound');
-  if (!hv || !hs) return;
   hs.addEventListener('click', () => {
     hv.muted = !hv.muted;
     if (!hv.muted) { hv.currentTime = 0; hv.play().catch(() => {}); }
-    hs.textContent = hv.muted ? '🔊 Sonido' : '🔇 Silenciar';
+    hs.textContent = hv.muted ? T[LANG].soundOn : T[LANG].soundOff;
   });
 })();
+$('langEs').addEventListener('click', () => applyLang('es'));
+$('langEn').addEventListener('click', () => applyLang('en'));
 
 // Poblar puntos desde el KV (misma fuente que admira.app y el gemelo)
 fetch(API + '/locations', { cache:'no-store' })
@@ -90,29 +171,30 @@ fetch(API + '/locations', { cache:'no-store' })
     const list = (d && d.locations) || [];
     const sel = $('loc');
     sel.innerHTML = '';
-    if (!list.length) { sel.innerHTML = '<option value="">(no hay puntos en el KV)</option>'; return; }
+    if (!list.length) { sel.innerHTML = '<option value="">' + T[LANG].noPts + '</option>'; return; }
     list.forEach(l => {
       const o = document.createElement('option');
       o.value = l.id; o.textContent = (l.name || l.id) + (l.addr ? ' · ' + l.addr : '');
       sel.appendChild(o);
     });
   })
-  .catch(() => { $('loc').innerHTML = '<option value="">(error cargando puntos)</option>'; });
+  .catch(() => { $('loc').innerHTML = '<option value="">' + T[LANG].errPts + '</option>'; });
 
 async function ask() {
+  const t = T[LANG];
   const loc = $('loc').value;
   const question = $('q').value.trim();
-  if (!question) { setStatus('Escribe una pregunta.', 'warn'); return; }
+  if (!question) { setStatus(t.writeQ, 'warn'); return; }
   $('ask').disabled = true;
   $('answer').textContent = '…';
-  setStatus('Pensando…', '');
+  setStatus(t.thinking, '');
   $('ctx').style.display = 'none';
   if (audio) { try { audio.pause(); } catch(e){} }
 
   try {
     const res = await fetch(API + '/metahuman/ask', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ loc, question, lang:'es', voice:true })
+      body: JSON.stringify({ loc, question, lang: LANG, voice:true })
     });
     const j = await res.json().catch(() => ({}));
 
@@ -121,23 +203,21 @@ async function ask() {
       if (j.audioBase64) {
         audio = new Audio('data:' + (j.mime || 'audio/mpeg') + ';base64,' + j.audioBase64);
         audio.play().catch(() => {});
-        setStatus('✓ Respuesta con voz (ElevenLabs)', 'ok');
+        setStatus(t.okVoice, 'ok');
       } else {
-        // Fallback: voz del navegador (Web Speech) mientras el TTS premium no esté listo.
         const spoke = speakBrowser(j.answer);
-        setStatus(spoke ? '✓ Respuesta · voz del navegador (fallback; ElevenLabs: ' + (j.voiceNote || 'no disp.') + ')'
-                        : '✓ Respuesta (sin voz: ' + (j.voiceNote || 'TTS no disponible') + ')', 'warn');
+        setStatus(spoke ? t.browserVoice(j.voiceNote || 'n/a') : t.noVoice(j.voiceNote || 'TTS n/a'), 'warn');
       }
     } else if (j.error === 'xai_key_not_set') {
       $('answer').textContent = '—';
-      setStatus('⚠️ Falta la clave xAI. En workers/omnipublicity-api: npx wrangler secret put XAI_API_KEY', 'err');
-      if (j.context) { $('ctx').style.display = 'block'; $('ctx').textContent = 'Contexto que ya conoce del punto:\n' + j.context; }
+      setStatus(t.xai, 'err');
+      if (j.context) { $('ctx').style.display = 'block'; $('ctx').textContent = t.ctxLead + j.context; }
     } else {
       $('answer').textContent = '—';
       setStatus('❌ ' + (j.error || ('HTTP ' + res.status)) + (j.detail ? ' · ' + j.detail : ''), 'err');
     }
   } catch (e) {
-    setStatus('❌ Error de red: ' + (e && e.message || e), 'err');
+    setStatus(t.net + (e && e.message || e), 'err');
   } finally {
     $('ask').disabled = false;
   }
@@ -147,9 +227,9 @@ function speakBrowser(text) {
     if (!('speechSynthesis' in window) || !text) return false;
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'es-ES'; u.rate = 1.02; u.pitch = 1;
-    const es = speechSynthesis.getVoices().find(v => /es(-|_)/i.test(v.lang));
-    if (es) u.voice = es;
+    u.lang = T[LANG].speechLang; u.rate = 1.02; u.pitch = 1;
+    const v = speechSynthesis.getVoices().find(v => v.lang && v.lang.toLowerCase().startsWith(LANG));
+    if (v) u.voice = v;
     speechSynthesis.speak(u);
     return true;
   } catch (e) { return false; }
@@ -159,6 +239,8 @@ function escapeHtml(s) { return String(s).replace(/[&<>]/g, c => ({'&':'&amp;','
 
 $('ask').addEventListener('click', ask);
 $('q').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) ask(); });
+
+applyLang(LANG);
 </script>
 </body>
 </html>
