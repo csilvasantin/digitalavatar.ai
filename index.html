@@ -7,7 +7,12 @@
 <style>
   :root { --bg:#05101a; --panel:#0a1925; --line:#1d3a4a; --txt:#dff3ff; --muted:#7fa8bb; --accent:#5fd0ff; --ok:#6ce6a2; --warn:#ffce6b; --err:#ff8a7a; }
   * { box-sizing:border-box; }
-  body { margin:0; min-height:100vh; background:radial-gradient(circle at 30% -10%, #0c2840, var(--bg) 55%); color:var(--txt); font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; display:flex; align-items:center; justify-content:center; padding:24px; }
+  body { margin:0; min-height:100vh; background:radial-gradient(circle at 30% -10%, #0c2840, var(--bg) 55%); color:var(--txt); font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; padding:28px 24px; }
+  .hero { display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .hero video { width:auto; height:min(46vh,360px); aspect-ratio:448/672; border-radius:18px; border:1px solid var(--line); box-shadow:0 18px 50px rgba(0,0,0,.55), 0 0 0 1px rgba(95,208,255,.10); background:#000; object-fit:cover; display:block; }
+  .hero-tag { color:var(--accent); font-size:.92rem; margin:0; letter-spacing:.05em; font-weight:600; text-align:center; }
+  .hero-tag span { color:var(--muted); font-weight:400; }
+  .hero-sound { font-size:.72rem; padding:7px 14px; }
   .card { width:min(640px,100%); background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:0 24px 60px rgba(0,0,0,.5); }
   h1 { font-size:1.15rem; margin:0 0 2px; letter-spacing:.04em; }
   h1 b { color:var(--accent); }
@@ -32,6 +37,11 @@
 </style>
 </head>
 <body>
+<div class="hero">
+  <video id="heroVid" src="assets/avatar-hero.mp4" poster="assets/avatar-hero-poster.jpg" autoplay muted loop playsinline preload="metadata"></video>
+  <p class="hero-tag">Tu tienda, con cara y voz. <span>· Pregúntale abajo 👇</span></p>
+  <button id="heroSound" class="hero-sound" type="button" title="Activar o silenciar el sonido">🔊 Sonido</button>
+</div>
 <div class="card">
   <h1><b>DigitalAvatar</b>.ai · Tester del MetaHuman</h1>
   <p class="sub">Cerebro (Grok) + voz (ElevenLabs) del avatar, sin Unreal. Elige un punto, pregunta y escucha.</p>
@@ -60,6 +70,18 @@
 const API = 'https://omnipublicity-api.csilvasantin.workers.dev';
 const $ = id => document.getElementById(id);
 let audio = null;
+
+// Hero: el vídeo arranca en bucle y muteado (autoplay permitido); el botón
+// activa el sonido (la voz de Cristina) reiniciando el clip desde el principio.
+(function () {
+  const hv = $('heroVid'), hs = $('heroSound');
+  if (!hv || !hs) return;
+  hs.addEventListener('click', () => {
+    hv.muted = !hv.muted;
+    if (!hv.muted) { hv.currentTime = 0; hv.play().catch(() => {}); }
+    hs.textContent = hv.muted ? '🔊 Sonido' : '🔇 Silenciar';
+  });
+})();
 
 // Poblar puntos desde el KV (misma fuente que admira.app y el gemelo)
 fetch(API + '/locations', { cache:'no-store' })
