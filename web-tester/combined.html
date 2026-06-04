@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DigitalAvatar.ai · Vídeo + avatar en vivo</title>
+<style>
+  :root { --bg:#05101a; --panel:#0a1925; --line:#1d3a4a; --txt:#dff3ff; --muted:#7fa8bb; --accent:#5fd0ff; --ok:#6ce6a2; --warn:#ffce6b; --err:#ff8a7a; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; background:radial-gradient(circle at 30% -10%, #0c2840, var(--bg) 55%); color:var(--txt); font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; display:flex; flex-direction:column; align-items:center; gap:16px; padding:24px 18px; }
+  .toggles { position:fixed; top:14px; right:16px; display:flex; gap:10px; z-index:10; }
+  .seg { display:flex; gap:4px; }
+  .seg button { padding:5px 11px; font-size:.72rem; border-radius:8px; border:1px solid var(--line); background:#06121c; color:var(--muted); cursor:pointer; }
+  .seg button.on { border-color:var(--accent); color:var(--accent); background:#0e2a3a; }
+  h1 { font-size:1.06rem; margin:0; letter-spacing:.04em; }
+  h1 b { color:var(--accent); }
+  .sub { color:var(--muted); font-size:.72rem; margin:0; text-align:center; }
+
+  /* Escenario: vídeo grande + inset del avatar vivo */
+  .stage { position:relative; width:min(420px,90vw); }
+  .stage video { width:100%; max-height:62vh; border-radius:18px; border:1px solid var(--line); background:#000; display:block; box-shadow:0 18px 50px rgba(0,0,0,.55); object-fit:cover; }
+  .inset { position:absolute; right:12px; bottom:12px; width:132px; height:132px; border-radius:16px; overflow:hidden; border:1.5px solid var(--accent); background:radial-gradient(circle at 50% 32%, #0e2233, #06121c 72%); box-shadow:0 10px 26px rgba(0,0,0,.55), 0 0 0 4px rgba(5,16,26,.6); }
+  .inset canvas { width:100%; height:100%; display:block; }
+  .inset .live { position:absolute; top:7px; left:8px; font-size:.56rem; letter-spacing:.12em; color:var(--muted); text-transform:uppercase; display:flex; align-items:center; gap:5px; }
+  .inset .live i { width:7px; height:7px; border-radius:50%; background:#39506a; display:inline-block; }
+  .inset.on { border-color:var(--ok); }
+  .inset.on .live { color:var(--ok); }
+  .inset.on .live i { background:var(--ok); box-shadow:0 0 8px var(--ok); animation:pulse 1.1s infinite; }
+  @keyframes pulse { 50% { opacity:.35; } }
+
+  .card { width:min(560px,100%); background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 20px; box-shadow:0 24px 60px rgba(0,0,0,.5); }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  button.act { background:linear-gradient(180deg,#0e3550,#0a2335); color:var(--accent); border:1px solid #2a7fa6; border-radius:10px; padding:10px 16px; font-family:inherit; font-size:.84rem; font-weight:600; cursor:pointer; }
+  button.act.alt { background:#06121c; color:var(--muted); border-color:var(--line); }
+  button.act:hover:not(:disabled) { border-color:var(--accent); box-shadow:0 0 14px rgba(95,208,255,.25); }
+  button.act:disabled { opacity:.45; cursor:default; }
+  label { display:block; font-size:.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin:14px 0 5px; }
+  select, textarea { width:100%; background:#06121c; color:var(--txt); border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-family:inherit; font-size:.86rem; }
+  textarea { resize:vertical; min-height:50px; }
+  .status { font-size:.74rem; margin-top:10px; min-height:18px; }
+  .status.ok { color:var(--ok); } .status.warn { color:var(--warn); } .status.err { color:var(--err); }
+  .answer { font-size:.95rem; line-height:1.5; margin-top:8px; }
+  .hint { font-size:.66rem; color:var(--muted); }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+  <div class="toggles">
+    <div class="seg" id="genSeg"><button id="genF">♀</button><button id="genM">♂</button></div>
+    <div class="seg" id="langSeg"><button id="langEs">ES</button><button id="langEn">EN</button></div>
+  </div>
+
+  <h1><b>DigitalAvatar</b>.ai · vídeo foto-real + avatar en vivo</h1>
+  <p class="sub">El vídeo es la cara premium; el recuadro <b>EN VIVO</b> es el avatar vectorial que hace lip-sync de la respuesta real (Grok + ElevenLabs), offline.</p>
+
+  <div class="stage">
+    <video id="heroVid" autoplay muted loop playsinline preload="metadata"></video>
+    <div class="inset" id="inset">
+      <span class="live"><i></i><span id="liveTxt">en vivo</span></span>
+      <canvas id="face"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <button class="act" id="btnAsk">🗣 Preguntar y hablar</button>
+      <button class="act alt" id="btnSynth">▶ Demo lip-sync</button>
+      <span class="hint">El inset mueve la boca con el audio</span>
+    </div>
+
+    <label for="loc">Xpacio (punto real de Admira.app)</label>
+    <select id="loc"><option value="">— cargando puntos… —</option></select>
+
+    <label for="q">Pregunta al avatar</label>
+    <textarea id="q">¿Tenéis tabaco de liar?</textarea>
+
+    <div class="answer" id="answer"></div>
+    <div class="status" id="status"></div>
+  </div>
+
+<script src="lipsync-avatar.js"></script>
+<script>
+const API = 'https://omnipublicity-api.csilvasantin.workers.dev';
+const $ = id => document.getElementById(id);
+
+let LANG = (localStorage.getItem('da_lang') === 'en') ? 'en' : 'es';
+let GENDER = (localStorage.getItem('da_gender') === 'male') ? 'male' : 'female';
+const VIDEO_AVAILABLE = { 'female-es':1, 'female-en':1, 'male-es':1, 'male-en':1 };
+function videoKey() {
+  const k = GENDER + '-' + LANG;
+  if (VIDEO_AVAILABLE[k]) return k;
+  if (VIDEO_AVAILABLE[GENDER + '-es']) return GENDER + '-es';
+  return 'female-' + LANG;
+}
+
+const avatar = new LipSyncAvatar($('face'), { accent:'#5fd0ff', gender:GENDER });
+avatar.start();
+
+let askAudio = null, synthSrc = null;
+function setLive(on){ $('inset').classList.toggle('on', on); $('liveTxt').textContent = on ? 'hablando' : 'en vivo'; }
+function setStatus(m,c){ const s=$('status'); s.textContent=m||''; s.className='status'+(c?' '+c:''); }
+
+function setHeroVideo() {
+  const hv = $('heroVid'); const k = videoKey();
+  const want = 'assets/avatar-' + k + '.mp4';
+  if (!hv.src || !hv.src.endsWith(want)) {
+    hv.src = want; hv.poster = 'assets/avatar-' + k + '-poster.jpg';
+    hv.muted = true; hv.load(); hv.play().catch(()=>{});
+  }
+}
+function applyGender(g){ GENDER=(g==='male')?'male':'female'; try{localStorage.setItem('da_gender',GENDER);}catch(e){}
+  avatar.setGender(GENDER); $('genF').classList.toggle('on',GENDER==='female'); $('genM').classList.toggle('on',GENDER==='male'); setHeroVideo(); }
+function applyLang(l){ LANG=(l==='en')?'en':'es'; try{localStorage.setItem('da_lang',LANG);}catch(e){}
+  $('langEs').classList.toggle('on',LANG==='es'); $('langEn').classList.toggle('on',LANG==='en'); setHeroVideo(); }
+
+$('genF').onclick=()=>applyGender('female'); $('genM').onclick=()=>applyGender('male');
+$('langEs').onclick=()=>applyLang('es'); $('langEn').onclick=()=>applyLang('en');
+
+// Puntos reales del KV
+fetch(API+'/locations',{cache:'no-store'}).then(r=>r.json()).then(d=>{
+  const list=(d&&d.locations)||[]; const sel=$('loc'); sel.innerHTML='';
+  if(!list.length){ sel.innerHTML='<option value="">(sin puntos en el KV)</option>'; return; }
+  list.forEach(l=>{ const o=document.createElement('option'); o.value=l.id; o.textContent=(l.name||l.id)+(l.addr?' · '+l.addr:''); sel.appendChild(o); });
+}).catch(()=>{ $('loc').innerHTML='<option value="">(error cargando puntos)</option>'; });
+
+function stopAudio(){ if(synthSrc){try{synthSrc.stop();}catch(e){} synthSrc=null;} if(askAudio){try{askAudio.pause();}catch(e){}} setLive(false); }
+
+// Demo: balbuceo sintético (sin red) para ver el lip-sync del inset
+function playSynth(){
+  stopAudio();
+  const ctx=avatar.ensureAudio(), sr=ctx.sampleRate, dur=3.0;
+  const buf=ctx.createBuffer(1,Math.floor(dur*sr),sr), d=buf.getChannelData(0);
+  let i=0;
+  while(i<d.length){
+    const len=Math.floor((0.12+Math.random()*0.14)*sr), gap=Math.floor((0.03+Math.random()*0.07)*sr);
+    const f0=110+Math.random()*60, f1=500+Math.random()*500, f2=1200+Math.random()*1800;
+    for(let j=0;j<len&&i<d.length;j++,i++){ const t=j/sr,p=j/len,env=Math.sin(Math.PI*p);
+      d[i]=(0.6*Math.sin(2*Math.PI*f0*t)+0.5*Math.sin(2*Math.PI*f1*t)+0.35*Math.sin(2*Math.PI*f2*t)+0.08*(Math.random()*2-1))*env*0.5; }
+    i+=gap;
+  }
+  const src=ctx.createBufferSource(); src.buffer=buf; avatar.connectSource(src,true);
+  src.onended=()=>setLive(false); src.start(); synthSrc=src; setLive(true);
+  setStatus('Demo de lip-sync (sintético) en el inset.', 'ok');
+}
+
+// Pregunta real → Grok + ElevenLabs → el inset lo dice
+async function ask(){
+  stopAudio();
+  const question=$('q').value.trim();
+  if(!question){ setStatus('Escribe una pregunta.','warn'); return; }
+  $('btnAsk').disabled=true; $('answer').textContent=''; setStatus('Pensando…');
+  try{
+    const res=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({loc:$('loc').value,question,lang:LANG,voice:true})});
+    const j=await res.json().catch(()=>({}));
+    if(j.ok){
+      $('answer').innerHTML='🤖 '+(j.answer||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+      if(j.audioBase64){
+        askAudio=new Audio('data:'+(j.mime||'audio/mpeg')+';base64,'+j.audioBase64);
+        avatar.connectAudioElement(askAudio);
+        askAudio.onended=()=>setLive(false);
+        await askAudio.play(); setLive(true);
+        setStatus('✓ Respuesta con voz — el inset hace lip-sync del MP3 real.','ok');
+      } else setStatus('Respuesta sin audio (¿voz off o sin clave?).','warn');
+    } else if(j.error==='xai_key_not_set'){
+      setStatus('⚠️ Falta XAI_API_KEY en el worker. El lip-sync ya va con ▶ Demo.','warn');
+    } else setStatus('❌ '+(j.error||('HTTP '+res.status)),'err');
+  }catch(e){ setStatus('❌ Error de red: '+(e.message||e),'err'); }
+  finally{ $('btnAsk').disabled=false; }
+}
+
+$('btnSynth').onclick=playSynth; $('btnAsk').onclick=ask;
+applyGender(GENDER); applyLang(LANG);
+</script>
+</body>
+</html>
