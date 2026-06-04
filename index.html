@@ -41,10 +41,16 @@
 
   .card { width:min(680px,100%); background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 20px; box-shadow:0 24px 60px rgba(0,0,0,.5); }
   /* Avatares vectoriales reubicados DENTRO de la tarjeta (no pisan los vídeos) */
-  .avatars { display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin-bottom:16px; }
-  .av { display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .avatars { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:16px; }
+  /* Cada avatar ocupa media tarjeta → queda centrado bajo su vídeo */
+  .av { flex:1 1 0; max-width:332px; display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; opacity:.5; transition:opacity .2s; }
+  @media (max-width:680px){ .av { max-width:none; } }
+  .av.sel { opacity:1; }
+  .av.sel .inset { box-shadow:0 10px 26px rgba(0,0,0,.55), 0 0 0 3px var(--accent); }
   .avatars .inset { position:relative; right:auto; bottom:auto; width:118px; height:118px; }
   .name { font-size:.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; }
+  .pick { font-size:.56rem; color:var(--accent); letter-spacing:.1em; text-transform:uppercase; height:12px; visibility:hidden; }
+  .av.sel .pick { visibility:visible; }
   .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
   button.act { background:linear-gradient(180deg,#0e3550,#0a2335); color:var(--accent); border:1px solid #2a7fa6; border-radius:10px; padding:10px 16px; font-family:inherit; font-size:.84rem; font-weight:600; cursor:pointer; }
   button.act.alt { background:#06121c; color:var(--muted); border-color:var(--line); }
@@ -87,8 +93,8 @@
 
   <div class="card">
     <div class="avatars">
-      <div class="av"><div class="inset" id="insF"><span class="live"><i></i><span class="lt"></span></span><canvas id="faceF"></canvas></div><div class="name" id="nameF"></div></div>
-      <div class="av"><div class="inset" id="insM"><span class="live"><i></i><span class="lt"></span></span><canvas id="faceM"></canvas></div><div class="name" id="nameM"></div></div>
+      <div class="av" id="avF"><div class="inset" id="insF"><span class="live"><i></i><span class="lt"></span></span><canvas id="faceF"></canvas></div><div class="name" id="nameF"></div><div class="pick" id="pickF"></div></div>
+      <div class="av" id="avM"><div class="inset" id="insM"><span class="live"><i></i><span class="lt"></span></span><canvas id="faceM"></canvas></div><div class="name" id="nameM"></div><div class="pick" id="pickM"></div></div>
     </div>
     <div class="row">
       <button class="act" id="btnAsk"></button>
@@ -113,12 +119,12 @@ const T = {
     sub:'Madre y padre a la vez, en el mismo idioma. Los vídeos salen parados y pixelados: pulsa ▶ para revelar la calidad real. El recuadro EN VIVO hace lip-sync de la respuesta (Grok + ElevenLabs), offline.',
     mother:'Madre', father:'Padre', live:'en vivo', speaking:'hablando',
     sound:'🔊 Sonido', mute:'🔇 Silenciar', reveal:'Revelar',
-    ask:'🗣 Preguntar (responde la madre)', demo:'▶ Demo lip-sync',
+    ask:'🗣 Preguntar', demo:'▶ Demo lip-sync', replies:'Responde',
     locLabel:'Xpacio (punto de Admira.app)', qLabel:'Pregunta al avatar',
     qPlaceholder:'¿Cuánta gente vive en Madrid?', qDefault:'¿Cuánta gente vive en Madrid?',
     noPts:'(sin puntos en el KV)', errPts:'(error cargando puntos)',
     writeQ:'Escribe una pregunta.', thinking:'Pensando…',
-    okVoice:'✓ Respuesta con voz (madre) — la madre hace lip-sync.',
+    okVoice:'✓ Respuesta con voz — lip-sync del avatar seleccionado.',
     xai:'⚠️ Falta XAI_API_KEY en el worker. El lip-sync ya va con ▶ Demo.',
     net:'❌ Error de red: ', demoMsg:'Demo de lip-sync en los dos recuadros.', speechLang:'es-ES',
     foot:'Lip-sync 2D propio, en el navegador, sin coste por uso. Mismo cerebro y voz que el gemelo de <a href="https://www.admira.app">Admira.app</a>.',
@@ -127,12 +133,12 @@ const T = {
     sub:'Mother and father at once, in the same language. Videos start paused & pixelated — press ▶ to reveal the real quality. The LIVE inset lip-syncs the reply (Grok + ElevenLabs), offline.',
     mother:'Mother', father:'Father', live:'live', speaking:'speaking',
     sound:'🔊 Sound', mute:'🔇 Mute', reveal:'Reveal',
-    ask:'🗣 Ask (the mother replies)', demo:'▶ Lip-sync demo',
+    ask:'🗣 Ask', demo:'▶ Lip-sync demo', replies:'Replies',
     locLabel:'Xpacio (Admira.app location)', qLabel:'Ask the avatar',
     qPlaceholder:'How many people live in Madrid?', qDefault:'How many people live in Madrid?',
     noPts:'(no locations in KV)', errPts:'(error loading locations)',
     writeQ:'Type a question.', thinking:'Thinking…',
-    okVoice:'✓ Reply with voice (mother) — she lip-syncs.',
+    okVoice:'✓ Reply with voice — the selected avatar lip-syncs.',
     xai:'⚠️ The worker is missing the xAI key. Lip-sync already works via ▶ Demo.',
     net:'❌ Network error: ', demoMsg:'Lip-sync demo in both insets.', speechLang:'en-US',
     foot:'Own 2D lip-sync, in the browser, no per-use cost. Same brain & voice as the <a href="https://www.admira.app">Admira.app</a> twin.',
@@ -141,6 +147,8 @@ const T = {
 
 // Por defecto INGLÉS (salvo que el usuario ya eligiera ES antes).
 let LANG = (localStorage.getItem('da_lang') === 'es') ? 'es' : 'en';
+// Quién responde: madre por defecto; si seleccionas al padre, responde él.
+let SPEAKER = (localStorage.getItem('da_speaker') === 'male') ? 'male' : 'female';
 const VIDEO_AVAILABLE = { 'female-es':1, 'female-en':1, 'male-es':1, 'male-en':1 };
 function vkey(gender){ const k=gender+'-'+LANG; return VIDEO_AVAILABLE[k] ? k : gender+'-es'; }
 
@@ -210,11 +218,24 @@ function applyLang(l){
   $('langEs').classList.toggle('on',LANG==='es'); $('langEn').classList.toggle('on',LANG==='en');
   setVideo($('vidF'),'female'); setVideo($('vidM'),'male');
   pixelState('F','female'); pixelState('M','male'); // por defecto: parados y pixelados
+  applySpeaker(SPEAKER); // refresca resaltado + etiqueta "responde"
 }
 
 function bindSound(btn, vid){ btn.onclick=()=>{ vid.muted=!vid.muted; if(!vid.muted){vid.currentTime=0;vid.play().catch(()=>{});} btn.textContent=vid.muted?T[LANG].sound:T[LANG].mute; }; }
 bindSound($('sndF'),$('vidF')); bindSound($('sndM'),$('vidM'));
 $('langEs').onclick=()=>applyLang('es'); $('langEn').onclick=()=>applyLang('en');
+
+// Selección de quién responde (clic en el avatar)
+function applySpeaker(s){
+  SPEAKER = (s==='male') ? 'male' : 'female';
+  try{ localStorage.setItem('da_speaker',SPEAKER); }catch(e){}
+  $('avF').classList.toggle('sel', SPEAKER==='female');
+  $('avM').classList.toggle('sel', SPEAKER==='male');
+  $('pickF').textContent = SPEAKER==='female' ? '▸ '+T[LANG].replies : '';
+  $('pickM').textContent = SPEAKER==='male'   ? '▸ '+T[LANG].replies : '';
+}
+$('avF').onclick=()=>applySpeaker('female');
+$('avM').onclick=()=>applySpeaker('male');
 
 fetch(API+'/locations',{cache:'no-store'}).then(r=>r.json()).then(d=>{
   const list=(d&&d.locations)||[]; const sel=$('loc'); sel.innerHTML='';
@@ -249,14 +270,16 @@ async function ask(){
   $('btnAsk').disabled=true; $('answer').textContent=''; setStatus(t.thinking);
   try{
     const res=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({loc:$('loc').value,question,lang:LANG,voice:true,voiceId:VOICES['female-'+LANG]||''})});
+      body:JSON.stringify({loc:$('loc').value,question,lang:LANG,voice:true,voiceId:VOICES[SPEAKER+'-'+LANG]||''})});
     const j=await res.json().catch(()=>({}));
     if(j.ok){
       $('answer').innerHTML='🤖 '+(j.answer||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
       if(j.audioBase64){
         askAudio=new Audio('data:'+(j.mime||'audio/mpeg')+';base64,'+j.audioBase64);
-        avatarF.connectAudioElement(askAudio); askAudio.onended=()=>setLiveF(false);
-        await askAudio.play(); setLiveF(true); setStatus(t.okVoice,'ok');
+        const av = SPEAKER==='female'?avatarF:avatarM;
+        const setLive = SPEAKER==='female'?setLiveF:setLiveM;
+        av.connectAudioElement(askAudio); askAudio.onended=()=>setLive(false);
+        await askAudio.play(); setLive(true); setStatus(t.okVoice,'ok');
       } else setStatus('Sin audio.','warn');
     } else if(j.error==='xai_key_not_set'){ setStatus(t.xai,'warn'); }
     else setStatus('❌ '+(j.error||('HTTP '+res.status)),'err');
