@@ -40,6 +40,11 @@
   .reveal.hidden { display:none; }
 
   .card { width:min(680px,100%); background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 20px; box-shadow:0 24px 60px rgba(0,0,0,.5); }
+  /* Avatares vectoriales reubicados DENTRO de la tarjeta (no pisan los vídeos) */
+  .avatars { display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin-bottom:16px; }
+  .av { display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .avatars .inset { position:relative; right:auto; bottom:auto; width:118px; height:118px; }
+  .name { font-size:.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; }
   .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
   button.act { background:linear-gradient(180deg,#0e3550,#0a2335); color:var(--accent); border:1px solid #2a7fa6; border-radius:10px; padding:10px 16px; font-family:inherit; font-size:.84rem; font-weight:600; cursor:pointer; }
   button.act.alt { background:#06121c; color:var(--muted); border-color:var(--line); }
@@ -70,7 +75,6 @@
       <canvas class="pixel" id="pxF"></canvas>
       <button class="reveal" id="revF"><span class="play">▶</span><small id="revFt"></small></button>
       <button class="sound" id="sndF"></button>
-      <div class="inset" id="insF"><span class="live"><i></i><span class="lt"></span></span><canvas id="faceF"></canvas></div>
     </div>
     <div class="stage">
       <span class="who" id="whoM"></span>
@@ -78,11 +82,14 @@
       <canvas class="pixel" id="pxM"></canvas>
       <button class="reveal" id="revM"><span class="play">▶</span><small id="revMt"></small></button>
       <button class="sound" id="sndM"></button>
-      <div class="inset" id="insM"><span class="live"><i></i><span class="lt"></span></span><canvas id="faceM"></canvas></div>
     </div>
   </div>
 
   <div class="card">
+    <div class="avatars">
+      <div class="av"><div class="inset" id="insF"><span class="live"><i></i><span class="lt"></span></span><canvas id="faceF"></canvas></div><div class="name" id="nameF"></div></div>
+      <div class="av"><div class="inset" id="insM"><span class="live"><i></i><span class="lt"></span></span><canvas id="faceM"></canvas></div><div class="name" id="nameM"></div></div>
+    </div>
     <div class="row">
       <button class="act" id="btnAsk"></button>
       <button class="act alt" id="btnDemo"></button>
@@ -192,6 +199,7 @@ function applyLang(l){
   document.documentElement.lang=t.htmlLang;
   $('appTitle').innerHTML=t.title; $('sub').textContent=t.sub;
   $('whoF').textContent=t.mother; $('whoM').textContent=t.father;
+  $('nameF').textContent=t.mother; $('nameM').textContent=t.father;
   $('btnAsk').textContent=t.ask; $('btnDemo').textContent=t.demo;
   $('locLabel').textContent=t.locLabel; $('qLabel').textContent=t.qLabel;
   const q=$('q'); q.placeholder=t.qPlaceholder;
