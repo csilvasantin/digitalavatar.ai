@@ -115,6 +115,15 @@ let LANG = (localStorage.getItem('da_lang')==='en') ? 'en'
   : ((navigator.language||'es').toLowerCase().startsWith('en') ? 'en' : 'es');
 let GENDER = (localStorage.getItem('da_gender')==='male') ? 'male' : 'female';
 const VIDEO_AVAILABLE = { 'female-es':1, 'female-en':1, 'male-es':1, 'male-en':1 };
+// Voces de ElevenLabs por sexo×idioma. Madre (♀) = voz femenina · Padre (♂) = voz masculina,
+// una por idioma. Rellena con tus voiceId; vacío → el worker usa su voz por defecto.
+const VOICES = {
+  'female-es': 'dNjJKg63Fr5AXwIdkATa', // madre · castellano (Cristina)
+  'female-en': 'qSeXEcewz7tA0Q0qk9fH', // madre · inglés
+  'male-es':   'qUPtETgSYRhCRb2pfOla', // padre · castellano
+  'male-en':   'wAGzRVkxKEs8La0lmdrE', // padre · inglés
+};
+function voiceId(){ return VOICES[GENDER+'-'+LANG] || ''; }
 function videoKey() {
   const k = GENDER+'-'+LANG;
   if (VIDEO_AVAILABLE[k]) return k;
@@ -181,7 +190,7 @@ async function ask(){
   $('btnAsk').disabled=true; $('answer').textContent=''; setStatus(t.thinking);
   try{
     const res=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({loc:$('loc').value,question,lang:LANG,voice:true})});
+      body:JSON.stringify({loc:$('loc').value,question,lang:LANG,voice:true,voiceId:voiceId()})});
     const j=await res.json().catch(()=>({}));
     if(j.ok){
       $('answer').innerHTML='🤖 '+(j.answer||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
