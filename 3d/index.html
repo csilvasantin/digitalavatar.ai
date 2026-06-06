@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DigitalAvatar.ai — 3D</title>
+<script type="importmap">
+{
+  "imports": {
+    "three":          "https://cdn.jsdelivr.net/npm/three@0.169/build/three.module.js",
+    "three/addons/":  "https://cdn.jsdelivr.net/npm/three@0.169/examples/jsm/"
+  }
+}
+</script>
+<style>
+  :root {
+    --bg:     #05101a;
+    --panel:  #0a1925;
+    --line:   #1d3a4a;
+    --txt:    #dff3ff;
+    --muted:  #7fa8bb;
+    --accent: #5fd0ff;
+    --ok:     #6ce6a2;
+    --warn:   #ffce6b;
+    --err:    #ff8a7a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: radial-gradient(circle at 30% -10%, #0c2840, var(--bg) 55%);
+    color: var(--txt);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+  }
+
+  /* ── Toggles ── */
+  .toggles {
+    position: fixed; top: 14px; right: 16px;
+    display: flex; gap: 10px; z-index: 20;
+  }
+  .seg { display: flex; gap: 4px; }
+  .seg button {
+    padding: 5px 12px; font-size: .72rem; border-radius: 8px;
+    border: 1px solid var(--line); background: #06121c;
+    color: var(--muted); cursor: pointer; font-family: inherit;
+  }
+  .seg button.on { border-color: var(--accent); color: var(--accent); background: #0e2a3a; }
+
+  /* ── Header ── */
+  .header {
+    margin-top: 22px; text-align: center; z-index: 1;
+  }
+  .header h1 { font-size: 1.06rem; letter-spacing: .04em; }
+  .header h1 b { color: var(--accent); }
+  .header p { color: var(--muted); font-size: .7rem; margin-top: 4px; }
+  .badge {
+    display: inline-block; margin-top: 6px;
+    padding: 3px 10px; border-radius: 20px;
+    border: 1px solid var(--accent); color: var(--accent);
+    font-size: .6rem; letter-spacing: .12em; text-transform: uppercase;
+  }
+
+  /* ── Three.js canvas ── */
+  #three-canvas {
+    width: min(760px, 100vw);
+    height: min(420px, 56vw);
+    display: block;
+    margin-top: 10px;
+    z-index: 1;
+    cursor: default;
+  }
+
+  /* ── UI card ── */
+  .card {
+    width: min(680px, 100%);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px 20px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.5);
+    margin: 8px 18px 28px;
+    z-index: 1;
+  }
+
+  /* Avatar selector */
+  .avatars {
+    display: flex; gap: 16px; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 16px;
+  }
+  .av {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 5px; cursor: pointer; opacity: .5; transition: opacity .2s;
+    padding: 8px 16px; border-radius: 12px;
+    border: 1px solid transparent;
+  }
+  .av.sel {
+    opacity: 1; border-color: var(--accent);
+    background: rgba(95,208,255,.06);
+  }
+  .av-dot {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    border: 1.5px solid var(--line);
+    background: #06121c;
+  }
+  .av.sel .av-dot { border-color: var(--accent); box-shadow: 0 0 10px rgba(95,208,255,.3); }
+  .av-name { font-size: .62rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+  .av-pick { font-size: .56rem; color: var(--accent); height: 12px; visibility: hidden; }
+  .av.sel .av-pick { visibility: visible; }
+
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 4px; }
+
+  button.act {
+    background: linear-gradient(180deg, #0e3550, #0a2335);
+    color: var(--accent); border: 1px solid #2a7fa6;
+    border-radius: 10px; padding: 10px 16px;
+    font-family: inherit; font-size: .84rem; font-weight: 600; cursor: pointer;
+  }
+  button.act.alt { background: #06121c; color: var(--muted); border-color: var(--line); }
+  button.act:hover:not(:disabled) { border-color: var(--accent); box-shadow: 0 0 14px rgba(95,208,255,.25); }
+  button.act:disabled { opacity: .45; cursor: default; }
+
+  label {
+    display: block; font-size: .68rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .08em; margin: 14px 0 5px;
+  }
+  select, textarea {
+    width: 100%; background: #06121c; color: var(--txt);
+    border: 1px solid var(--line); border-radius: 10px;
+    padding: 10px 12px; font-family: inherit; font-size: .86rem;
+  }
+  textarea { resize: vertical; min-height: 50px; }
+
+  .answer { font-size: .95rem; line-height: 1.5; margin-top: 8px; }
+  .status { font-size: .74rem; margin-top: 10px; min-height: 18px; }
+  .status.ok   { color: var(--ok); }
+  .status.warn { color: var(--warn); }
+  .status.err  { color: var(--err); }
+
+  .foot { margin-top: 14px; font-size: .66rem; color: var(--muted); }
+  a { color: var(--accent); }
+
+  /* Ace badge */
+  .ace-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: .58rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted); padding: 3px 8px; border-radius: 6px;
+    border: 1px solid var(--line); background: #06121c;
+  }
+  .ace-badge.on  { color: var(--ok);  border-color: var(--ok); }
+  .ace-badge.off { color: var(--warn); border-color: var(--warn); }
+  .ace-badge i {
+    width: 6px; height: 6px; border-radius: 50%; background: currentColor;
+    display: inline-block;
+  }
+</style>
+</head>
+<body>
+
+<!-- Toggles fijos -->
+<div class="toggles">
+  <div class="seg" id="langSeg">
+    <button id="langEs">ES</button>
+    <button id="langEn">EN</button>
+  </div>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <h1 id="appTitle"></h1>
+  <p id="sub"></p>
+  <span class="badge">3D · WebGL · Nvidia ACE</span>
+</div>
+
+<!-- Three.js canvas -->
+<canvas id="three-canvas"></canvas>
+
+<!-- UI card -->
+<div class="card">
+  <div class="avatars">
+    <div class="av" id="avF">
+      <div class="av-dot">♀</div>
+      <div class="av-name" id="nameF"></div>
+      <div class="av-pick" id="pickF"></div>
+    </div>
+    <div class="av" id="avM">
+      <div class="av-dot">♂</div>
+      <div class="av-name" id="nameM"></div>
+      <div class="av-pick" id="pickM"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <button class="act" id="btnAsk"></button>
+    <button class="act alt" id="btnDemo"></button>
+    <span class="ace-badge off" id="aceBadge"><i></i><span id="aceLabel"></span></span>
+  </div>
+
+  <label for="loc" id="locLabel"></label>
+  <select id="loc"></select>
+
+  <label for="q" id="qLabel"></label>
+  <textarea id="q" rows="2"></textarea>
+
+  <div class="answer" id="answer"></div>
+  <div class="status" id="status"></div>
+  <p class="foot" id="foot"></p>
+</div>
+
+<script type="module">
+import { Scene3D, LipSyncPlayer } from './avatar3d.js';
+
+// ── Constantes ──────────────────────────────────────────────────────────────
+const API     = 'https://omnipublicity-api.csilvasantin.workers.dev';
+const ACE_API = 'https://admira-nvidia-ace.csilvasantin.workers.dev';
+const $       = id => document.getElementById(id);
+
+// ── i18n ────────────────────────────────────────────────────────────────────
+const T = {
+  es: {
+    lang:'es', title:'<b>DigitalAvatar</b>.ai — <span style="color:var(--muted);font-size:.7em">3D</span>',
+    sub: 'Avatares 3D con lip-sync de Nvidia ACE. Sin clave ACE → fallback WebAudio.',
+    mother:'Madre', father:'Padre', replies:'Responde',
+    ask:'🗣 Preguntar', demo:'▶ Demo lip-sync',
+    locLabel:'Xpacio (punto Admira.app)', qLabel:'Pregunta al avatar',
+    qPlaceholder:'¿Cuánta gente vive en Madrid?', qDefault:'¿Cuánta gente vive en Madrid?',
+    noPts:'(sin puntos en el KV)', errPts:'(error cargando puntos)',
+    writeQ:'Escribe una pregunta.', thinking:'Pensando…',
+    okAce:'✓ Respuesta con voz + lip-sync Nvidia ACE.',
+    okFallback:'✓ Respuesta con voz + lip-sync WebAudio (fallback).',
+    noAudio:'Sin audio en la respuesta.', xai:'⚠️ Falta XAI_API_KEY en el worker.',
+    net:'❌ Error de red: ', aceOff:'ACE offline', aceOn:'ACE activo',
+    foot:'Motor 3D: Three.js r169 · Lip-sync: Nvidia ACE Audio2Face-3D · Voz: ElevenLabs · IA: Grok (<a href="https://www.admira.app">Admira.app</a>)',
+    demoMsg:'Demo de lip-sync en los dos avatares.',
+  },
+  en: {
+    lang:'en', title:'<b>DigitalAvatar</b>.ai — <span style="color:var(--muted);font-size:.7em">3D</span>',
+    sub: '3D avatars with Nvidia ACE lip-sync. No ACE key → WebAudio fallback.',
+    mother:'Mother', father:'Father', replies:'Replies',
+    ask:'🗣 Ask', demo:'▶ Lip-sync demo',
+    locLabel:'Xpacio (Admira.app location)', qLabel:'Ask the avatar',
+    qPlaceholder:'How many people live in Madrid?', qDefault:'How many people live in Madrid?',
+    noPts:'(no locations in KV)', errPts:'(error loading locations)',
+    writeQ:'Type a question.', thinking:'Thinking…',
+    okAce:'✓ Reply with voice + Nvidia ACE lip-sync.',
+    okFallback:'✓ Reply with voice + WebAudio lip-sync (fallback).',
+    noAudio:'No audio in response.', xai:'⚠️ Worker missing xAI key.',
+    net:'❌ Network error: ', aceOff:'ACE offline', aceOn:'ACE active',
+    foot:'3D engine: Three.js r169 · Lip-sync: Nvidia ACE Audio2Face-3D · Voice: ElevenLabs · AI: Grok (<a href="https://www.admira.app">Admira.app</a>)',
+    demoMsg:'Lip-sync demo on both avatars.',
+  },
+};
+
+// Voces ElevenLabs por género × idioma
+const VOICES = {
+  'female-es': 'dNjJKg63Fr5AXwIdkATa', 'female-en': 'qSeXEcewz7tA0Q0qk9fH',
+  'male-es':   'qUPtETgSYRhCRb2pfOla', 'male-en':   'wAGzRVkxKEs8La0lmdrE',
+};
+
+// ── Estado ───────────────────────────────────────────────────────────────────
+let LANG    = (localStorage.getItem('da_lang')    === 'es') ? 'es' : 'en';
+let SPEAKER = (localStorage.getItem('da_speaker') === 'male') ? 'male' : 'female';
+let aceAvailable = false;
+let askAudio = null;
+
+// ── Inicializar escena 3D ────────────────────────────────────────────────────
+const canvas3d = $('three-canvas');
+const scene = new Scene3D(canvas3d, { accent: '#5fd0ff' });
+
+// Avatares a x = -2 (femenino) y x = +2 (masculino)
+// Para usar GLB: scene.addAvatar('female', -2, { glbUrl: 'assets/avatar-female.glb' })
+const avF = scene.addAvatar('female', -2);
+const avM = scene.addAvatar('male',    2);
+scene.start();
+
+// ── Verificar si ACE está disponible ─────────────────────────────────────────
+(async () => {
+  try {
+    const r = await fetch(ACE_API + '/health', { signal: AbortSignal.timeout(4000) });
+    const j = await r.json();
+    aceAvailable = j.ok === true;
+  } catch { aceAvailable = false; }
+  updateAceBadge();
+})();
+
+function updateAceBadge() {
+  const t = T[LANG];
+  $('aceBadge').className = 'ace-badge ' + (aceAvailable ? 'on' : 'off');
+  $('aceLabel').textContent = aceAvailable ? t.aceOn : t.aceOff;
+}
+
+// ── Cargar puntos Admira.app ─────────────────────────────────────────────────
+fetch(API + '/locations', { cache: 'no-store' })
+  .then(r => r.json())
+  .then(d => {
+    const list = (d && d.locations) || [];
+    const sel = $('loc'); sel.innerHTML = '';
+    if (!list.length) { sel.innerHTML = `<option value="">${T[LANG].noPts}</option>`; return; }
+    list.forEach(l => {
+      const o = document.createElement('option');
+      o.value = l.id;
+      o.textContent = (l.name || l.id) + (l.addr ? ' · ' + l.addr : '');
+      sel.appendChild(o);
+    });
+  })
+  .catch(() => { $('loc').innerHTML = `<option value="">${T[LANG].errPts}</option>`; });
+
+// ── Helpers de UI ─────────────────────────────────────────────────────────────
+function setStatus(msg, cls) {
+  const s = $('status'); s.innerHTML = msg || ''; s.className = 'status' + (cls ? ' ' + cls : '');
+}
+function setLiveF(on) { avF?.setLive(on); }
+function setLiveM(on) { avM?.setLive(on); }
+
+function applyLang(l) {
+  LANG = (l === 'es') ? 'es' : 'en';
+  try { localStorage.setItem('da_lang', LANG); } catch {}
+  const t = T[LANG];
+  document.documentElement.lang = LANG;
+  $('appTitle').innerHTML = t.title;
+  $('sub').textContent    = t.sub;
+  $('nameF').textContent  = t.mother;
+  $('nameM').textContent  = t.father;
+  $('btnAsk').textContent = t.ask;
+  $('btnDemo').textContent = t.demo;
+  $('locLabel').textContent = t.locLabel;
+  $('qLabel').textContent   = t.qLabel;
+  const q = $('q'); q.placeholder = t.qPlaceholder;
+  if (!q.value.trim() || q.value === T.es.qDefault || q.value === T.en.qDefault) q.value = t.qDefault;
+  $('foot').innerHTML = t.foot;
+  $('langEs').classList.toggle('on', LANG === 'es');
+  $('langEn').classList.toggle('on', LANG === 'en');
+  // Actualizar nombres en los avatares 3D
+  avF?.setNameLabel(t.mother.toUpperCase());
+  avM?.setNameLabel(t.father.toUpperCase());
+  updateAceBadge();
+  applySpeaker(SPEAKER);
+}
+
+function applySpeaker(s) {
+  SPEAKER = (s === 'male') ? 'male' : 'female';
+  try { localStorage.setItem('da_speaker', SPEAKER); } catch {}
+  const t = T[LANG];
+  $('avF').classList.toggle('sel', SPEAKER === 'female');
+  $('avM').classList.toggle('sel', SPEAKER === 'male');
+  $('pickF').textContent = SPEAKER === 'female' ? '▸ ' + t.replies : '';
+  $('pickM').textContent = SPEAKER === 'male'   ? '▸ ' + t.replies : '';
+}
+
+// ── Demo lip-sync (sin backend) ───────────────────────────────────────────────
+function playDemo() {
+  stopAll();
+  const t = T[LANG];
+  setStatus(t.demoMsg, 'ok');
+  // Genera audio sintético en ambos avatares simultáneamente
+  [avF, avM].forEach((av, i) => {
+    if (!av) return;
+    const setLive = i === 0 ? setLiveF : setLiveM;
+    const ctx = av.audio.resume();
+    const sr = ctx.sampleRate, dur = 3.2;
+    const buf = ctx.createBuffer(1, Math.floor(dur * sr), sr);
+    const d = buf.getChannelData(0);
+    let idx = 0;
+    while (idx < d.length) {
+      const len = Math.floor((0.10 + Math.random() * 0.15) * sr);
+      const gap = Math.floor((0.03 + Math.random() * 0.06) * sr);
+      const f0 = 100 + Math.random() * 80;
+      const f1 = 400 + Math.random() * 600;
+      const f2 = 1100 + Math.random() * 1600;
+      for (let j = 0; j < len && idx < d.length; j++, idx++) {
+        const tt = j / sr, env = Math.sin(Math.PI * j / len);
+        d[idx] = (0.6*Math.sin(2*Math.PI*f0*tt) + 0.45*Math.sin(2*Math.PI*f1*tt) + 0.3*Math.sin(2*Math.PI*f2*tt) + 0.06*(Math.random()*2-1)) * env * 0.48;
+      }
+      idx += gap;
+    }
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    av.audio.connectElement({ currentTime: 0, paused: false }); // señal de fallback
+    // Conectar directo al analyser de la AudioEngine
+    src.connect(av.audio.analyser); av.audio.analyser.connect(ctx.destination);
+    av.audio.connected = true;
+    setLive(true);
+    src.onended = () => { av.audio.connected = false; setLive(false); };
+    src.start();
+  });
+}
+
+// ── Pregunta al avatar ────────────────────────────────────────────────────────
+function stopAll() {
+  try { askAudio?.pause(); } catch {}
+  askAudio = null;
+  setLiveF(false); setLiveM(false);
+  avF?.player.load([]);
+  avM?.player.load([]);
+}
+
+async function ask() {
+  stopAll();
+  const t = T[LANG];
+  const question = $('q').value.trim();
+  if (!question) { setStatus(t.writeQ, 'warn'); return; }
+  $('btnAsk').disabled = true;
+  $('answer').textContent = '';
+  setStatus(t.thinking);
+
+  try {
+    // 1. Llamar al backend de IA (Grok + ElevenLabs)
+    const res = await fetch(API + '/metahuman/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        loc:     $('loc').value,
+        question,
+        lang:    LANG,
+        voice:   true,
+        voiceId: VOICES[SPEAKER + '-' + LANG] || '',
+      }),
+    });
+    const j = await res.json().catch(() => ({}));
+
+    if (!j.ok) {
+      if (j.error === 'xai_key_not_set') setStatus(t.xai, 'warn');
+      else setStatus('❌ ' + (j.error || 'HTTP ' + res.status), 'err');
+      return;
+    }
+
+    // Mostrar respuesta de texto
+    $('answer').innerHTML = '🤖 ' + (j.answer || '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+    if (!j.audioBase64) { setStatus(t.noAudio, 'warn'); return; }
+
+    // 2. Intentar obtener blendshapes de Nvidia ACE en paralelo con la reproducción
+    let blendshapes = null;
+    if (aceAvailable) {
+      try {
+        const aceRes = await fetch(ACE_API + '/blendshapes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ audioBase64: j.audioBase64, mime: j.mime || 'audio/mpeg' }),
+          signal: AbortSignal.timeout(12000),
+        });
+        const aceData = await aceRes.json();
+        if (aceData.ok && aceData.blendshapes?.length) blendshapes = aceData.blendshapes;
+      } catch { /* fallback silencioso */ }
+    }
+
+    // 3. Crear el elemento de audio
+    askAudio = new Audio('data:' + (j.mime || 'audio/mpeg') + ';base64,' + j.audioBase64);
+    const av = SPEAKER === 'female' ? avF : avM;
+    const setLive = SPEAKER === 'female' ? setLiveF : setLiveM;
+
+    if (blendshapes) {
+      // Modo ACE: blendshapes precisos
+      av.setBlendshapes(blendshapes);
+      av.player.attach(askAudio);
+      askAudio.onended = () => { setLive(false); av.player.load([]); };
+      await askAudio.play();
+      setLive(true);
+      setStatus(t.okAce, 'ok');
+    } else {
+      // Modo fallback: WebAudio RMS
+      av.connectAudioElement(askAudio);
+      askAudio.onended = () => setLive(false);
+      await askAudio.play();
+      setLive(true);
+      setStatus(t.okFallback + (aceAvailable ? '' : ' (sin clave ACE)'), 'ok');
+    }
+
+  } catch (e) {
+    setStatus(t.net + (e.message || e), 'err');
+  } finally {
+    $('btnAsk').disabled = false;
+  }
+}
+
+// ── Event listeners ───────────────────────────────────────────────────────────
+$('langEs').onclick = () => applyLang('es');
+$('langEn').onclick = () => applyLang('en');
+$('avF').onclick    = () => applySpeaker('female');
+$('avM').onclick    = () => applySpeaker('male');
+$('btnAsk').onclick = ask;
+$('btnDemo').onclick = playDemo;
+$('q').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) ask(); });
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+applyLang(LANG);
+</script>
+</body>
+</html>
