@@ -100,7 +100,7 @@
   <div class="top">
     <div class="brand"><b>DigitalAvatar</b>.ai<span class="livedot" id="livedot"></span><span class="tag" id="tag">avatar digital en tiempo real</span></div>
     <div class="sp"></div>
-    <div class="seg" id="langSeg"><button id="langEs">ES</button><button id="langEn">EN</button></div>
+    <div class="seg" id="langSeg"><button id="langToggle" title="Cambiar idioma / switch language">EN</button></div>
   </div>
 
   <div class="console">
@@ -449,7 +449,7 @@ function applyLang(l){
   localStorage.setItem('da_lang',LANG);
   document.documentElement.lang=t.lang;
   $('tag').textContent=t.tag; $('q').placeholder=t.placeholder;
-  $('langEs').classList.toggle('on',LANG==='es'); $('langEn').classList.toggle('on',LANG==='en');
+  const lt=$('langToggle'); if(lt) lt.textContent=(LANG==='es')?'EN':'ES';
   $('chips').innerHTML=t.chips.map(c=>`<span class="chip">${esc(c)}</span>`).join('');
   [...$('chips').children].forEach((el,i)=>el.onclick=()=>{ $('q').value=t.chips[i]; ask(); });
 }
@@ -465,7 +465,7 @@ function loadLocations(){
 $('btnSend').onclick=()=>ask();
 $('btnMic').onclick=toggleListen;
 $('q').addEventListener('keydown',e=>{ if(e.key==='Enter') ask(); });
-$('langEs').onclick=()=>applyLang('es'); $('langEn').onclick=()=>applyLang('en');
+$('langToggle').onclick=()=>{ const nl=(LANG==='es')?'en':'es'; applyLang(nl); if(audioEl){try{audioEl.pause();}catch(e){}} if(typeof stopSpeaking==='function') stopSpeaking(); greet(); };
 
 initThree(); animate(); loadAvatar(); initSpeech(); applyLang(LANG); loadLocations();
 </script>

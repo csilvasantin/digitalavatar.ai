@@ -92,7 +92,7 @@
   <div class="top">
     <div class="brand"><b>DigitalAvatar</b>.ai<span class="livedot" id="livedot"></span><span class="tag" id="tag">avatar foto-real en tiempo real</span></div>
     <div class="sp"></div>
-    <div class="seg" id="langSeg"><button id="langEs">ES</button><button id="langEn">EN</button></div>
+    <div class="seg" id="langSeg"><button id="langToggle" title="Cambiar idioma / switch language">EN</button></div>
   </div>
 
   <div class="console">
@@ -335,13 +335,14 @@ function toggleListen(){ listening?stopListen():startListen(); }
 function listenAfterReply(){ if(!KIOSK || !recog || listening || speaking) return; setTimeout(()=>{ if(!speaking && !listening && !thinking) startListen(); }, 550); }
 
 function applyLang(l){ LANG=(l==='en')?'en':'es'; const t=T[LANG]; localStorage.setItem('da_lang',LANG); document.documentElement.lang=t.lang;
-  $('tag').textContent=(KIOSK&&window.__locName)?window.__locName:t.tag; $('q').placeholder=t.placeholder; $('langEs').classList.toggle('on',LANG==='es'); $('langEn').classList.toggle('on',LANG==='en'); }
+  $('tag').textContent=(KIOSK&&window.__locName)?window.__locName:t.tag; $('q').placeholder=t.placeholder; const lt=$('langToggle'); if(lt) lt.textContent=(LANG==='es')?'EN':'ES'; }
 function loadLocations(){ fetch(API+'/locations',{cache:'no-store'}).then(r=>r.json()).then(d=>{ const list=(d&&d.locations)||[], sel=$('loc'); sel.innerHTML='<option value="">'+T[LANG].loc+'</option>'; list.forEach(l=>{ const o=document.createElement('option'); o.value=l.id; o.textContent=(l.name||l.id)+(l.addr?' · '+l.addr:''); sel.appendChild(o); });
     if(LOCK_LOC){ sel.value=LOCK_LOC; const m=list.find(l=>String(l.id)===LOCK_LOC); if(m){ window.__locName=m.name||LOCK_LOC; $('tag').textContent=window.__locName; } }   // tienda fijada del tótem
   }).catch(()=>{}); }
 
 $('btnSend').onclick=()=>ask(); $('btnMic').onclick=toggleListen; $('q').addEventListener('keydown',e=>{ if(e.key==='Enter') ask(); });
-$('langEs').onclick=()=>applyLang('es'); $('langEn').onclick=()=>applyLang('en');
+$('langToggle').onclick=()=>{ const nl=(LANG==='es')?'en':'es'; applyLang(nl); if(audioEl){try{audioEl.pause();}catch(e){}} stopSpeaking();
+  speakFixed(nl==='es'?'Vale, seguimos en español. ¿En qué te ayudo?':'Okay, switching to English. How can I help you?'); };
 initThree(); animate(); loadAvatar(MODEL_URL); initSpeech(); applyLang(LANG); loadLocations();
 // Kiosko: reinicia el reloj de atracción ante cualquier interacción (táctil/teclado/voz)
 if(KIOSK){ ['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev, resetAttract, {passive:true})); $('khint').classList.add('show'); resetAttract(); }
