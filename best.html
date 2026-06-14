@@ -138,7 +138,10 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-const API = 'https://omnipublicity-api.csilvasantin.workers.dev';
+// Proxy en pixer-eleven (/da/*) → reenvía a omnipublicity-api por la malla interna
+// de Cloudflare. Esquiva el bloqueo ISP español de workers.dev: pixer-eleven SÍ es
+// alcanzable desde redes ES, omnipublicity directo no siempre lo es.
+const API = 'https://pixer-eleven.csilvasantin.workers.dev/da';
 const $ = id => document.getElementById(id);
 
 // Avatar RPM por defecto AUTO-ALOJADO (siempre carga, sin depender de readyplayer.me).
