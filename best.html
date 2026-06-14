@@ -174,6 +174,11 @@ const T = {
     micNo:'Your browser does not support speech input (try Chrome).', loc:'Xpacio (Admira.app location)', loading:'Loading photoreal avatar…', speechLang:'en-US' },
 };
 let LANG = FORCE_LANG || ((localStorage.getItem('da_lang')==='en') ? 'en' : 'es');
+// Silencio del avatar (tótem mudo): sin voz de atracción ni voz en las respuestas
+// (sigue habiendo lip-sync + subtítulo). Persiste y se controla con /avatar3d audio on|off.
+let MUTED = (params.get('audio')==='off') || (localStorage.getItem('da_muted')==='1');
+function setMuted(on){ MUTED=!!on; try{localStorage.setItem('da_muted',MUTED?'1':'0');}catch(e){}
+  if(MUTED){ if(audioEl){try{audioEl.pause();}catch(e){}} stopSpeaking(); clearTimeout(attractTimer); } else { resetAttract(); } }
 const VOICES = { es:'dNjJKg63Fr5AXwIdkATa', en:'qSeXEcewz7tA0Q0qk9fH' };
 
 /* ===== three scene ===== */
@@ -303,6 +308,7 @@ async function ask(question){
     const j=await res.json().catch(()=>({}));
     if(!j.ok){ thinking=false; setStatus('❌ '+(j.error||('HTTP '+res.status)),'err'); setCaption(''); return; }
     const answer=j.answer||'';
+    if(MUTED){ thinking=false; setCaption(answer); setStatus(''); resetAttract(); listenAfterReply(); return; }   // mudo: respuesta solo en subtítulo
     if(j.audioBase64){ if(audioEl){try{audioEl.pause();}catch(e){}} audioEl=new Audio('data:'+(j.mime||'audio/mpeg')+';base64,'+j.audioBase64); window.__audio=audioEl;
       const tr=j.alignment?buildTrack(j.alignment):buildTrackFromText(answer,2.5); capTrack={text:answer, al:j.alignment||null};
       audioEl.onplay=()=>{ thinking=false; startSpeaking(tr); tickCaption(); };
@@ -316,6 +322,7 @@ function greet(){ ask(LANG==='es'?'Salúdame en una frase corta y di que eres un
 
 /* ===== KIOSKO: voz fija (atracción) + modo atracción en bucle ===== */
 async function speakFixed(text){
+  if(MUTED){ setCaption(text); return; }   // tótem mudo: solo subtítulo, sin voz
   try{ const res=await fetch(API+'/tts',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({text, lang:LANG, voiceId:VOICES[LANG]||'', timestamps:true})});
     const j=await res.json().catch(()=>({}));
@@ -334,7 +341,7 @@ const ATTRACT={
       'I can tell you offers, opening hours or answer any question.'] };
 let attractTimer=null, attractIdx=0;
 function resetAttract(){ if(!KIOSK) return; clearTimeout(attractTimer); attractTimer=setTimeout(attract, 28000); }
-function attract(){ if(!KIOSK){ return; } if(speaking||listening){ resetAttract(); return; } const list=ATTRACT[LANG]||ATTRACT.es; speakFixed(list[attractIdx%list.length]); attractIdx++; }
+function attract(){ if(!KIOSK||MUTED){ return; } if(speaking||listening){ resetAttract(); return; } const list=ATTRACT[LANG]||ATTRACT.es; speakFixed(list[attractIdx%list.length]); attractIdx++; }
 
 let recog=null, listening=false;
 function initSpeech(){ const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){ $('btnMic').disabled=true; return; }
@@ -373,6 +380,7 @@ window.addEventListener('message', (ev)=>{
   const d=ev&&ev.data; if(!d||typeof d!=='object') return;
   if(d.type==='da-ask'){ if(d.lang&&d.lang!==LANG) applyLang(d.lang); const qz=String(d.question||'').trim(); if(qz) ask(qz); }
   else if(d.type==='da-lang'&&d.lang){ applyLang(d.lang); }
+  else if(d.type==='da-audio'){ setMuted(d.on===false||d.on==='off'); }   // {on:true}=con voz · {on:false}=mudo
 });
 // Si en 18s no cargó, ofrece fallback (RPM puede no resolver en algunas redes)
 setTimeout(()=>{ if(!window.__avatarGroup && !$('fallback').classList.contains('show')) showFallback('Está tardando… puede que tu red no alcance readyplayer.me.'); }, 18000);
