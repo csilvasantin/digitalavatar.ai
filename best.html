@@ -61,7 +61,7 @@
      textos encima de la cara. En el tótem físico (vertical grande) sí se ve. */
   @media (max-width:620px){
     html.kiosk .console, html.kiosk .khint, html.kiosk .caption, html.kiosk .status, html.kiosk .brand, html.kiosk #langSeg{ display:none !important; }
-    html.kiosk #stage{ transform:scale(.88); transform-origin:50% 38%; }  /* avatar un poco más pequeño en el tótem */
+    html.kiosk #stage{ transform:scale(.79); transform-origin:50% 40%; }  /* avatar más pequeño: cabe entera (cara + barbilla) en el tótem */
   }
   /* Aviso de atracción "toca o habla" cuando está en reposo */
   .khint{ display:none; position:fixed; left:50%; bottom:118px; transform:translateX(-50%); z-index:6;
@@ -358,7 +358,22 @@ $('langToggle').onclick=()=>{ const nl=(LANG==='es')?'en':'es'; applyLang(nl); i
   speakFixed(nl==='es'?'Vale, seguimos en español. ¿En qué te ayudo?':'Okay, switching to English. How can I help you?'); };
 initThree(); animate(); loadAvatar(MODEL_URL); initSpeech(); applyLang(LANG); loadLocations();
 // Kiosko: reinicia el reloj de atracción ante cualquier interacción (táctil/teclado/voz)
-if(KIOSK){ ['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev, resetAttract, {passive:true})); $('khint').classList.add('show'); resetAttract(); }
+if(KIOSK){ ['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev, resetAttract, {passive:true})); $('khint').classList.add('show'); resetAttract();
+  // TOCAR la cara = hablarle. En el tótem el chat está oculto, así que el gesto
+  // táctil sobre el avatar arranca el micro (y corta la voz de atracción si suena).
+  $('stage').addEventListener('pointerdown', ()=>{
+    if(listening){ stopListen(); return; }
+    if(audioEl){ try{audioEl.pause();}catch(e){} } stopSpeaking();
+    startListen();
+  }, {passive:true});
+}
+// El gemelo (CLI /avatar3d <pregunta>) empuja la pregunta al avatar del tótem por
+// postMessage → ella responde con voz y lip-sync, sin necesidad de teclado.
+window.addEventListener('message', (ev)=>{
+  const d=ev&&ev.data; if(!d||typeof d!=='object') return;
+  if(d.type==='da-ask'){ if(d.lang&&d.lang!==LANG) applyLang(d.lang); const qz=String(d.question||'').trim(); if(qz) ask(qz); }
+  else if(d.type==='da-lang'&&d.lang){ applyLang(d.lang); }
+});
 // Si en 18s no cargó, ofrece fallback (RPM puede no resolver en algunas redes)
 setTimeout(()=>{ if(!window.__avatarGroup && !$('fallback').classList.contains('show')) showFallback('Está tardando… puede que tu red no alcance readyplayer.me.'); }, 18000);
 </script>
