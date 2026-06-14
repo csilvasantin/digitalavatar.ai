@@ -48,6 +48,21 @@
   .livedot{display:inline-block; width:8px; height:8px; border-radius:50%; background:#33506a; margin-left:8px; vertical-align:middle}
   .livedot.on{background:var(--ok); box-shadow:0 0 9px var(--ok); animation:micpulse 1.1s infinite}
   .exp{position:fixed; top:54px; left:50%; transform:translateX(-50%); z-index:5; font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); opacity:.8; pointer-events:none}
+  /* ── KIOSKO (tótem) ── */
+  html.kiosk #evo, html.kiosk .exp{ display:none !important; }
+  html.kiosk .meta{ display:none; }                       /* selector oculto: tienda fijada */
+  html.kiosk .console{ width:min(900px,95vw); gap:16px; bottom:max(34px,env(safe-area-inset-bottom)); }
+  html.kiosk .caption{ font-size:1.7rem; max-height:26vh; }
+  html.kiosk .bar{ padding:13px 13px 13px 20px; border-radius:22px; }
+  html.kiosk .bar input{ font-size:1.3rem; }
+  html.kiosk .iconbtn{ width:60px; height:60px; font-size:1.45rem; border-radius:16px; }
+  html.kiosk .brand .tag{ font-size:.66rem }
+  /* Aviso de atracción "toca o habla" cuando está en reposo */
+  .khint{ display:none; position:fixed; left:50%; bottom:118px; transform:translateX(-50%); z-index:6;
+    font-size:.95rem; color:var(--accent); background:rgba(6,14,24,.6); border:1px solid var(--line);
+    padding:8px 16px; border-radius:999px; backdrop-filter:blur(8px); animation:khb 2.4s ease-in-out infinite; pointer-events:none }
+  html.kiosk .khint.show{ display:block }
+  @keyframes khb{ 50%{ transform:translateX(-50%) translateY(-5px); opacity:.7 } }
 </style>
 </head>
 <body>
@@ -91,6 +106,8 @@
     <div class="status" id="status"></div>
   </div>
 
+  <div class="khint" id="khint">👆 Tócame o háblame</div>
+
   <div id="load">
     <div class="ring" id="ring"></div>
     <div class="lt" id="loadt">Cargando avatar foto-real…</div>
@@ -129,6 +146,11 @@ function rpmUrlFrom(idOrUrl){
 }
 const params=new URLSearchParams(location.search);
 let MODEL_URL = params.get('avatar') ? rpmUrlFrom(params.get('avatar')) : DEFAULT_AVATAR;
+// Modo KIOSKO (tótem): pantalla completa, anclado a una tienda, atracción en bucle.
+const KIOSK = params.get('kiosk')==='1' || params.get('kiosk')==='true';
+const LOCK_LOC = params.get('loc') || '';
+const FORCE_LANG = (params.get('lang')==='en')?'en':(params.get('lang')==='es')?'es':'';
+if(KIOSK) document.documentElement.classList.add('kiosk');
 
 const T = {
   es:{ lang:'es', tag:'avatar foto-real en tiempo real', placeholder:'Escribe o pulsa 🎙️ para hablar…',
@@ -138,7 +160,7 @@ const T = {
     thinking:'Thinking…', listening:'Listening…', net:'Network error: ', noVoice:'(no voice: missing TTS key)',
     micNo:'Your browser does not support speech input (try Chrome).', loc:'Xpacio (Admira.app location)', loading:'Loading photoreal avatar…', speechLang:'en-US' },
 };
-let LANG = (localStorage.getItem('da_lang')==='en') ? 'en' : 'es';
+let LANG = FORCE_LANG || ((localStorage.getItem('da_lang')==='en') ? 'en' : 'es');
 const VOICES = { es:'dNjJKg63Fr5AXwIdkATa', en:'qSeXEcewz7tA0Q0qk9fH' };
 
 /* ===== three scene ===== */
@@ -232,7 +254,7 @@ function animate(){ requestAnimationFrame(animate); const dt=Math.min(0.05,clock
 /* ===== brain + voice (igual que la 3D) ===== */
 let capTrack=null;
 function setStatus(m,c){ const s=$('status'); s.textContent=m||''; s.className='status'+(c?' '+c:''); }
-function setLive(on){ $('livedot').classList.toggle('on',on); }
+function setLive(on){ $('livedot').classList.toggle('on',on); if(KIOSK) $('khint').classList.toggle('show', !on); }
 function esc(s){ return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
 function setCaption(t){ $('caption').innerHTML='<span class="sp1">'+esc(t)+'</span>'; }
 function tickCaption(){ if(!capTrack||!audioEl) return; const t=audioEl.currentTime, al=capTrack.al; let n=0; if(al&&al.ends){ while(n<al.ends.length&&al.ends[n]<=t)n++; }
@@ -248,13 +270,35 @@ async function ask(question){
     const answer=j.answer||'';
     if(j.audioBase64){ if(audioEl){try{audioEl.pause();}catch(e){}} audioEl=new Audio('data:'+(j.mime||'audio/mpeg')+';base64,'+j.audioBase64); window.__audio=audioEl;
       const tr=j.alignment?buildTrack(j.alignment):buildTrackFromText(answer,2.5); capTrack={text:answer, al:j.alignment||null};
-      audioEl.onplay=()=>{ startSpeaking(tr); tickCaption(); }; audioEl.onended=()=>{ stopSpeaking(); setStatus(''); };
+      audioEl.onplay=()=>{ startSpeaking(tr); tickCaption(); }; audioEl.onended=()=>{ stopSpeaking(); setStatus(''); resetAttract(); };
       await audioEl.play(); setStatus('');
     } else { setCaption(answer); setStatus(T[LANG].noVoice,'warn'); }
   }catch(e){ setStatus(T[LANG].net+(e.message||e),'err'); setCaption(''); }
   finally{ $('btnSend').disabled=false; }
 }
 function greet(){ ask(LANG==='es'?'Salúdame en una frase corta y di que eres un avatar digital foto-real.':'Greet me in one short sentence and say you are a photoreal digital avatar.'); }
+
+/* ===== KIOSKO: voz fija (atracción) + modo atracción en bucle ===== */
+async function speakFixed(text){
+  try{ const res=await fetch(API+'/tts',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({text, lang:LANG, voiceId:VOICES[LANG]||'', timestamps:true})});
+    const j=await res.json().catch(()=>({}));
+    if(j.ok&&j.audioBase64){ if(audioEl){try{audioEl.pause();}catch(e){}} audioEl=new Audio('data:'+(j.mime||'audio/mpeg')+';base64,'+j.audioBase64); window.__audio=audioEl;
+      const tr=j.alignment?buildTrack(j.alignment):buildTrackFromText(text,2.5); capTrack={text, al:j.alignment||null};
+      audioEl.onplay=()=>{ startSpeaking(tr); tickCaption(); }; audioEl.onended=()=>{ stopSpeaking(); resetAttract(); };
+      setCaption(text); await audioEl.play(); }
+  }catch(e){}
+}
+const ATTRACT={
+  es:['¡Hola! Soy el asistente digital de la tienda. Pregúntame lo que quieras.',
+      '¿Buscas algo en concreto? Tócame o háblame y te ayudo.',
+      'Puedo contarte ofertas, horarios o resolverte cualquier duda.'],
+  en:['Hi! I am the store digital assistant. Ask me anything.',
+      'Looking for something? Tap or talk to me and I will help.',
+      'I can tell you offers, opening hours or answer any question.'] };
+let attractTimer=null, attractIdx=0;
+function resetAttract(){ if(!KIOSK) return; clearTimeout(attractTimer); attractTimer=setTimeout(attract, 28000); }
+function attract(){ if(!KIOSK){ return; } if(speaking||listening){ resetAttract(); return; } const list=ATTRACT[LANG]||ATTRACT.es; speakFixed(list[attractIdx%list.length]); attractIdx++; }
 
 let recog=null, listening=false;
 function initSpeech(){ const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){ $('btnMic').disabled=true; return; }
@@ -266,12 +310,16 @@ function stopListen(){ listening=false; $('btnMic').classList.remove('live'); tr
 function toggleListen(){ listening?stopListen():startListen(); }
 
 function applyLang(l){ LANG=(l==='en')?'en':'es'; const t=T[LANG]; localStorage.setItem('da_lang',LANG); document.documentElement.lang=t.lang;
-  $('tag').textContent=t.tag; $('q').placeholder=t.placeholder; $('langEs').classList.toggle('on',LANG==='es'); $('langEn').classList.toggle('on',LANG==='en'); }
-function loadLocations(){ fetch(API+'/locations',{cache:'no-store'}).then(r=>r.json()).then(d=>{ const list=(d&&d.locations)||[], sel=$('loc'); sel.innerHTML='<option value="">'+T[LANG].loc+'</option>'; list.forEach(l=>{ const o=document.createElement('option'); o.value=l.id; o.textContent=(l.name||l.id)+(l.addr?' · '+l.addr:''); sel.appendChild(o); }); }).catch(()=>{}); }
+  $('tag').textContent=(KIOSK&&window.__locName)?window.__locName:t.tag; $('q').placeholder=t.placeholder; $('langEs').classList.toggle('on',LANG==='es'); $('langEn').classList.toggle('on',LANG==='en'); }
+function loadLocations(){ fetch(API+'/locations',{cache:'no-store'}).then(r=>r.json()).then(d=>{ const list=(d&&d.locations)||[], sel=$('loc'); sel.innerHTML='<option value="">'+T[LANG].loc+'</option>'; list.forEach(l=>{ const o=document.createElement('option'); o.value=l.id; o.textContent=(l.name||l.id)+(l.addr?' · '+l.addr:''); sel.appendChild(o); });
+    if(LOCK_LOC){ sel.value=LOCK_LOC; const m=list.find(l=>String(l.id)===LOCK_LOC); if(m){ window.__locName=m.name||LOCK_LOC; $('tag').textContent=window.__locName; } }   // tienda fijada del tótem
+  }).catch(()=>{}); }
 
 $('btnSend').onclick=()=>ask(); $('btnMic').onclick=toggleListen; $('q').addEventListener('keydown',e=>{ if(e.key==='Enter') ask(); });
 $('langEs').onclick=()=>applyLang('es'); $('langEn').onclick=()=>applyLang('en');
 initThree(); animate(); loadAvatar(MODEL_URL); initSpeech(); applyLang(LANG); loadLocations();
+// Kiosko: reinicia el reloj de atracción ante cualquier interacción (táctil/teclado/voz)
+if(KIOSK){ ['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev, resetAttract, {passive:true})); $('khint').classList.add('show'); resetAttract(); }
 // Si en 18s no cargó, ofrece fallback (RPM puede no resolver en algunas redes)
 setTimeout(()=>{ if(!window.__avatarGroup && !$('fallback').classList.contains('show')) showFallback('Está tardando… puede que tu red no alcance readyplayer.me.'); }, 18000);
 </script>
