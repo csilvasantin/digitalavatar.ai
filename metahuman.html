@@ -45,18 +45,34 @@
   var cur=(f==='good.html')?'2d':(f==='better.html')?'3d':(f==='best.html')?'foto':(f==='vectorial.html')?'vectorial':'metahuman';
   document.querySelectorAll('#evo a').forEach(function(a){if(a.getAttribute('data-evo')===cur)a.classList.add('on');});})();</script>
 
-  <h1><span class="pulse"></span><b>Metahuman</b> · Unreal Engine</h1>
-  <p class="sub">Humano digital de <b>MetaHuman (Unreal Engine 5)</b> con Audio2Face y Pixel Streaming — el grado máximo de realismo facial en tiempo real. En desarrollo: requiere host GPU NVIDIA (cloud o Lenovo on-prem). Mientras tanto, recorre la evolución con el conmutador de arriba.</p>
+  <h1><span class="pulse"></span><b>Metahuman</b> · Unreal Engine 5</h1>
+  <p class="sub">Humano digital <b>MetaHuman</b> renderizado en <b>Unreal Engine 5</b> y emitido en tiempo real por <b>Pixel Streaming</b>. El stream de abajo es en vivo desde el host de render — pulsa <b>play</b> para conectar.</p>
+
+  <div class="stage">
+    <div class="stage-bar"><span class="live"><span class="dot"></span>EN VIVO</span> · MetaHuman · Pixel Streaming</div>
+    <iframe id="mh" src="https://macbook-pro-16.tail48b61c.ts.net/avatar/"
+            allow="autoplay; fullscreen; microphone; camera" allowfullscreen
+            referrerpolicy="no-referrer"></iframe>
+    <div class="stage-foot">Si ves una pantalla en negro: pulsa play en el reproductor. El host de render debe estar encendido. <a href="https://macbook-pro-16.tail48b61c.ts.net/avatar/" target="_blank" rel="noopener">Abrir a pantalla completa ↗</a></div>
+  </div>
+  <style>
+    .stage{ width:100%; max-width:430px; background:var(--panel); border:1px solid var(--line); border-radius:18px; overflow:hidden; backdrop-filter:blur(10px); box-shadow:0 18px 50px rgba(0,0,0,.5) }
+    .stage-bar{ display:flex; align-items:center; gap:8px; padding:10px 14px; font-size:.74rem; color:var(--muted); border-bottom:1px solid var(--line) }
+    .live{ display:inline-flex; align-items:center; gap:6px; color:var(--ok); font-weight:700; letter-spacing:.04em }
+    .live .dot{ width:8px; height:8px; border-radius:50%; background:var(--ok); box-shadow:0 0 10px var(--ok); animation:p 1.3s infinite }
+    #mh{ display:block; width:100%; aspect-ratio:9/16; border:0; background:#000 }
+    .stage-foot{ padding:10px 14px; font-size:.72rem; color:var(--muted); line-height:1.5 } .stage-foot a{ color:var(--accent); text-decoration:none; font-weight:600 }
+  </style>
 
   <div class="steps">
     <div class="step done"><div class="tag">✓ Vectorial</div><h3>2D vectorial</h3><p>Cara de canvas con lip-sync. El origen.</p><a href="vectorial.html">Ver →</a></div>
     <div class="step done"><div class="tag">✓ 2D</div><h3>Vídeo</h3><p>Vídeos madre/padre + lip-sync 2D.</p><a href="good.html">Ver →</a></div>
     <div class="step done"><div class="tag">✓ 3D</div><h3>Malla 3D</h3><p>Cara 3D con 52 blendshapes (facecap).</p><a href="better.html">Ver →</a></div>
-    <div class="step now"><div class="tag">● Metahuman (en desarrollo)</div><h3>MetaHuman Unreal</h3><p>Piel/ojos foto-reales, Audio2Face, Pixel Streaming. Aquí aterrizará.</p></div>
+    <div class="step now"><div class="tag">● Metahuman (en vivo)</div><h3>MetaHuman Unreal</h3><p>Piel/ojos foto-reales por Pixel Streaming. Lip-sync en afinado.</p></div>
     <div class="step done"><div class="tag">✓ Fotorealístico</div><h3>Humano rigged</h3><p>Avatar Ready Player Me hablando en tiempo real.</p><a href="best.html">Ver →</a></div>
   </div>
 
   <p class="note">Cada versión se conserva como histórico (URL propia + etiquetas git): la evolución nunca se pierde.</p>
-  <a class="cta" href="best.html">▶ Probar el avatar actual (Fotorealístico)</a>
+  <a class="cta" href="best.html">▶ Probar el avatar que sí habla (Fotorealístico)</a>
 </body>
 </html>
