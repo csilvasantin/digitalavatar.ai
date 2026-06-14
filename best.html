@@ -148,7 +148,10 @@ function rpmUrlFrom(idOrUrl){
 const params=new URLSearchParams(location.search);
 let MODEL_URL = params.get('avatar') ? rpmUrlFrom(params.get('avatar')) : DEFAULT_AVATAR;
 // Modo KIOSKO (tótem): pantalla completa, anclado a una tienda, atracción en bucle.
-const KIOSK = params.get('kiosk')==='1' || params.get('kiosk')==='true';
+// Se activa con ?kiosk=1 O automáticamente al estar embebido en un iframe (tótem),
+// para que NUNCA salga el menú de navegación sobre el avatar en los tótems.
+let inIframe=false; try{ inIframe=(window.self!==window.top); }catch(e){ inIframe=true; }
+const KIOSK = params.get('kiosk')==='1' || params.get('kiosk')==='true' || params.get('kiosk')!=='0' && inIframe;
 const LOCK_LOC = params.get('loc') || '';
 const FORCE_LANG = (params.get('lang')==='en')?'en':(params.get('lang')==='es')?'es':'';
 if(KIOSK) document.documentElement.classList.add('kiosk');
