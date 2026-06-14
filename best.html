@@ -228,25 +228,47 @@ function charToViseme(c,next){ c=(c||'').toLowerCase(); const two=c+(next||'').t
 function buildTrack(al){ const t=[]; for(let i=0;i<al.chars.length;i++) t.push({v:charToViseme(al.chars[i],al.chars[i+1]), t0:al.starts[i], t1:al.ends[i]}); return t; }
 function buildTrackFromText(txt,dur){ const ch=[...txt], n=Math.max(1,ch.length), s=dur/n, t=[]; for(let i=0;i<ch.length;i++) t.push({v:charToViseme(ch[i],ch[i+1]), t0:i*s, t1:(i+1)*s}); return t; }
 
-let speaking=false, track=null, audioEl=null, cur={};
-function startSpeaking(tr){ track=tr; speaking=true; setLive(true); }
+let speaking=false, track=null, audioEl=null, cur={}, thinking=false;
+function startSpeaking(tr){ track=tr; speaking=true; setLive(true); window.__track=tr; }
 function stopSpeaking(){ speaking=false; track=null; setLive(false); }
+// Lip-sync más fino: visema a tope + apertura de mandíbula según la vocal.
+const VOWEL_JAW={ aa:0.34, O:0.24, E:0.16, U:0.13, I:0.07 };
+const MOUTH_DRIVE=ALL_VIS.concat(['jawOpen']);
 function updateMouth(dt){
-  const target={}; ALL_VIS.forEach(m=>target[m]=0);
+  const target={}; MOUTH_DRIVE.forEach(m=>target[m]=0);
   if(speaking && track && audioEl){ const t=audioEl.currentTime; let a=null;
     for(let i=0;i<track.length;i++){ if(t>=track[i].t0-0.02 && t<=track[i].t1+0.04){a=track[i];break;} if(track[i].t0>t){a=track[i-1]||track[i];break;} }
-    if(a){ const m=VISEME_MORPH[a.v]; if(m) target[m]=(a.v==='sil')?0:0.95; }
+    if(a && a.v!=='sil'){ const m=VISEME_MORPH[a.v]; if(m) target[m]=1.0; if(VOWEL_JAW[a.v]) target['jawOpen']=VOWEL_JAW[a.v]; }
   }
-  const k=1-Math.exp(-dt*22);
-  for(const m of ALL_VIS){ const c=cur[m]||0, nv=c+(target[m]-c)*k; cur[m]=nv; setMorph(m,nv); }
+  const k=1-Math.exp(-dt*20);
+  for(const m of MOUTH_DRIVE){ const c=cur[m]||0, nv=c+(target[m]-c)*k; cur[m]=nv; setMorph(m,nv); }
 }
-let nextBlink=1.5, blinkT=-1;
+// Expresión + vida: parpadeo, mirada a cámara (micro-saccades), sonrisa de
+// reposo, cejas al hablar y pose de "pensando".
+let nextBlink=1.5, blinkT=-1, sacT=0, gx=0, gy=0, gxs=0, gys=0;
 function updateIdle(dt,time){
   nextBlink-=dt;
   if(blinkT>=0){ blinkT+=dt; const p=blinkT/0.13, v=p<0.5?p*2:Math.max(0,2-2*p); setMorph('eyeBlinkLeft',v); setMorph('eyeBlinkRight',v); if(blinkT>0.13){blinkT=-1; setMorph('eyeBlinkLeft',0); setMorph('eyeBlinkRight',0);} }
   else if(nextBlink<=0){ blinkT=0; nextBlink=2.2+Math.random()*4; }
-  // Vida sutil rotando el HUESO de la cabeza (no el grupo: pivota en los pies y saca la cara del plano)
-  const hb=window.__headBone; if(hb){ const r=hb.userData.rest||{x:0,y:0,z:0}; hb.rotation.x=r.x; hb.rotation.y=r.y+Math.sin(time*0.5)*0.045+(speaking?Math.sin(time*2.1)*0.02:0); hb.rotation.z=r.z+Math.sin(time*0.37)*0.02; }
+  // Mirada: micro-saccades suaves (centrado ≈ mira a cámara)
+  sacT-=dt; if(sacT<=0){ gx=(Math.random()-0.5)*0.5; gy=(Math.random()-0.5)*0.32; sacT=1.0+Math.random()*2.6; }
+  let tgx=gx, tgy=gy; if(thinking){ tgx=gx*0.3; tgy=0.5; }   // pensando: mirada arriba
+  gxs+=(tgx-gxs)*Math.min(1,dt*8); gys+=(tgy-gys)*Math.min(1,dt*8);
+  setMorph('eyeLookOutLeft',Math.max(0,gxs)); setMorph('eyeLookInLeft',Math.max(0,-gxs));
+  setMorph('eyeLookInRight',Math.max(0,gxs)); setMorph('eyeLookOutRight',Math.max(0,-gxs));
+  setMorph('eyeLookUpLeft',Math.max(0,gys)); setMorph('eyeLookUpRight',Math.max(0,gys));
+  setMorph('eyeLookDownLeft',Math.max(0,-gys)); setMorph('eyeLookDownRight',Math.max(0,-gys));
+  // Sonrisa de reposo (menos al hablar) + cejas (más al pensar/hablar)
+  const smile = thinking?0.05 : speaking?0.06 : 0.14;
+  setMorph('mouthSmileLeft',smile); setMorph('mouthSmileRight',smile);
+  const brow = thinking?0.38 : speaking?(0.09+0.05*Math.sin(time*3)) : 0.02;
+  setMorph('browInnerUp',brow);
+  setMorph('browOuterUpLeft', thinking?0.22:0); setMorph('browOuterUpRight', thinking?0.22:0);
+  // Cabeza viva (ladeo leve al pensar)
+  const hb=window.__headBone; if(hb){ const r=hb.userData.rest||{x:0,y:0,z:0};
+    hb.rotation.x=r.x + (thinking?0.05:0);
+    hb.rotation.y=r.y+Math.sin(time*0.5)*0.045+(speaking?Math.sin(time*2.1)*0.02:0);
+    hb.rotation.z=r.z+Math.sin(time*0.37)*0.02 + (thinking?0.06:0); }
 }
 function animate(){ requestAnimationFrame(animate); const dt=Math.min(0.05,clock.getDelta()), time=clock.elapsedTime;
   if(headMeshes.length){ updateMouth(dt); updateIdle(dt,time); } renderer.render(scene,camera); }
@@ -262,18 +284,19 @@ function tickCaption(){ if(!capTrack||!audioEl) return; const t=audioEl.currentT
   if(speaking) requestAnimationFrame(tickCaption); else $('caption').innerHTML='<span class="sp1">'+esc(s)+'</span>'; }
 async function ask(question){
   question=(question||$('q').value).trim(); if(!question) return;
-  $('q').value=''; setStatus(T[LANG].thinking); $('btnSend').disabled=true; setCaption('…');
+  $('q').value=''; setStatus(T[LANG].thinking); $('btnSend').disabled=true; setCaption('…'); thinking=true;   // gesto de "pensando"
   try{ const res=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({loc:$('loc').value, question, lang:LANG, voice:true, timestamps:true, voiceId:VOICES[LANG]||''})});
     const j=await res.json().catch(()=>({}));
-    if(!j.ok){ setStatus('❌ '+(j.error||('HTTP '+res.status)),'err'); setCaption(''); return; }
+    if(!j.ok){ thinking=false; setStatus('❌ '+(j.error||('HTTP '+res.status)),'err'); setCaption(''); return; }
     const answer=j.answer||'';
     if(j.audioBase64){ if(audioEl){try{audioEl.pause();}catch(e){}} audioEl=new Audio('data:'+(j.mime||'audio/mpeg')+';base64,'+j.audioBase64); window.__audio=audioEl;
       const tr=j.alignment?buildTrack(j.alignment):buildTrackFromText(answer,2.5); capTrack={text:answer, al:j.alignment||null};
-      audioEl.onplay=()=>{ startSpeaking(tr); tickCaption(); }; audioEl.onended=()=>{ stopSpeaking(); setStatus(''); resetAttract(); };
+      audioEl.onplay=()=>{ thinking=false; startSpeaking(tr); tickCaption(); };
+      audioEl.onended=()=>{ stopSpeaking(); setStatus(''); resetAttract(); listenAfterReply(); };   // manos libres
       await audioEl.play(); setStatus('');
-    } else { setCaption(answer); setStatus(T[LANG].noVoice,'warn'); }
-  }catch(e){ setStatus(T[LANG].net+(e.message||e),'err'); setCaption(''); }
+    } else { thinking=false; setCaption(answer); setStatus(T[LANG].noVoice,'warn'); listenAfterReply(); }
+  }catch(e){ thinking=false; setStatus(T[LANG].net+(e.message||e),'err'); setCaption(''); }
   finally{ $('btnSend').disabled=false; }
 }
 function greet(){ ask(LANG==='es'?'Salúdame en una frase corta y di que eres un avatar digital foto-real.':'Greet me in one short sentence and say you are a photoreal digital avatar.'); }
@@ -308,6 +331,8 @@ function initSpeech(){ const SR=window.SpeechRecognition||window.webkitSpeechRec
 function startListen(){ if(!recog){ setStatus(T[LANG].micNo,'warn'); return; } try{ recog.lang=T[LANG].speechLang; recog.start(); listening=true; $('btnMic').classList.add('live'); setStatus(T[LANG].listening);}catch(e){} }
 function stopListen(){ listening=false; $('btnMic').classList.remove('live'); try{recog.stop();}catch(e){} if($('status').textContent===T[LANG].listening) setStatus(''); }
 function toggleListen(){ listening?stopListen():startListen(); }
+// Manos libres (kiosko): tras responder, vuelve a escuchar solo → diálogo continuo.
+function listenAfterReply(){ if(!KIOSK || !recog || listening || speaking) return; setTimeout(()=>{ if(!speaking && !listening && !thinking) startListen(); }, 550); }
 
 function applyLang(l){ LANG=(l==='en')?'en':'es'; const t=T[LANG]; localStorage.setItem('da_lang',LANG); document.documentElement.lang=t.lang;
   $('tag').textContent=(KIOSK&&window.__locName)?window.__locName:t.tag; $('q').placeholder=t.placeholder; $('langEs').classList.toggle('on',LANG==='es'); $('langEn').classList.toggle('on',LANG==='en'); }
