@@ -376,6 +376,10 @@ if(KIOSK){ ['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev, r
   // TOCAR la cara = hablarle. En el tótem el chat está oculto, así que el gesto
   // táctil sobre el avatar arranca el micro (y corta la voz de atracción si suena).
   $('stage').addEventListener('pointerdown', ()=>{
+    // Incrustado en el gemelo (EMBED): el toque NO se queda dentro del iframe, se
+    // reenvía al gemelo para que abra el panel de interacción (antes el iframe se
+    // comía el clic del tótem). En el tótem físico (kiosk, no embed) = micro.
+    if(EMBED){ try{ window.parent.postMessage({type:'da-tap'},'*'); }catch(e){} return; }
     if(listening){ stopListen(); return; }
     if(audioEl){ try{audioEl.pause();}catch(e){} } stopSpeaking();
     startListen();
