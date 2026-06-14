@@ -61,8 +61,13 @@
      textos encima de la cara. En el tótem físico (vertical grande) sí se ve. */
   @media (max-width:620px){
     html.kiosk .console, html.kiosk .khint, html.kiosk .caption, html.kiosk .status, html.kiosk .brand, html.kiosk #langSeg{ display:none !important; }
-    html.kiosk #stage{ transform:scale(.79); transform-origin:50% 40%; }  /* avatar más pequeño: cabe entera (cara + barbilla) en el tótem */
+    html.kiosk #stage{ transform:scale(.72); transform-origin:50% 40%; }  /* avatar más pequeño: cabe entera (cara + barbilla) en el tótem */
   }
+  /* Modo EMBED (incrustado en una pantalla del gemelo 2D: tótem o pared larga).
+     Oculta SIEMPRE el chat/menú, a cualquier ancho (la pared larga es apaisada y
+     >620px). En apaisado el avatar va casi a tamaño completo, centrado. */
+  html.embed .console, html.embed .khint, html.embed .caption, html.embed .status, html.embed .brand, html.embed #langSeg{ display:none !important; }
+  html.embed #stage{ transform:scale(.92); transform-origin:50% 42%; }
   /* Aviso de atracción "toca o habla" cuando está en reposo */
   .khint{ display:none; position:fixed; left:50%; bottom:118px; transform:translateX(-50%); z-index:6;
     font-size:.95rem; color:var(--accent); background:rgba(6,14,24,.6); border:1px solid var(--line);
@@ -163,7 +168,9 @@ let inIframe=false; try{ inIframe=(window.self!==window.top); }catch(e){ inIfram
 const KIOSK = params.get('kiosk')==='1' || params.get('kiosk')==='true' || params.get('kiosk')!=='0' && inIframe;
 const LOCK_LOC = params.get('loc') || '';
 const FORCE_LANG = (params.get('lang')==='en')?'en':(params.get('lang')==='es')?'es':'';
+const EMBED = params.get('embed')==='1';   // incrustado en una pantalla del gemelo 2D (tótem/pared)
 if(KIOSK) document.documentElement.classList.add('kiosk');
+if(EMBED) document.documentElement.classList.add('embed');
 
 const T = {
   es:{ lang:'es', tag:'avatar foto-real en tiempo real', placeholder:'Escribe o pulsa 🎙️ para hablar…',
