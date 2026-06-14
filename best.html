@@ -115,16 +115,18 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 const API = 'https://omnipublicity-api.csilvasantin.workers.dev';
 const $ = id => document.getElementById(id);
 
-// Avatar RPM por defecto (público). Se puede sobreescribir con ?avatar=<id|url> o el input de fallback.
-const DEFAULT_RPM = '64bfa15f0e72c63d7c3934a6';
+// Avatar RPM por defecto AUTO-ALOJADO (siempre carga, sin depender de readyplayer.me).
+// Se puede sobreescribir con ?avatar=<id|url> o pegando una URL RPM en el fallback.
+const DEFAULT_AVATAR = 'assets/avatar-rpm.glb';
 function rpmUrlFrom(idOrUrl){
   let s=String(idOrUrl||'').trim();
   if(/^https?:\/\//.test(s)){ return s.includes('morphTargets')? s : s + (s.includes('?')?'&':'?') + 'morphTargets=ARKit,Oculus%20Visemes&textureAtlas=1024&lod=0'; }
+  if(/\.glb($|\?)/.test(s) && !s.includes('readyplayer')) return s;   // ruta local
   s=s.replace(/\.glb$/,'');
   return `https://models.readyplayer.me/${s}.glb?morphTargets=ARKit,Oculus%20Visemes&textureAtlas=1024&lod=0`;
 }
 const params=new URLSearchParams(location.search);
-let MODEL_URL = rpmUrlFrom(params.get('avatar') || DEFAULT_RPM);
+let MODEL_URL = params.get('avatar') ? rpmUrlFrom(params.get('avatar')) : DEFAULT_AVATAR;
 
 const T = {
   es:{ lang:'es', tag:'avatar foto-real en tiempo real', placeholder:'Escribe o pulsa 🎙️ para hablar…',
@@ -164,18 +166,22 @@ function loadAvatar(url){
   clearAvatar();
   loader.load(url, (gltf)=>{
     const root=gltf.scene; const grp=new THREE.Group(); grp.add(root); grp.name='rig'; scene.add(grp); window.__rig=grp;
-    let headBBoxMesh=null;
-    root.traverse(o=>{ if(o.isMesh && o.morphTargetDictionary){
-      if(o.morphTargetDictionary['viseme_aa']!==undefined || o.morphTargetDictionary['jawOpen']!==undefined){ headMeshes.push(o); }
-      if(o.name==='Wolf3D_Head'||o.name==='Wolf3D_Avatar'||/head/i.test(o.name)) headBBoxMesh=o;
-    }});
+    let headBone=null;
+    root.traverse(o=>{
+      if(o.isMesh && o.morphTargetDictionary && (o.morphTargetDictionary['viseme_aa']!==undefined || o.morphTargetDictionary['jawOpen']!==undefined)) headMeshes.push(o);
+      if(o.isBone && o.name==='Head') headBone=o;
+    });
     if(!headMeshes.length){ console.warn('Sin morphs de visema en el avatar'); showFallback('El avatar no trae blendshapes de visema.'); return; }
-    if(!headBBoxMesh) headBBoxMesh=headMeshes[0];
-    // Encuadre automático a la cabeza
-    const box=new THREE.Box3().setFromObject(headBBoxMesh); const size=box.getSize(new THREE.Vector3()), c=box.getCenter(new THREE.Vector3());
-    const h=size.y||0.25; const base=h/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)));
-    const dist=base/0.58; const eyeY=c.y+h*0.06;
-    camera.position.set(c.x, eyeY+h*0.03, c.z+dist); camera.lookAt(c.x, eyeY-h*0.12, c.z); camera.updateProjectionMatrix();
+    // Encuadre por el HUESO de la cabeza (el bbox de un SkinnedMesh engaña → salían los pies)
+    root.updateWorldMatrix(true,true);
+    const hp=new THREE.Vector3();
+    if(headBone){ headBone.getWorldPosition(hp); }
+    else { const b=new THREE.Box3().setFromObject(root); b.getCenter(hp); hp.y=b.max.y-0.12; }
+    const cx=hp.x, cy=hp.y+0.09, cz=hp.z;        // centro aprox de la cara
+    const dist=0.82;
+    camera.position.set(cx, cy+0.02, cz+dist); camera.lookAt(cx, cy-0.05, cz); camera.updateProjectionMatrix();
+    if(headBone) headBone.userData.rest={x:headBone.rotation.x,y:headBone.rotation.y,z:headBone.rotation.z};
+    window.__headBone=headBone;
     window.__avatarGroup=grp; $('load').classList.add('gone'); setStatus(''); greet();
   }, (xhr)=>{ if(xhr.total) $('loadt').textContent=T[LANG].loading+' '+Math.round(xhr.loaded/xhr.total*100)+'%'; },
   (err)=>{ console.error('RPM load error', err); showFallback('No se pudo descargar el avatar (red o URL).'); });
@@ -215,7 +221,8 @@ function updateIdle(dt,time){
   nextBlink-=dt;
   if(blinkT>=0){ blinkT+=dt; const p=blinkT/0.13, v=p<0.5?p*2:Math.max(0,2-2*p); setMorph('eyeBlinkLeft',v); setMorph('eyeBlinkRight',v); if(blinkT>0.13){blinkT=-1; setMorph('eyeBlinkLeft',0); setMorph('eyeBlinkRight',0);} }
   else if(nextBlink<=0){ blinkT=0; nextBlink=2.2+Math.random()*4; }
-  const g=window.__avatarGroup; if(g){ g.rotation.y=Math.sin(time*0.45)*0.04 + (speaking?Math.sin(time*2.1)*0.01:0); g.rotation.x=Math.sin(time*0.33)*0.02; }
+  // Vida sutil rotando el HUESO de la cabeza (no el grupo: pivota en los pies y saca la cara del plano)
+  const hb=window.__headBone; if(hb){ const r=hb.userData.rest||{x:0,y:0,z:0}; hb.rotation.x=r.x; hb.rotation.y=r.y+Math.sin(time*0.5)*0.045+(speaking?Math.sin(time*2.1)*0.02:0); hb.rotation.z=r.z+Math.sin(time*0.37)*0.02; }
 }
 function animate(){ requestAnimationFrame(animate); const dt=Math.min(0.05,clock.getDelta()), time=clock.elapsedTime;
   if(headMeshes.length){ updateMouth(dt); updateIdle(dt,time); } renderer.render(scene,camera); }
