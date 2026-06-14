@@ -60,7 +60,8 @@
   /* Tótem PEQUEÑO (iframe estrecho del gemelo 2D): solo el avatar, sin chat ni
      textos encima de la cara. En el tótem físico (vertical grande) sí se ve. */
   @media (max-width:620px){
-    html.kiosk .console, html.kiosk .khint, html.kiosk .caption, html.kiosk .status, html.kiosk .brand{ display:none !important; }
+    html.kiosk .console, html.kiosk .khint, html.kiosk .caption, html.kiosk .status, html.kiosk .brand, html.kiosk #langSeg{ display:none !important; }
+    html.kiosk #stage{ transform:scale(.88); transform-origin:50% 38%; }  /* avatar un poco más pequeño en el tótem */
   }
   /* Aviso de atracción "toca o habla" cuando está en reposo */
   .khint{ display:none; position:fixed; left:50%; bottom:118px; transform:translateX(-50%); z-index:6;
