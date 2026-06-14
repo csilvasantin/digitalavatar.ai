@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DigitalAvatar.ai — Foto-real (best)</title>
+<style>
+  :root{ --bg:#05080f; --panel:rgba(10,19,30,.7); --line:#1b3346; --txt:#eaf6ff; --muted:#86a6bd; --accent:#5fd0ff; --ok:#6ce6a2; }
+  *{box-sizing:border-box}
+  body{ margin:0; min-height:100vh; padding:70px 18px 40px; background:radial-gradient(120% 90% at 50% -10%, #11243b 0%, var(--bg) 60%);
+    color:var(--txt); font-family:ui-sans-serif,-apple-system,Segoe UI,Roboto,sans-serif; display:flex; flex-direction:column; align-items:center; gap:22px; }
+  h1{ font-size:1.5rem; margin:6px 0 0; text-align:center; letter-spacing:.01em }
+  h1 b{ color:var(--accent) }
+  .sub{ color:var(--muted); max-width:620px; text-align:center; font-size:.92rem; line-height:1.55; margin:0 }
+  .steps{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; width:100%; max-width:900px }
+  .step{ flex:1 1 240px; max-width:280px; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px; backdrop-filter:blur(10px) }
+  .step .tag{ font-size:.6rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted) }
+  .step h3{ margin:6px 0 6px; font-size:1.05rem }
+  .step p{ margin:0; color:var(--muted); font-size:.84rem; line-height:1.5 }
+  .step.done{ border-color:#1f5a3a } .step.done .tag{ color:var(--ok) }
+  .step.now{ border-color:var(--accent); box-shadow:0 0 24px rgba(95,208,255,.15) } .step.now .tag{ color:var(--accent) }
+  .step.next{ border-style:dashed }
+  .step a{ color:var(--accent); text-decoration:none; font-weight:600; font-size:.82rem }
+  .pulse{ display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); animation:p 1.3s infinite; margin-right:7px; vertical-align:middle }
+  @keyframes p{ 50%{opacity:.3} }
+  .note{ color:var(--muted); font-size:.78rem; max-width:600px; text-align:center }
+  .cta{ display:inline-block; margin-top:4px; padding:11px 20px; border-radius:12px; border:1px solid #2a7fa6;
+    background:linear-gradient(180deg,#0e3550,#0a2335); color:var(--accent); font-weight:700; text-decoration:none }
+</style>
+</head>
+<body>
+  <!-- Conmutador de EVOLUCIÓN (good→better→best) · histórico siempre accesible -->
+  <nav id="evo" aria-label="Evolución del avatar">
+    <span class="evo-l">Evolución</span>
+    <a data-evo="good" href="good.html">2D</a>
+    <a data-evo="better" href="better.html">3D</a>
+    <a data-evo="best" href="best.html">Foto-real</a>
+  </nav>
+  <style>
+  #evo{position:fixed;top:9px;left:50%;transform:translateX(-50%);z-index:60;display:flex;gap:3px;align-items:center;
+    background:rgba(6,14,24,.82);border:1px solid #1b3346;border-radius:999px;padding:4px 6px;backdrop-filter:blur(10px);
+    font-family:ui-sans-serif,-apple-system,system-ui,sans-serif;box-shadow:0 8px 26px rgba(0,0,0,.5)}
+  #evo .evo-l{font-size:.56rem;letter-spacing:.14em;color:#7fa8bb;text-transform:uppercase;padding:0 7px 0 5px}
+  #evo a{display:inline-block;padding:5px 12px;border-radius:999px;font-size:.72rem;font-weight:700;text-decoration:none;color:#86a6bd;white-space:nowrap}
+  #evo a.on{background:linear-gradient(180deg,#12466a,#0c2c44);color:#bfe9ff;box-shadow:0 0 12px rgba(95,208,255,.25)}
+  @media(max-width:520px){#evo .evo-l{display:none}#evo a{padding:5px 10px;font-size:.68rem}}
+  </style>
+  <script>(function(){var f=(location.pathname.split('/').pop()||'').toLowerCase();
+  var cur=(f==='good.html')?'good':(f==='best.html')?'best':'better';
+  document.querySelectorAll('#evo a').forEach(function(a){if(a.getAttribute('data-evo')===cur)a.classList.add('on');});})();</script>
+
+  <h1><span class="pulse"></span><b>Best</b> · el salto foto-real</h1>
+  <p class="sub">La siguiente generación de DigitalAvatar: un humano digital foto-realista en tiempo real. En construcción. Mientras tanto, recorre la evolución con el conmutador de arriba.</p>
+
+  <div class="steps">
+    <div class="step done">
+      <div class="tag">✓ v1 · Good</div>
+      <h3>Avatar 2D</h3>
+      <p>Vídeos madre/padre + lip-sync 2D en el navegador. El origen.</p>
+      <a href="good.html">Ver la versión 2D →</a>
+    </div>
+    <div class="step now">
+      <div class="tag">● v2 · Better (actual)</div>
+      <h3>Cabeza 3D que habla</h3>
+      <p>Cara 3D con 52 blendshapes, lip-sync por fonemas reales, mirada a cámara y push-to-talk.</p>
+      <a href="better.html">Ver la versión 3D →</a>
+    </div>
+    <div class="step next">
+      <div class="tag">⏳ v3 · Best</div>
+      <h3>Humano foto-real</h3>
+      <p>Piel, ojos y micro-expresiones foto-realistas en tiempo real (MetaHuman / Ready Player Me / streaming). Aquí aterrizará.</p>
+    </div>
+  </div>
+
+  <p class="note">Cada versión se conserva como histórico (URL propia + etiquetas git): la evolución nunca se pierde.</p>
+  <a class="cta" href="better.html">▶ Probar el avatar actual (3D)</a>
+</body>
+</html>
