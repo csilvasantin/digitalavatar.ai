@@ -307,22 +307,26 @@ function setCaption(t){ $('caption').innerHTML='<span class="sp1">'+esc(t)+'</sp
 function tickCaption(){ if(!capTrack||!audioEl) return; const t=audioEl.currentTime, al=capTrack.al; let n=0; if(al&&al.ends){ while(n<al.ends.length&&al.ends[n]<=t)n++; }
   const s=capTrack.text; $('caption').innerHTML='<span class="sp1">'+esc(s.slice(0,n))+'</span><span class="sp0">'+esc(s.slice(n))+'</span>';
   if(speaking) requestAnimationFrame(tickCaption); else $('caption').innerHTML='<span class="sp1">'+esc(s)+'</span>'; }
+// Devuelve la respuesta (y si sonó o está muda) al gemelo que la incrustó, para
+// que la muestre en su panel. {answer,muted,spoke} o {error}.
+function notifyParent(payload){ try{ if(window.self!==window.top) window.parent.postMessage(Object.assign({type:'da-answer'},payload||{}),'*'); }catch(e){} }
 async function ask(question){
   question=(question||$('q').value).trim(); if(!question) return;
   $('q').value=''; setStatus(T[LANG].thinking); $('btnSend').disabled=true; setCaption('…'); thinking=true;   // gesto de "pensando"
   try{ const res=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({loc:$('loc').value, question, lang:LANG, voice:true, timestamps:true, voiceId:VOICES[LANG]||''})});
     const j=await res.json().catch(()=>({}));
-    if(!j.ok){ thinking=false; setStatus('❌ '+(j.error||('HTTP '+res.status)),'err'); setCaption(''); return; }
+    if(!j.ok){ thinking=false; setStatus('❌ '+(j.error||('HTTP '+res.status)),'err'); setCaption(''); notifyParent({error:(j.error||('HTTP '+res.status))}); return; }
     const answer=j.answer||'';
-    if(MUTED){ thinking=false; setCaption(answer); setStatus(''); resetAttract(); listenAfterReply(); return; }   // mudo: respuesta solo en subtítulo
+    if(MUTED){ thinking=false; setCaption(answer); setStatus(''); resetAttract(); listenAfterReply(); notifyParent({answer:answer,muted:true,spoke:false}); return; }   // mudo: respuesta solo en subtítulo
     if(j.audioBase64){ if(audioEl){try{audioEl.pause();}catch(e){}} audioEl=new Audio('data:'+(j.mime||'audio/mpeg')+';base64,'+j.audioBase64); window.__audio=audioEl;
       const tr=j.alignment?buildTrack(j.alignment):buildTrackFromText(answer,2.5); capTrack={text:answer, al:j.alignment||null};
       audioEl.onplay=()=>{ thinking=false; startSpeaking(tr); tickCaption(); };
       audioEl.onended=()=>{ stopSpeaking(); setStatus(''); resetAttract(); listenAfterReply(); };   // manos libres
-      await audioEl.play(); setStatus('');
-    } else { thinking=false; setCaption(answer); setStatus(T[LANG].noVoice,'warn'); listenAfterReply(); }
-  }catch(e){ thinking=false; setStatus(T[LANG].net+(e.message||e),'err'); setCaption(''); }
+      try{ await audioEl.play(); setStatus(''); notifyParent({answer:answer,muted:false,spoke:true}); }
+      catch(e){ thinking=false; setStatus(''); setCaption(answer); notifyParent({answer:answer,muted:false,spoke:false}); }   // autoplay bloqueado: texto sí, voz no
+    } else { thinking=false; setCaption(answer); setStatus(T[LANG].noVoice,'warn'); listenAfterReply(); notifyParent({answer:answer,muted:false,spoke:false}); }
+  }catch(e){ thinking=false; setStatus(T[LANG].net+(e.message||e),'err'); setCaption(''); notifyParent({error:String(e.message||e)}); }
   finally{ $('btnSend').disabled=false; }
 }
 function greet(){ ask(LANG==='es'?'Salúdame en una frase corta y di que eres un avatar digital foto-real.':'Greet me in one short sentence and say you are a photoreal digital avatar.'); }
