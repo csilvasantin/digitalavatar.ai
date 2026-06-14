@@ -71,13 +71,14 @@
 <body>
   <!-- Conmutador de EVOLUCIÓN (good→better→best) · histórico siempre accesible -->
   <nav id="evo" aria-label="Evolución del avatar">
-    <span class="evo-l">Evolución</span>
-    <a data-evo="good" href="good.html">2D</a>
-    <a data-evo="better" href="better.html">3D</a>
-    <a data-evo="best" href="best.html">Foto-real</a>
+    <a data-evo="vectorial" href="vectorial.html">Vectorial</a>
+    <a data-evo="2d" href="good.html">2D</a>
+    <a data-evo="3d" href="better.html">3D</a>
+    <a data-evo="metahuman" href="metahuman.html">Metahuman</a>
+    <a data-evo="foto" href="best.html">Fotorealístico</a>
   </nav>
   <style>
-  #evo{position:fixed;top:9px;left:50%;transform:translateX(-50%);z-index:60;display:flex;gap:3px;align-items:center;
+  #evo{position:fixed;top:9px;left:50%;transform:translateX(-50%);z-index:60;display:flex;flex-wrap:wrap;gap:3px;align-items:center;justify-content:center;max-width:96vw;
     background:rgba(6,14,24,.82);border:1px solid #1b3346;border-radius:999px;padding:4px 6px;backdrop-filter:blur(10px);
     font-family:ui-sans-serif,-apple-system,system-ui,sans-serif;box-shadow:0 8px 26px rgba(0,0,0,.5)}
   #evo .evo-l{font-size:.56rem;letter-spacing:.14em;color:#7fa8bb;text-transform:uppercase;padding:0 7px 0 5px}
@@ -86,7 +87,7 @@
   @media(max-width:520px){#evo .evo-l{display:none}#evo a{padding:5px 10px;font-size:.68rem}}
   </style>
   <script>(function(){var f=(location.pathname.split('/').pop()||'').toLowerCase();
-  var cur=(f==='good.html')?'good':(f==='best.html')?'best':'better';
+  var cur=(f==='good.html')?'2d':(f==='better.html')?'3d':(f==='metahuman.html')?'metahuman':(f==='best.html')?'foto':(f==='vectorial.html')?'vectorial':'3d';
   document.querySelectorAll('#evo a').forEach(function(a){if(a.getAttribute('data-evo')===cur)a.classList.add('on');});})();</script>
   <style>body{padding-top:46px}</style>
   <div class="toggles">

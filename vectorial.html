@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate"><meta http-equiv="Pragma" content="no-cache">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DigitalAvatar.ai — Vectorial</title>
+<style>
+  :root{ --bg:#05080f; --panel:rgba(10,19,30,.72); --line:#1b3346; --txt:#eaf6ff; --muted:#86a6bd; --accent:#5fd0ff; --ok:#6ce6a2; --warn:#ffce6b; --err:#ff8a7a; }
+  *{box-sizing:border-box} html,body{height:100%}
+  body{ margin:0; background:radial-gradient(120% 90% at 50% -10%, #11243b 0%, var(--bg) 60%); color:var(--txt);
+    font-family:ui-sans-serif,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; overflow:hidden; }
+  .top{position:fixed; top:0; left:0; right:0; display:flex; align-items:center; gap:12px; padding:14px 18px; z-index:5; pointer-events:none}
+  .brand{font-weight:700; font-size:1rem; pointer-events:auto; text-shadow:0 2px 16px rgba(0,0,0,.6)}
+  .brand b{color:var(--accent)} .brand .tag{display:block; font-size:.6rem; letter-spacing:.22em; color:var(--muted); text-transform:uppercase; margin-top:2px}
+  .top .sp{flex:1}
+  .seg{display:flex; gap:4px; pointer-events:auto; background:rgba(6,12,20,.5); padding:4px; border-radius:11px; border:1px solid var(--line); backdrop-filter:blur(8px)}
+  .seg button{padding:6px 12px; font-size:.72rem; border-radius:8px; border:0; background:transparent; color:var(--muted); cursor:pointer; font-weight:600}
+  #stage{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:1}
+  #face{ width:min(52vmin,420px); height:min(52vmin,420px); border-radius:50%;
+    background:radial-gradient(circle at 50% 32%, #102a3e, #06121c 72%); border:1.5px solid var(--accent);
+    box-shadow:0 18px 60px rgba(0,0,0,.55), 0 0 0 6px rgba(5,16,26,.5); }
+  .console{position:fixed; left:50%; bottom:max(18px,env(safe-area-inset-bottom)); transform:translateX(-50%); width:min(720px,94vw); z-index:6; display:flex; flex-direction:column; gap:10px}
+  .caption{max-height:26vh; overflow:auto; text-align:center; font-size:1.15rem; line-height:1.5; text-shadow:0 2px 18px rgba(0,0,0,.75); padding:0 6px}
+  .caption .sp0{color:var(--muted)} .caption .sp1{color:var(--txt)}
+  .bar{display:flex; gap:10px; align-items:center; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:9px 9px 9px 14px; backdrop-filter:blur(14px); box-shadow:0 22px 60px rgba(0,0,0,.5)}
+  .bar input{flex:1; background:transparent; border:0; outline:0; color:var(--txt); font-size:1rem; font-family:inherit}
+  .bar input::placeholder{color:var(--muted)}
+  .iconbtn{width:44px; height:44px; flex:0 0 auto; border-radius:12px; border:1px solid var(--line); background:#0a1726; color:var(--accent); font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center}
+  .iconbtn.send{background:linear-gradient(180deg,#12466a,#0c2c44)}
+  .iconbtn.mic.live{background:linear-gradient(180deg,#5a1530,#3a0f22); border-color:#ff5b8a; color:#ff9bb8}
+  .meta{display:flex; gap:8px; justify-content:center} .meta select{background:rgba(6,12,20,.6); color:var(--muted); border:1px solid var(--line); border-radius:9px; padding:6px 10px; font-size:.72rem; font-family:inherit; max-width:62vw}
+  .status{font-size:.72rem; color:var(--muted); min-height:15px; text-align:center}
+  .status.warn{color:var(--warn)} .status.err{color:var(--err)}
+</style>
+</head>
+<body>
+  <!-- Conmutador de EVOLUCIÓN -->
+  <nav id="evo" aria-label="Evolución del avatar">
+    <a data-evo="vectorial" href="vectorial.html">Vectorial</a>
+    <a data-evo="2d" href="good.html">2D</a>
+    <a data-evo="3d" href="better.html">3D</a>
+    <a data-evo="metahuman" href="metahuman.html">Metahuman</a>
+    <a data-evo="foto" href="best.html">Fotorealístico</a>
+  </nav>
+  <style>
+  #evo{position:fixed;top:9px;left:50%;transform:translateX(-50%);z-index:60;display:flex;flex-wrap:wrap;gap:3px;align-items:center;justify-content:center;max-width:96vw;
+    background:rgba(6,14,24,.82);border:1px solid #1b3346;border-radius:999px;padding:4px 6px;backdrop-filter:blur(10px);
+    font-family:ui-sans-serif,-apple-system,system-ui,sans-serif;box-shadow:0 8px 26px rgba(0,0,0,.5)}
+  #evo a{display:inline-block;padding:5px 11px;border-radius:999px;font-size:.7rem;font-weight:700;text-decoration:none;color:#86a6bd;white-space:nowrap}
+  #evo a.on{background:linear-gradient(180deg,#12466a,#0c2c44);color:#bfe9ff;box-shadow:0 0 12px rgba(95,208,255,.25)}
+  @media(max-width:560px){#evo a{padding:5px 9px;font-size:.66rem}}
+  </style>
+  <script>(function(){var f=(location.pathname.split('/').pop()||'').toLowerCase();
+  var cur=(f==='good.html')?'2d':(f==='better.html')?'3d':(f==='metahuman.html')?'metahuman':(f==='best.html')?'foto':'vectorial';
+  document.querySelectorAll('#evo a').forEach(function(a){if(a.getAttribute('data-evo')===cur)a.classList.add('on');});})();</script>
+
+  <div id="stage"><canvas id="face" width="512" height="512"></canvas></div>
+
+  <div class="top">
+    <div class="brand"><b>DigitalAvatar</b>.ai<span class="tag" id="tag">avatar vectorial 2D</span></div>
+    <div class="sp"></div>
+    <div class="seg"><button id="langToggle" title="Cambiar idioma / switch language">EN</button></div>
+  </div>
+
+  <div class="console">
+    <div class="caption" id="caption"></div>
+    <div class="bar">
+      <input id="q" autocomplete="off">
+      <button class="iconbtn mic" id="btnMic" title="Hablar">🎙️</button>
+      <button class="iconbtn send" id="btnSend" title="Enviar">➤</button>
+    </div>
+    <div class="meta"><select id="loc"></select></div>
+    <div class="status" id="status"></div>
+  </div>
+
+<script src="lipsync-avatar.js"></script>
+<script>
+const API='https://omnipublicity-api.csilvasantin.workers.dev';
+const $=id=>document.getElementById(id);
+const T={ es:{lang:'es',tag:'avatar vectorial 2D',ph:'Escribe o pulsa 🎙️ para hablar…',think:'Pensando…',listen:'Escuchando…',net:'Error de red: ',loc:'Xpacio (Admira.app)',speech:'es-ES',
+  greet:'Hola, soy el avatar vectorial 2D. ¿En qué te ayudo?'},
+  en:{lang:'en',tag:'2D vector avatar',ph:'Type or press 🎙️ to talk…',think:'Thinking…',listen:'Listening…',net:'Network error: ',loc:'Xpacio (Admira.app location)',speech:'en-US',
+  greet:'Hi, I am the 2D vector avatar. How can I help you?'} };
+let LANG=(localStorage.getItem('da_lang')==='en')?'en':'es';
+const VOICES={es:'dNjJKg63Fr5AXwIdkATa',en:'qSeXEcewz7tA0Q0qk9fH'};
+
+const avatar=new LipSyncAvatar($('face'),{accent:'#5fd0ff',gender:'female'}); avatar.start();
+let audioEl=null;
+function esc(s){return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function setStatus(m,c){const s=$('status'); s.textContent=m||''; s.className='status'+(c?' '+c:'');}
+function setCaption(t){$('caption').innerHTML='<span class="sp1">'+esc(t)+'</span>';}
+
+async function ask(question){ question=(question||$('q').value).trim(); if(!question) return;
+  $('q').value=''; setStatus(T[LANG].think); $('btnSend').disabled=true; setCaption('…');
+  try{ const res=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({loc:$('loc').value,question,lang:LANG,voice:true,voiceId:VOICES[LANG]||''})});
+    const j=await res.json().catch(()=>({}));
+    if(!j.ok){ setStatus('❌ '+(j.error||('HTTP '+res.status)),'err'); setCaption(''); return; }
+    setCaption(j.answer||'');
+    if(j.audioBase64){ if(audioEl){try{audioEl.pause();}catch(e){}} audioEl=new Audio('data:'+(j.mime||'audio/mpeg')+';base64,'+j.audioBase64);
+      avatar.ensureAudio(); avatar.connectAudioElement(audioEl); await audioEl.play(); setStatus(''); }
+  }catch(e){ setStatus(T[LANG].net+(e.message||e),'err'); setCaption(''); }
+  finally{ $('btnSend').disabled=false; } }
+function greet(){ setCaption(T[LANG].greet); fetch(API+'/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:T[LANG].greet,lang:LANG,voiceId:VOICES[LANG]||''})}).then(r=>r.json()).then(j=>{ if(j.ok&&j.audioBase64){ audioEl=new Audio('data:'+(j.mime||'audio/mpeg')+';base64,'+j.audioBase64); avatar.ensureAudio(); avatar.connectAudioElement(audioEl); audioEl.play().catch(()=>{}); } }).catch(()=>{}); }
+
+let recog=null,listening=false;
+function initSpeech(){ const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){ $('btnMic').disabled=true; return; }
+  recog=new SR(); recog.interimResults=true; recog.maxAlternatives=1;
+  recog.onresult=(e)=>{ let t=''; for(let i=e.resultIndex;i<e.results.length;i++) t+=e.results[i][0].transcript; $('q').value=t; if(e.results[e.results.length-1].isFinal){ stopListen(); ask(t); } };
+  recog.onerror=()=>stopListen(); recog.onend=()=>{ if(listening) stopListen(); }; }
+function startListen(){ if(!recog){return;} try{ recog.lang=T[LANG].speech; recog.start(); listening=true; $('btnMic').classList.add('live'); setStatus(T[LANG].listen);}catch(e){} }
+function stopListen(){ listening=false; $('btnMic').classList.remove('live'); try{recog.stop();}catch(e){} if($('status').textContent===T[LANG].listen) setStatus(''); }
+
+function applyLang(l){ LANG=(l==='en')?'en':'es'; const t=T[LANG]; localStorage.setItem('da_lang',LANG); document.documentElement.lang=t.lang;
+  $('tag').textContent=t.tag; $('q').placeholder=t.ph; $('langToggle').textContent=(LANG==='es')?'EN':'ES'; }
+function loadLocations(){ fetch(API+'/locations',{cache:'no-store'}).then(r=>r.json()).then(d=>{ const list=(d&&d.locations)||[],sel=$('loc'); sel.innerHTML='<option value="">'+T[LANG].loc+'</option>'; list.forEach(l=>{const o=document.createElement('option');o.value=l.id;o.textContent=(l.name||l.id)+(l.addr?' · '+l.addr:'');sel.appendChild(o);}); }).catch(()=>{}); }
+
+$('btnSend').onclick=()=>ask(); $('btnMic').onclick=()=>listening?stopListen():startListen();
+$('q').addEventListener('keydown',e=>{ if(e.key==='Enter') ask(); });
+$('langToggle').onclick=()=>{ const nl=(LANG==='es')?'en':'es'; applyLang(nl); if(audioEl){try{audioEl.pause();}catch(e){}} greet(); };
+applyLang(LANG); initSpeech(); loadLocations(); greet();
+</script>
+</body>
+</html>
