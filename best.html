@@ -57,6 +57,11 @@
   html.kiosk .bar input{ font-size:1.3rem; }
   html.kiosk .iconbtn{ width:60px; height:60px; font-size:1.45rem; border-radius:16px; }
   html.kiosk .brand .tag{ font-size:.66rem }
+  /* Tótem PEQUEÑO (iframe estrecho del gemelo 2D): solo el avatar, sin chat ni
+     textos encima de la cara. En el tótem físico (vertical grande) sí se ve. */
+  @media (max-width:620px){
+    html.kiosk .console, html.kiosk .khint, html.kiosk .caption, html.kiosk .status, html.kiosk .brand{ display:none !important; }
+  }
   /* Aviso de atracción "toca o habla" cuando está en reposo */
   .khint{ display:none; position:fixed; left:50%; bottom:118px; transform:translateX(-50%); z-index:6;
     font-size:.95rem; color:var(--accent); background:rgba(6,14,24,.6); border:1px solid var(--line);
