@@ -1,295 +1,452 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DigitalAvatar.ai</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DigitalAvatar.ai — el mejor avatar digital del mundo</title>
 <style>
-  :root { --bg:#05101a; --panel:#0a1925; --line:#1d3a4a; --txt:#dff3ff; --muted:#7fa8bb; --accent:#5fd0ff; --ok:#6ce6a2; --warn:#ffce6b; --err:#ff8a7a; }
-  * { box-sizing:border-box; }
-  body { margin:0; min-height:100vh; background:radial-gradient(circle at 30% -10%, #0c2840, var(--bg) 55%); color:var(--txt); font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; display:flex; flex-direction:column; align-items:center; gap:16px; padding:24px 18px; }
-  .toggles { position:fixed; top:14px; right:16px; display:flex; gap:10px; z-index:10; }
-  .seg { display:flex; gap:4px; }
-  .seg button { padding:5px 12px; font-size:.72rem; border-radius:8px; border:1px solid var(--line); background:#06121c; color:var(--muted); cursor:pointer; }
-  .seg button.on { border-color:var(--accent); color:var(--accent); background:#0e2a3a; }
-  h1 { font-size:1.06rem; margin:0; letter-spacing:.04em; text-align:center; }
-  h1 b { color:var(--accent); }
-  .sub { color:var(--muted); font-size:.72rem; margin:0; text-align:center; max-width:620px; }
+  :root{
+    --bg:#05080f; --bg2:#0a1320; --panel:rgba(10,19,30,.72); --line:#1b3346;
+    --txt:#eaf6ff; --muted:#86a6bd; --accent:#5fd0ff; --accent2:#7c8cff;
+    --ok:#6ce6a2; --warn:#ffce6b; --err:#ff8a7a;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:radial-gradient(120% 90% at 50% -10%, #11243b 0%, var(--bg) 60%);
+    color:var(--txt); font-family:ui-sans-serif,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    overflow:hidden;
+  }
+  #stage{position:fixed; inset:0; z-index:1}
+  canvas{display:block; width:100%; height:100%}
+  /* halo de estudio detrás de la cabeza (el canvas es transparente) */
+  body::before{ content:''; position:fixed; left:50%; top:52%; width:72vmin; height:82vmin;
+    transform:translate(-50%,-50%); z-index:0; pointer-events:none;
+    background:radial-gradient(50% 50% at 50% 50%, rgba(70,120,180,.26), rgba(40,80,140,.10) 45%, transparent 70%);
+    filter:blur(14px); }
 
-  .duo { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; width:100%; }
-  .stage { position:relative; width:min(330px,44vw); aspect-ratio:3/4; border-radius:18px; }
-  @media (max-width:680px){ .stage { width:min(420px,90vw); } }
-  .stage video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border-radius:18px; border:1px solid var(--line); background:#000; box-shadow:0 18px 50px rgba(0,0,0,.55); }
-  .who { position:absolute; top:10px; left:12px; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); background:rgba(6,18,28,.66); padding:3px 8px; border-radius:7px; z-index:4; }
-  .inset { position:absolute; right:10px; bottom:10px; width:112px; height:112px; border-radius:14px; overflow:hidden; border:1.5px solid var(--accent); background:radial-gradient(circle at 50% 32%, #0e2233, #06121c 72%); box-shadow:0 10px 26px rgba(0,0,0,.55), 0 0 0 4px rgba(5,16,26,.6); z-index:5; }
-  .inset canvas { width:100%; height:100%; display:block; }
-  .inset .live { position:absolute; top:6px; left:7px; font-size:.52rem; letter-spacing:.1em; color:var(--muted); text-transform:uppercase; display:flex; align-items:center; gap:4px; }
-  .inset .live i { width:6px; height:6px; border-radius:50%; background:#39506a; display:inline-block; }
-  .inset.on { border-color:var(--ok); }
-  .inset.on .live { color:var(--ok); }
-  .inset.on .live i { background:var(--ok); box-shadow:0 0 8px var(--ok); animation:pulse 1.1s infinite; }
-  @keyframes pulse { 50% { opacity:.35; } }
-  .sound { position:absolute; left:10px; bottom:10px; font-size:.62rem; padding:5px 9px; border-radius:8px; border:1px solid var(--line); background:rgba(6,18,28,.72); color:var(--muted); cursor:pointer; z-index:4; }
-  /* Overlay pixelado: por defecto tapa el vídeo (parado) y oculta la calidad real */
-  .pixel { position:absolute; inset:0; width:100%; height:100%; image-rendering:pixelated; border-radius:18px; cursor:pointer; z-index:2; }
-  .pixel.hidden { display:none; }
-  .reveal { position:absolute; left:50%; top:46%; transform:translate(-50%,-50%); z-index:3; min-width:58px; padding:10px 8px 8px; border-radius:14px; border:1.5px solid var(--accent); background:rgba(6,18,28,.74); color:var(--accent); cursor:pointer; box-shadow:0 6px 20px rgba(0,0,0,.5); text-align:center; line-height:1; }
-  .reveal .play { font-size:1.2rem; }
-  .reveal small { display:block; font-size:.5rem; letter-spacing:.12em; color:var(--muted); margin-top:4px; text-transform:uppercase; }
-  .reveal:hover { box-shadow:0 0 16px rgba(95,208,255,.4); }
-  .reveal.hidden { display:none; }
+  /* Top bar */
+  .top{position:fixed; top:0; left:0; right:0; display:flex; align-items:center; gap:12px;
+    padding:14px 18px; z-index:5; pointer-events:none}
+  .brand{font-weight:700; letter-spacing:.02em; font-size:1rem; pointer-events:auto;
+    text-shadow:0 2px 16px rgba(0,0,0,.6)}
+  .brand b{color:var(--accent)}
+  .brand .tag{display:block; font-size:.6rem; letter-spacing:.22em; color:var(--muted); text-transform:uppercase; margin-top:2px}
+  .top .sp{flex:1}
+  .seg{display:flex; gap:4px; pointer-events:auto; background:rgba(6,12,20,.5); padding:4px; border-radius:11px; border:1px solid var(--line); backdrop-filter:blur(8px)}
+  .seg button{padding:6px 12px; font-size:.72rem; border-radius:8px; border:0; background:transparent; color:var(--muted); cursor:pointer; font-weight:600}
+  .seg button.on{background:linear-gradient(180deg,#123a52,#0c2638); color:var(--accent)}
 
-  .card { width:min(680px,100%); background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 20px; box-shadow:0 24px 60px rgba(0,0,0,.5); }
-  /* Avatares vectoriales reubicados DENTRO de la tarjeta (no pisan los vídeos) */
-  .avatars { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:16px; }
-  /* Cada avatar ocupa media tarjeta → queda centrado bajo su vídeo */
-  .av { flex:1 1 0; max-width:332px; display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; opacity:.5; transition:opacity .2s; }
-  @media (max-width:680px){ .av { max-width:none; } }
-  .av.sel { opacity:1; }
-  .av.sel .inset { box-shadow:0 10px 26px rgba(0,0,0,.55), 0 0 0 3px var(--accent); }
-  .avatars .inset { position:relative; right:auto; bottom:auto; width:118px; height:118px; }
-  .name { font-size:.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; }
-  .pick { font-size:.56rem; color:var(--accent); letter-spacing:.1em; text-transform:uppercase; height:12px; visibility:hidden; }
-  .av.sel .pick { visibility:visible; }
-  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-  button.act { background:linear-gradient(180deg,#0e3550,#0a2335); color:var(--accent); border:1px solid #2a7fa6; border-radius:10px; padding:10px 16px; font-family:inherit; font-size:.84rem; font-weight:600; cursor:pointer; }
-  button.act.alt { background:#06121c; color:var(--muted); border-color:var(--line); }
-  button.act:hover:not(:disabled) { border-color:var(--accent); box-shadow:0 0 14px rgba(95,208,255,.25); }
-  button.act:disabled { opacity:.45; cursor:default; }
-  label { display:block; font-size:.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin:14px 0 5px; }
-  select, textarea { width:100%; background:#06121c; color:var(--txt); border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-family:inherit; font-size:.86rem; }
-  textarea { resize:vertical; min-height:50px; }
-  .status { font-size:.74rem; margin-top:10px; min-height:18px; }
-  .status.ok { color:var(--ok); } .status.warn { color:var(--warn); } .status.err { color:var(--err); }
-  .answer { font-size:.95rem; line-height:1.5; margin-top:8px; }
-  .foot { margin-top:14px; font-size:.66rem; color:var(--muted); }
-  a { color:var(--accent); }
+  /* Loading */
+  #load{position:fixed; inset:0; display:flex; flex-direction:column; gap:14px; align-items:center; justify-content:center; z-index:20; background:var(--bg); transition:opacity .6s; }
+  #load.gone{opacity:0; pointer-events:none}
+  .ring{width:46px; height:46px; border-radius:50%; border:3px solid #14304a; border-top-color:var(--accent); animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  #load .lt{font-size:.78rem; color:var(--muted); letter-spacing:.04em}
+
+  /* Bottom console */
+  .console{position:fixed; left:50%; bottom:max(18px,env(safe-area-inset-bottom)); transform:translateX(-50%);
+    width:min(720px,94vw); z-index:6; display:flex; flex-direction:column; gap:10px}
+  .caption{min-height:0; max-height:30vh; overflow:auto; text-align:center; font-size:1.18rem; line-height:1.5;
+    text-shadow:0 2px 18px rgba(0,0,0,.75); padding:0 6px}
+  .caption .sp0{color:var(--muted)} .caption .sp1{color:var(--txt)}
+  .bar{display:flex; gap:10px; align-items:center; background:var(--panel); border:1px solid var(--line);
+    border-radius:16px; padding:9px 9px 9px 14px; backdrop-filter:blur(14px); box-shadow:0 22px 60px rgba(0,0,0,.5)}
+  .bar input{flex:1; background:transparent; border:0; outline:0; color:var(--txt); font-size:1rem; font-family:inherit}
+  .bar input::placeholder{color:var(--muted)}
+  .iconbtn{width:44px; height:44px; flex:0 0 auto; border-radius:12px; border:1px solid var(--line);
+    background:#0a1726; color:var(--accent); font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center}
+  .iconbtn:hover{border-color:var(--accent)}
+  .iconbtn.send{background:linear-gradient(180deg,#12466a,#0c2c44)}
+  .iconbtn.mic.live{background:linear-gradient(180deg,#5a1530,#3a0f22); border-color:#ff5b8a; color:#ff9bb8; animation:micpulse 1.1s infinite}
+  @keyframes micpulse{50%{box-shadow:0 0 0 7px rgba(255,91,138,.15)}}
+  .iconbtn:disabled{opacity:.45; cursor:default}
+  .meta{display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap}
+  .meta select{background:rgba(6,12,20,.6); color:var(--muted); border:1px solid var(--line); border-radius:9px; padding:6px 10px; font-size:.72rem; font-family:inherit; max-width:62vw}
+  .status{font-size:.72rem; color:var(--muted); min-height:15px; text-align:center}
+  .status.ok{color:var(--ok)} .status.warn{color:var(--warn)} .status.err{color:var(--err)}
+  .hintchips{display:flex; gap:7px; flex-wrap:wrap; justify-content:center}
+  .chip{font-size:.7rem; color:var(--muted); border:1px solid var(--line); background:rgba(6,12,20,.45); padding:5px 11px; border-radius:20px; cursor:pointer}
+  .chip:hover{color:var(--accent); border-color:var(--accent)}
+  /* speaking dot on brand */
+  .livedot{display:inline-block; width:8px; height:8px; border-radius:50%; background:#33506a; margin-left:8px; vertical-align:middle}
+  .livedot.on{background:var(--ok); box-shadow:0 0 9px var(--ok); animation:micpulse 1.1s infinite}
 </style>
 </head>
 <body>
-  <div class="toggles">
+  <div id="stage"></div>
+
+  <div class="top">
+    <div class="brand"><b>DigitalAvatar</b>.ai<span class="livedot" id="livedot"></span><span class="tag" id="tag">avatar digital en tiempo real</span></div>
+    <div class="sp"></div>
     <div class="seg" id="langSeg"><button id="langEs">ES</button><button id="langEn">EN</button></div>
   </div>
 
-  <h1 id="appTitle"></h1>
-  <p class="sub" id="sub"></p>
-
-  <div class="duo">
-    <div class="stage">
-      <span class="who" id="whoF"></span>
-      <video id="vidF" muted loop playsinline preload="metadata"></video>
-      <canvas class="pixel" id="pxF"></canvas>
-      <button class="reveal" id="revF"><span class="play">▶</span><small id="revFt"></small></button>
-      <button class="sound" id="sndF"></button>
+  <div class="console">
+    <div class="caption" id="caption"></div>
+    <div class="hintchips" id="chips"></div>
+    <div class="bar">
+      <input id="q" autocomplete="off">
+      <button class="iconbtn mic" id="btnMic" title="Hablar">🎙️</button>
+      <button class="iconbtn send" id="btnSend" title="Enviar">➤</button>
     </div>
-    <div class="stage">
-      <span class="who" id="whoM"></span>
-      <video id="vidM" muted loop playsinline preload="metadata"></video>
-      <canvas class="pixel" id="pxM"></canvas>
-      <button class="reveal" id="revM"><span class="play">▶</span><small id="revMt"></small></button>
-      <button class="sound" id="sndM"></button>
+    <div class="meta">
+      <select id="loc"></select>
     </div>
-  </div>
-
-  <div class="card">
-    <div class="avatars">
-      <div class="av" id="avF"><div class="inset" id="insF"><span class="live"><i></i><span class="lt"></span></span><canvas id="faceF"></canvas></div><div class="name" id="nameF"></div><div class="pick" id="pickF"></div></div>
-      <div class="av" id="avM"><div class="inset" id="insM"><span class="live"><i></i><span class="lt"></span></span><canvas id="faceM"></canvas></div><div class="name" id="nameM"></div><div class="pick" id="pickM"></div></div>
-    </div>
-    <div class="row">
-      <button class="act" id="btnAsk"></button>
-      <button class="act alt" id="btnDemo"></button>
-    </div>
-    <label for="loc" id="locLabel"></label>
-    <select id="loc"></select>
-    <label for="q" id="qLabel"></label>
-    <textarea id="q"></textarea>
-    <div class="answer" id="answer"></div>
     <div class="status" id="status"></div>
-    <p class="foot" id="foot"></p>
   </div>
 
-<script src="lipsync-avatar.js"></script>
-<script>
+  <div id="load"><div class="ring"></div><div class="lt" id="loadt">Cargando avatar…</div></div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
 const API = 'https://omnipublicity-api.csilvasantin.workers.dev';
 const $ = id => document.getElementById(id);
 
+/* ---------- i18n ---------- */
 const T = {
-  es: { htmlLang:'es', title:'<b>DigitalAvatar</b>.ai',
-    sub:'Madre y padre a la vez, en el mismo idioma. Los vídeos salen parados y pixelados: pulsa ▶ para revelar la calidad real. El recuadro EN VIVO hace lip-sync de la respuesta (Grok + ElevenLabs), offline.',
-    mother:'Madre', father:'Padre', live:'en vivo', speaking:'hablando',
-    sound:'🔊 Sonido', mute:'🔇 Silenciar', reveal:'Revelar',
-    ask:'🗣 Preguntar', demo:'▶ Demo lip-sync', replies:'Responde',
-    locLabel:'Xpacio (punto de Admira.app)', qLabel:'Pregunta al avatar',
-    qPlaceholder:'¿Cuánta gente vive en Madrid?', qDefault:'¿Cuánta gente vive en Madrid?',
-    noPts:'(sin puntos en el KV)', errPts:'(error cargando puntos)',
-    writeQ:'Escribe una pregunta.', thinking:'Pensando…',
-    okVoice:'✓ Respuesta con voz — lip-sync del avatar seleccionado.',
-    xai:'⚠️ Falta XAI_API_KEY en el worker. El lip-sync ya va con ▶ Demo.',
-    net:'❌ Error de red: ', demoMsg:'Demo de lip-sync en los dos recuadros.', speechLang:'es-ES',
-    foot:'Lip-sync 2D propio, en el navegador, sin coste por uso. Mismo cerebro y voz que el gemelo de <a href="https://www.admira.app">Admira.app</a>.',
-  },
-  en: { htmlLang:'en', title:'<b>DigitalAvatar</b>.ai',
-    sub:'Mother and father at once, in the same language. Videos start paused & pixelated — press ▶ to reveal the real quality. The LIVE inset lip-syncs the reply (Grok + ElevenLabs), offline.',
-    mother:'Mother', father:'Father', live:'live', speaking:'speaking',
-    sound:'🔊 Sound', mute:'🔇 Mute', reveal:'Reveal',
-    ask:'🗣 Ask', demo:'▶ Lip-sync demo', replies:'Replies',
-    locLabel:'Xpacio (Admira.app location)', qLabel:'Ask the avatar',
-    qPlaceholder:'How many people live in Madrid?', qDefault:'How many people live in Madrid?',
-    noPts:'(no locations in KV)', errPts:'(error loading locations)',
-    writeQ:'Type a question.', thinking:'Thinking…',
-    okVoice:'✓ Reply with voice — the selected avatar lip-syncs.',
-    xai:'⚠️ The worker is missing the xAI key. Lip-sync already works via ▶ Demo.',
-    net:'❌ Network error: ', demoMsg:'Lip-sync demo in both insets.', speechLang:'en-US',
-    foot:'Own 2D lip-sync, in the browser, no per-use cost. Same brain & voice as the <a href="https://www.admira.app">Admira.app</a> twin.',
-  },
+  es:{ lang:'es', tag:'avatar digital en tiempo real', placeholder:'Escribe o pulsa 🎙️ para hablar…',
+    thinking:'Pensando…', listening:'Escuchando…', speaking:'Hablando',
+    okVoice:'', noVoice:'(sin voz: falta clave TTS)', net:'Error de red: ',
+    micNo:'Tu navegador no soporta dictado por voz (prueba Chrome).',
+    loc:'Xpacio (Admira.app)', loading:'Cargando avatar…',
+    chips:['¿Quién eres?','¿Qué hora es en Madrid?','Cuéntame un dato curioso','¿Qué ofrece esta tienda?'],
+    speechLang:'es-ES' },
+  en:{ lang:'en', tag:'real-time digital avatar', placeholder:'Type or press 🎙️ to talk…',
+    thinking:'Thinking…', listening:'Listening…', speaking:'Speaking',
+    okVoice:'', noVoice:'(no voice: missing TTS key)', net:'Network error: ',
+    micNo:'Your browser does not support speech input (try Chrome).',
+    loc:'Xpacio (Admira.app location)', loading:'Loading avatar…',
+    chips:['Who are you?','What time is it in Madrid?','Tell me a fun fact','What does this shop offer?'],
+    speechLang:'en-US' },
 };
+let LANG = (localStorage.getItem('da_lang')==='en') ? 'en' : 'es';
+// Voz ElevenLabs por idioma (neutra, multilingüe).
+const VOICES = { es:'dNjJKg63Fr5AXwIdkATa', en:'qSeXEcewz7tA0Q0qk9fH' };
 
-// Por defecto INGLÉS (salvo que el usuario ya eligiera ES antes).
-let LANG = (localStorage.getItem('da_lang') === 'es') ? 'es' : 'en';
-// Quién responde: madre por defecto; si seleccionas al padre, responde él.
-let SPEAKER = (localStorage.getItem('da_speaker') === 'male') ? 'male' : 'female';
-const VIDEO_AVAILABLE = { 'female-es':1, 'female-en':1, 'male-es':1, 'male-en':1 };
-function vkey(gender){ const k=gender+'-'+LANG; return VIDEO_AVAILABLE[k] ? k : gender+'-es'; }
+/* ================= THREE.JS SCENE ================= */
+let renderer, scene, camera, clock, head, headDict, headInf, eyeL, eyeR, grpEyeL, grpEyeR;
+let gazeYaw=0, gazePitch=0, gyaw=0, gpit=0;   // mirada de los globos oculares
+const stageEl = $('stage');
 
-// Voces ElevenLabs por sexo×idioma.
-const VOICES = {
-  'female-es':'dNjJKg63Fr5AXwIdkATa', 'female-en':'qSeXEcewz7tA0Q0qk9fH',
-  'male-es':'qUPtETgSYRhCRb2pfOla',   'male-en':'wAGzRVkxKEs8La0lmdrE',
+function initThree(){
+  renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.92;
+  stageEl.appendChild(renderer.domElement);
+
+  scene = new THREE.Scene();
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.03).texture;
+  window.__scene = scene;
+
+  camera = new THREE.PerspectiveCamera(28, innerWidth/innerHeight, 0.1, 100);
+  camera.position.set(0, 0.06, 0.62);
+
+  // Iluminación de estudio suave (key cálida + rim azul + fill + hemisférica)
+  const key = new THREE.SpotLight(0xffe9d6, 9, 12, Math.PI/4.2, 0.7, 1.1);
+  key.position.set(0.7, 1.0, 1.4); scene.add(key);
+  const rim = new THREE.DirectionalLight(0x9fc2ff, 1.4); rim.position.set(-1.3,0.5,-1.1); scene.add(rim);
+  const fill = new THREE.DirectionalLight(0xcfeaff, 0.5); fill.position.set(-0.7,-0.3,1.2); scene.add(fill);
+  scene.add(new THREE.HemisphereLight(0xdff1ff, 0x0b1622, 0.55));
+
+  clock = new THREE.Clock();
+  addEventListener('resize', onResize);
+}
+function onResize(){ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight); }
+
+function loadAvatar(){
+  const ktx2 = new KTX2Loader()
+    .setTranscoderPath('https://unpkg.com/three@0.160.0/examples/jsm/libs/basis/')
+    .detectSupport(renderer);
+  const loader = new GLTFLoader();
+  loader.setKTX2Loader(ktx2);
+  loader.setMeshoptDecoder(MeshoptDecoder);
+  loader.load('assets/facecap.glb', (gltf)=>{
+    const root = gltf.scene;
+    root.traverse(o=>{
+      if(o.isMesh && o.morphTargetDictionary && o.morphTargetDictionary['jawOpen']!==undefined){
+        head=o; headDict=o.morphTargetDictionary; headInf=o.morphTargetInfluences;
+        // Tono de piel cálido sobre la geometría (el modelo viene sin textura de piel)
+        o.material = o.material.clone();
+        o.material.color = new THREE.Color(0xc99a7e);
+        o.material.roughness = 0.66; o.material.metalness = 0.0;
+        if('envMapIntensity' in o.material) o.material.envMapIntensity = 0.7;
+      }
+    });
+    window.__head=head; window.__headDict=headDict; window.__headInf=headInf;
+    eyeL = root.getObjectByName('eyeLeft')  || null;
+    eyeR = root.getObjectByName('eyeRight') || null;
+    grpEyeL = root.getObjectByName('grp_eyeLeft')  || null;
+    grpEyeR = root.getObjectByName('grp_eyeRight') || null;
+    if(grpEyeL) grpEyeL.rotation.set(0,0,0);
+    if(grpEyeR) grpEyeR.rotation.set(0,0,0);
+    // Globos oculares brillantes → catchlight del entorno (dan vida a la mirada)
+    root.traverse(o=>{ if(o.isMesh && (o.name==='mesh_0' || o.name==='mesh_1')){
+      o.material=o.material.clone(); o.material.roughness=0.12; o.material.metalness=0.0;
+      if('envMapIntensity' in o.material) o.material.envMapIntensity=1.7;
+    }});
+    const grp = new THREE.Group(); grp.add(root); grp.name='avatarGroup';
+    scene.add(grp);
+    window.__avatarGroup = grp;
+    // Auto-encuadre: centra la cabeza en el origen y coloca la cámara a una
+    // distancia proporcional al tamaño real del modelo (sea cual sea su escala).
+    const box=new THREE.Box3().setFromObject(root);
+    const size=box.getSize(new THREE.Vector3()), center=box.getCenter(new THREE.Vector3());
+    root.position.sub(center);                 // centra el modelo
+    const h=size.y||0.3;
+    const base=h/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)));
+    const FILL=0.60;                             // cabeza ≈ 60% del alto del viewport
+    const dist=base/FILL;
+    const eyeY=h*0.18;                           // ojos (algo por encima del centro de la caja)
+    // Componer la cabeza en el tercio superior: la cámara mira un poco por debajo
+    // de los ojos → la cara sube y el chin queda por encima de la consola.
+    camera.position.set(0, eyeY+h*0.04, dist);
+    camera.lookAt(0, eyeY-h*0.16, 0);
+    camera.updateProjectionMatrix();
+    window.__eyeY = eyeY;
+    $('load').classList.add('gone');
+    setStatus('');
+    greet();
+  }, (xhr)=>{ if(xhr.total) $('loadt').textContent = T[LANG].loading+' '+Math.round(xhr.loaded/xhr.total*100)+'%'; },
+  (err)=>{ console.error('GLB load error', err); $('loadt').textContent='Error cargando avatar'; setStatus('No se pudo cargar el modelo 3D.','err'); });
+}
+
+function setInf(name, v){ const i=headDict?headDict[name]:undefined; if(i!==undefined) headInf[i]=v; }
+
+/* ===== VISEMES (ARKit blendshapes) ===== */
+const VIS = {
+  sil:{},
+  aa:{jawOpen:0.55, mouthLowerDown_L:0.18, mouthLowerDown_R:0.18},
+  E :{jawOpen:0.30, mouthSmile_L:0.16, mouthSmile_R:0.16, mouthStretch_L:0.12, mouthStretch_R:0.12},
+  I :{jawOpen:0.16, mouthSmile_L:0.34, mouthSmile_R:0.34, mouthStretch_L:0.18, mouthStretch_R:0.18},
+  O :{jawOpen:0.42, mouthFunnel:0.52, mouthPucker:0.30},
+  U :{jawOpen:0.20, mouthPucker:0.70, mouthFunnel:0.26},
+  PP:{mouthClose:0.55, mouthPress_L:0.40, mouthPress_R:0.40, jawOpen:0.02},
+  FF:{jawOpen:0.12, mouthRollLower:0.40, mouthLowerDown_L:0.28, mouthLowerDown_R:0.28, mouthUpperUp_L:0.10, mouthUpperUp_R:0.10},
+  TH:{jawOpen:0.22, tongueOut:0.40},
+  DD:{jawOpen:0.22, mouthShrugUpper:0.16, tongueOut:0.06},
+  kk:{jawOpen:0.28, mouthFunnel:0.10},
+  CH:{jawOpen:0.18, mouthFunnel:0.46, mouthPucker:0.34},
+  SS:{jawOpen:0.10, mouthStretch_L:0.20, mouthStretch_R:0.20, mouthSmile_L:0.10, mouthSmile_R:0.10, mouthShrugUpper:0.10},
+  nn:{jawOpen:0.12, mouthClose:0.22},
+  RR:{jawOpen:0.20, mouthFunnel:0.22, mouthPucker:0.12},
 };
+// Todas las morfo-bocas que tocamos (para poder relajarlas)
+const MOUTH_MORPHS = ['jawOpen','mouthClose','mouthFunnel','mouthPucker','mouthLeft','mouthRight','mouthSmile_L','mouthSmile_R','mouthStretch_L','mouthStretch_R','mouthRollLower','mouthRollUpper','mouthShrugUpper','mouthShrugLower','mouthPress_L','mouthPress_R','mouthLowerDown_L','mouthLowerDown_R','mouthUpperUp_L','mouthUpperUp_R','tongueOut'];
 
-const avatarF = new LipSyncAvatar($('faceF'), { accent:'#5fd0ff', gender:'female' });
-const avatarM = new LipSyncAvatar($('faceM'), { accent:'#5fd0ff', gender:'male' });
-avatarF.start(); avatarM.start();
-
-let askAudio=null, synthF=null, synthM=null;
-function setLiveF(on){ $('insF').classList.toggle('on',on); $('insF').querySelector('.lt').textContent = on?T[LANG].speaking:T[LANG].live; }
-function setLiveM(on){ $('insM').classList.toggle('on',on); $('insM').querySelector('.lt').textContent = on?T[LANG].speaking:T[LANG].live; }
-function setStatus(m,c){ const s=$('status'); s.innerHTML=m||''; s.className='status'+(c?' '+c:''); }
-
-function setVideo(vid, gender){
-  const k=vkey(gender), want='assets/avatar-'+k+'.mp4';
-  if(!vid.src || !vid.src.endsWith(want)){ vid.src=want; vid.poster='assets/avatar-'+k+'-poster.jpg'; vid.load(); } // NO autoplay: arranca parado
+function charToViseme(c, next){
+  c=(c||'').toLowerCase();
+  const two=c+(next||'').toLowerCase();
+  if(two==='ch'||two==='sh') return 'CH';
+  if(two==='qu') return 'kk';
+  if(two==='th') return 'TH';
+  if(two==='rr') return 'RR';
+  if(two==='ll') return 'I';
+  if('aá'.includes(c)) return 'aa';
+  if('eé'.includes(c)) return 'E';
+  if('iíyï'.includes(c)) return 'I';
+  if('oó'.includes(c)) return 'O';
+  if('uúü'.includes(c)) return 'U';
+  if('pbm'.includes(c)) return 'PP';
+  if('fv'.includes(c)) return 'FF';
+  if('w'.includes(c)) return 'U';
+  if('tdl'.includes(c)) return 'DD';
+  if('n'.includes(c)) return 'nn';
+  if('r'.includes(c)) return 'RR';
+  if('szxç'.includes(c)) return 'SS';
+  if('kgqc'.includes(c)) return 'kk';
+  if('jñ'.includes(c)) return 'CH';
+  if('h'.includes(c)) return 'sil';
+  if(/[\s.,;:!?¡¿"'()\-–—]/.test(c)) return 'sil';
+  return 'DD';
 }
 
-// Dibuja el póster muy pixelado en el overlay (oculta el nivel de render real).
-function drawPixel(canvas, gender){
-  const k=vkey(gender), img=new Image();
-  img.onload=()=>{
-    const W=44, H=Math.round(W*4/3); // marco 3:4
-    canvas.width=W; canvas.height=H;
-    const ctx=canvas.getContext('2d'); ctx.imageSmoothingEnabled=false;
-    const ar=img.width/img.height, car=W/H; let sw,sh,sx,sy;
-    if(ar>car){ sh=img.height; sw=sh*car; sx=(img.width-sw)/2; sy=0; } // cover
-    else { sw=img.width; sh=sw/car; sx=0; sy=(img.height-sh)/2; }
-    ctx.drawImage(img, sx,sy,sw,sh, 0,0,W,H);
-  };
-  img.src='assets/avatar-'+k+'-poster.jpg';
-}
-// Estado por defecto de un stage: vídeo parado + overlay pixelado + botón ▶ visible.
-function pixelState(which, gender){
-  const vid=$('vid'+which), px=$('px'+which), rev=$('rev'+which);
-  try{ vid.pause(); }catch(e){}
-  drawPixel(px, gender);
-  px.classList.remove('hidden'); rev.classList.remove('hidden');
-  $('rev'+which+'t').textContent = T[LANG].reveal;
-}
-// Pulsar ▶ (o el overlay): reproduce y revela la calidad real.
-function reveal(which){
-  const vid=$('vid'+which), px=$('px'+which), rev=$('rev'+which);
-  vid.play().catch(()=>{}); px.classList.add('hidden'); rev.classList.add('hidden');
-}
-$('revF').onclick=()=>reveal('F'); $('pxF').onclick=()=>reveal('F');
-$('revM').onclick=()=>reveal('M'); $('pxM').onclick=()=>reveal('M');
-function applyLang(l){
-  LANG = (l==='es')?'es':'en'; const t=T[LANG];
-  try{ localStorage.setItem('da_lang',LANG); }catch(e){}
-  document.documentElement.lang=t.htmlLang;
-  $('appTitle').innerHTML=t.title; $('sub').textContent=t.sub;
-  $('whoF').textContent=t.mother; $('whoM').textContent=t.father;
-  $('nameF').textContent=t.mother; $('nameM').textContent=t.father;
-  $('btnAsk').textContent=t.ask; $('btnDemo').textContent=t.demo;
-  $('locLabel').textContent=t.locLabel; $('qLabel').textContent=t.qLabel;
-  const q=$('q'); q.placeholder=t.qPlaceholder;
-  if(!q.value.trim()||q.value===T.es.qDefault||q.value===T.en.qDefault) q.value=t.qDefault;
-  $('foot').innerHTML=t.foot;
-  $('sndF').textContent=$('vidF').muted?t.sound:t.mute; $('sndM').textContent=$('vidM').muted?t.sound:t.mute;
-  setLiveF($('insF').classList.contains('on')); setLiveM($('insM').classList.contains('on'));
-  $('langEs').classList.toggle('on',LANG==='es'); $('langEn').classList.toggle('on',LANG==='en');
-  setVideo($('vidF'),'female'); setVideo($('vidM'),'male');
-  pixelState('F','female'); pixelState('M','male'); // por defecto: parados y pixelados
-  applySpeaker(SPEAKER); // refresca resaltado + etiqueta "responde"
-}
-
-function bindSound(btn, vid){ btn.onclick=()=>{ vid.muted=!vid.muted; if(!vid.muted){vid.currentTime=0;vid.play().catch(()=>{});} btn.textContent=vid.muted?T[LANG].sound:T[LANG].mute; }; }
-bindSound($('sndF'),$('vidF')); bindSound($('sndM'),$('vidM'));
-$('langEs').onclick=()=>applyLang('es'); $('langEn').onclick=()=>applyLang('en');
-
-// Selección de quién responde (clic en el avatar)
-function applySpeaker(s){
-  SPEAKER = (s==='male') ? 'male' : 'female';
-  try{ localStorage.setItem('da_speaker',SPEAKER); }catch(e){}
-  $('avF').classList.toggle('sel', SPEAKER==='female');
-  $('avM').classList.toggle('sel', SPEAKER==='male');
-  $('pickF').textContent = SPEAKER==='female' ? '▸ '+T[LANG].replies : '';
-  $('pickM').textContent = SPEAKER==='male'   ? '▸ '+T[LANG].replies : '';
-}
-$('avF').onclick=()=>applySpeaker('female');
-$('avM').onclick=()=>applySpeaker('male');
-
-fetch(API+'/locations',{cache:'no-store'}).then(r=>r.json()).then(d=>{
-  const list=(d&&d.locations)||[]; const sel=$('loc'); sel.innerHTML='';
-  if(!list.length){ sel.innerHTML='<option value="">'+T[LANG].noPts+'</option>'; return; }
-  list.forEach(l=>{ const o=document.createElement('option'); o.value=l.id; o.textContent=(l.name||l.id)+(l.addr?' · '+l.addr:''); sel.appendChild(o); });
-}).catch(()=>{ $('loc').innerHTML='<option value="">'+T[LANG].errPts+'</option>'; });
-
-function stopAll(){ if(askAudio){try{askAudio.pause();}catch(e){}} if(synthF){try{synthF.stop();}catch(e){}synthF=null;} if(synthM){try{synthM.stop();}catch(e){}synthM=null;} setLiveF(false); setLiveM(false); }
-
-function babble(avatar, onend){
-  const ctx=avatar.ensureAudio(), sr=ctx.sampleRate, dur=3.0;
-  const buf=ctx.createBuffer(1,Math.floor(dur*sr),sr), d=buf.getChannelData(0); let i=0;
-  while(i<d.length){
-    const len=Math.floor((0.12+Math.random()*0.14)*sr), gap=Math.floor((0.03+Math.random()*0.07)*sr);
-    const f0=110+Math.random()*60,f1=500+Math.random()*500,f2=1200+Math.random()*1800;
-    for(let j=0;j<len&&i<d.length;j++,i++){ const t=j/sr,p=j/len,env=Math.sin(Math.PI*p);
-      d[i]=(0.6*Math.sin(2*Math.PI*f0*t)+0.5*Math.sin(2*Math.PI*f1*t)+0.35*Math.sin(2*Math.PI*f2*t)+0.08*(Math.random()*2-1))*env*0.5; }
-    i+=gap;
+/* Build a timed viseme track from ElevenLabs alignment (chars+starts+ends). */
+function buildTrack(al){
+  const chars=al.chars, st=al.starts, en=al.ends, track=[];
+  for(let i=0;i<chars.length;i++){
+    const v=charToViseme(chars[i], chars[i+1]);
+    track.push({ v, t0:st[i], t1:en[i] });
   }
-  const src=ctx.createBufferSource(); src.buffer=buf; avatar.connectSource(src,true); src.onended=onend; src.start(); return src;
+  return track;
 }
-function playDemo(){ stopAll();
-  synthF=babble(avatarF, ()=>setLiveF(false)); setLiveF(true);
-  synthM=babble(avatarM, ()=>setLiveM(false)); setLiveM(true);
-  setStatus(T[LANG].demoMsg,'ok');
+/* Fallback: spread chars of `text` across [0,dur] evenly. */
+function buildTrackFromText(text, dur){
+  const chars=[...text]; const n=Math.max(1,chars.length); const step=dur/n; const track=[];
+  for(let i=0;i<chars.length;i++) track.push({ v:charToViseme(chars[i],chars[i+1]), t0:i*step, t1:(i+1)*step });
+  return track;
 }
 
-// La madre responde (voz femenina del idioma). Solo su recuadro hace lip-sync.
-async function ask(){
-  stopAll(); const t=T[LANG]; const question=$('q').value.trim();
-  if(!question){ setStatus(t.writeQ,'warn'); return; }
-  $('btnAsk').disabled=true; $('answer').textContent=''; setStatus(t.thinking);
+/* ===== speaking state ===== */
+let speaking=false, track=null, audioEl=null, audioStart=0, energy=0;
+let curMouth={}; // smoothed weights
+function startSpeaking(tr){ track=tr; speaking=true; setLive(true); window.__track=tr; }
+function stopSpeaking(){ speaking=false; track=null; setLive(false); }
+window.__dbg=()=>({speaking, t:audioEl?+audioEl.currentTime.toFixed(2):-1, dur:audioEl?+(audioEl.duration||0).toFixed(2):-1, paused:audioEl?audioEl.paused:true, trackLen:track?track.length:0, energy:+energy.toFixed(2)});
+
+function updateMouth(dt){
+  if(window.__freezeMouth) return;   // debug: deja fijar morphs a mano
+  // target weights this frame
+  const target={}; MOUTH_MORPHS.forEach(m=>target[m]=0);
+  if(speaking && track && audioEl){
+    const t=audioEl.currentTime;
+    // find active char (linear scan from a hint)
+    let active=null;
+    for(let i=0;i<track.length;i++){ if(t>=track[i].t0-0.02 && t<=track[i].t1+0.04){ active=track[i]; break; } if(track[i].t0>t){ active=track[i-1]||track[i]; break; } }
+    if(active){ const w=VIS[active.v]||{}; for(const k in w) target[k]=w[k]; }
+    // amplitude gate da vida a la mandíbula
+    const g=0.65+0.6*energy;
+    if(target.jawOpen!==undefined) target.jawOpen=Math.min(0.85, target.jawOpen*g);
+  }
+  // smooth toward target (framerate-independent; ~22/s response)
+  const k = window.__instantMouth ? 1 : (1 - Math.exp(-dt*22));
+  for(const m of MOUTH_MORPHS){
+    const cur=curMouth[m]||0; const nv=cur+(target[m]-cur)*k;
+    curMouth[m]=nv; setInf(m,nv);
+  }
+}
+
+/* ===== idle: blink, breathing, saccades, micro head ===== */
+let nextBlink=1.5, blinkT=-1, sacT=0, sx=0, sy=0;
+function updateIdle(dt, time){
+  // blink
+  nextBlink-=dt;
+  if(blinkT>=0){ blinkT+=dt; const p=blinkT/0.13; const v=p<0.5? p*2 : Math.max(0,2-2*p); setInf('eyeBlink_L',v); setInf('eyeBlink_R',v); if(blinkT>0.13){blinkT=-1; setInf('eyeBlink_L',0); setInf('eyeBlink_R',0);} }
+  else if(nextBlink<=0){ blinkT=0; nextBlink=2.2+Math.random()*4; }
+  // Mirada: globos hacia la cámara con micro-saccades (rota los ojos, no morphs)
+  sacT-=dt; if(sacT<=0){ gazeYaw=(Math.random()-0.5)*0.16; gazePitch=(Math.random()-0.5)*0.09; sacT=1.1+Math.random()*2.8; }
+  gyaw += (gazeYaw-gyaw)*Math.min(1,dt*9); gpit += (gazePitch-gpit)*Math.min(1,dt*9);
+  if(grpEyeL){ grpEyeL.rotation.set(gpit, gyaw, 0); grpEyeR.rotation.set(gpit, gyaw, 0); }
+  // párpados acompañan ligeramente la mirada vertical
+  setInf('eyeLookUp_L', Math.max(0,gpit*3)); setInf('eyeLookUp_R', Math.max(0,gpit*3));
+  setInf('eyeLookDown_L', Math.max(0,-gpit*3)); setInf('eyeLookDown_R', Math.max(0,-gpit*3));
+  // breathing + micro head sway on the group
+  const g=window.__avatarGroup;
+  if(g){ g.rotation.y=Math.sin(time*0.45)*0.05 + (speaking?Math.sin(time*2.1)*0.012:0);
+         g.rotation.x=Math.sin(time*0.33)*0.025;
+         g.position.y=Math.sin(time*0.9)*0.004; }
+  // subtle brow life while speaking
+  setInf('browInnerUp', speaking? 0.08+0.08*energy : 0.0);
+}
+
+function animate(){
+  requestAnimationFrame(animate);
+  const dt=Math.min(0.05, clock.getDelta()); const time=clock.elapsedTime;
+  if(audioAnalyser && speaking){ audioAnalyser.getByteTimeDomainData(audioBuf); let s=0; for(let i=0;i<audioBuf.length;i++){const d=(audioBuf[i]-128)/128; s+=d*d;} energy=Math.min(1,Math.sqrt(s/audioBuf.length)*3.4); }
+  else energy*=0.9;
+  if(head){ updateMouth(dt); updateIdle(dt,time); }
+  renderer.render(scene,camera);
+}
+
+/* ================= AUDIO + BRAIN ================= */
+let audioCtx, audioAnalyser, audioBuf, mediaSrc;
+function ensureAudioGraph(el){
+  if(!audioCtx){ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); audioAnalyser=audioCtx.createAnalyser(); audioAnalyser.fftSize=512; audioBuf=new Uint8Array(audioAnalyser.fftSize); }
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  if(mediaSrc){ try{mediaSrc.disconnect();}catch(e){} }
+  mediaSrc=audioCtx.createMediaElementSource(el); mediaSrc.connect(audioAnalyser); audioAnalyser.connect(audioCtx.destination);
+}
+
+function setStatus(m,c){ const s=$('status'); s.textContent=m||''; s.className='status'+(c?' '+c:''); }
+function setLive(on){ $('livedot').classList.toggle('on',on); }
+
+/* caption with progressive highlight synced to audio */
+let capTrack=null;
+function setCaption(text){ $('caption').innerHTML='<span class="sp1">'+esc(text)+'</span>'; }
+function setCaptionProgressive(text, al){ capTrack={text, al}; }
+function tickCaption(){
+  if(!capTrack||!audioEl){ return; }
+  const t=audioEl.currentTime, al=capTrack.al; let n=0;
+  if(al&&al.ends){ while(n<al.ends.length && al.ends[n]<=t) n++; }
+  const s=capTrack.text;
+  $('caption').innerHTML='<span class="sp1">'+esc(s.slice(0,n))+'</span><span class="sp0">'+esc(s.slice(n))+'</span>';
+  if(speaking) requestAnimationFrame(tickCaption);
+  else $('caption').innerHTML='<span class="sp1">'+esc(s)+'</span>';
+}
+function esc(s){ return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+async function ask(question){
+  question=(question||$('q').value).trim();
+  if(!question) return;
+  $('q').value=''; setStatus(T[LANG].thinking); $('btnSend').disabled=true; setCaption('…');
   try{
     const res=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({loc:$('loc').value,question,lang:LANG,voice:true,voiceId:VOICES[SPEAKER+'-'+LANG]||''})});
+      body:JSON.stringify({ loc:$('loc').value, question, lang:LANG, voice:true, timestamps:true, voiceId:VOICES[LANG]||'' })});
     const j=await res.json().catch(()=>({}));
-    if(j.ok){
-      $('answer').innerHTML='🤖 '+(j.answer||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-      if(j.audioBase64){
-        askAudio=new Audio('data:'+(j.mime||'audio/mpeg')+';base64,'+j.audioBase64);
-        const av = SPEAKER==='female'?avatarF:avatarM;
-        const setLive = SPEAKER==='female'?setLiveF:setLiveM;
-        av.connectAudioElement(askAudio); askAudio.onended=()=>setLive(false);
-        await askAudio.play(); setLive(true); setStatus(t.okVoice,'ok');
-      } else setStatus('Sin audio.','warn');
-    } else if(j.error==='xai_key_not_set'){ setStatus(t.xai,'warn'); }
-    else setStatus('❌ '+(j.error||('HTTP '+res.status)),'err');
-  }catch(e){ setStatus(t.net+(e.message||e),'err'); }
-  finally{ $('btnAsk').disabled=false; }
+    if(!j.ok){ setStatus('❌ '+(j.error||('HTTP '+res.status)),'err'); setCaption(''); return; }
+    const answer=j.answer||'';
+    if(j.audioBase64){
+      if(audioEl){ try{audioEl.pause();}catch(e){} }
+      audioEl=new Audio('data:'+(j.mime||'audio/mpeg')+';base64,'+j.audioBase64);
+      audioEl.crossOrigin='anonymous'; window.__audio=audioEl;
+      ensureAudioGraph(audioEl);
+      const tr = j.alignment ? buildTrack(j.alignment) : buildTrackFromText(answer, 2.5);
+      setCaptionProgressive(answer, j.alignment||null);
+      audioEl.onplay=()=>{ startSpeaking(tr); tickCaption(); };
+      audioEl.onended=()=>{ stopSpeaking(); setStatus(''); };
+      await audioEl.play();
+      setStatus('');
+    } else {
+      setCaption(answer); setStatus(T[LANG].noVoice,'warn');
+    }
+  }catch(e){ setStatus(T[LANG].net+(e.message||e),'err'); setCaption(''); }
+  finally{ $('btnSend').disabled=false; }
+}
+function greet(){ ask(LANG==='es'?'Salúdame en una frase corta y di que eres un avatar digital.':'Greet me in one short sentence and say you are a digital avatar.'); }
+
+/* ===== push-to-talk (Web Speech API) ===== */
+let recog=null, listening=false;
+function initSpeech(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ $('btnMic').disabled=true; return; }
+  recog=new SR(); recog.interimResults=true; recog.maxAlternatives=1;
+  recog.onresult=(e)=>{ let txt=''; for(let i=e.resultIndex;i<e.results.length;i++) txt+=e.results[i][0].transcript; $('q').value=txt; if(e.results[e.results.length-1].isFinal){ stopListen(); ask(txt); } };
+  recog.onerror=()=>stopListen(); recog.onend=()=>{ if(listening) stopListen(); };
+}
+function startListen(){ if(!recog){ setStatus(T[LANG].micNo,'warn'); return; } try{ recog.lang=T[LANG].speechLang; recog.start(); listening=true; $('btnMic').classList.add('live'); setStatus(T[LANG].listening); if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume(); }catch(e){} }
+function stopListen(){ listening=false; $('btnMic').classList.remove('live'); try{recog.stop();}catch(e){} if($('status').textContent===T[LANG].listening) setStatus(''); }
+function toggleListen(){ listening?stopListen():startListen(); }
+
+/* ===== language + UI ===== */
+function applyLang(l){
+  LANG=(l==='en')?'en':'es'; const t=T[LANG];
+  localStorage.setItem('da_lang',LANG);
+  document.documentElement.lang=t.lang;
+  $('tag').textContent=t.tag; $('q').placeholder=t.placeholder;
+  $('langEs').classList.toggle('on',LANG==='es'); $('langEn').classList.toggle('on',LANG==='en');
+  $('chips').innerHTML=t.chips.map(c=>`<span class="chip">${esc(c)}</span>`).join('');
+  [...$('chips').children].forEach((el,i)=>el.onclick=()=>{ $('q').value=t.chips[i]; ask(); });
 }
 
-$('btnDemo').onclick=playDemo; $('btnAsk').onclick=ask;
-$('q').addEventListener('keydown',e=>{ if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)) ask(); });
-applyLang(LANG);
+function loadLocations(){
+  fetch(API+'/locations',{cache:'no-store'}).then(r=>r.json()).then(d=>{
+    const list=(d&&d.locations)||[], sel=$('loc'); sel.innerHTML='<option value="">'+T[LANG].loc+'</option>';
+    list.forEach(l=>{ const o=document.createElement('option'); o.value=l.id; o.textContent=(l.name||l.id)+(l.addr?' · '+l.addr:''); sel.appendChild(o); });
+  }).catch(()=>{});
+}
+
+/* ===== wire ===== */
+$('btnSend').onclick=()=>ask();
+$('btnMic').onclick=toggleListen;
+$('q').addEventListener('keydown',e=>{ if(e.key==='Enter') ask(); });
+$('langEs').onclick=()=>applyLang('es'); $('langEn').onclick=()=>applyLang('en');
+
+initThree(); animate(); loadAvatar(); initSpeech(); applyLang(LANG); loadLocations();
 </script>
 </body>
 </html>
