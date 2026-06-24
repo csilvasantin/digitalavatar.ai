@@ -128,5 +128,36 @@
 
   <p class="note">Cada versión se conserva como histórico (URL propia + etiquetas git): la evolución nunca se pierde.</p>
   <a class="cta" href="best.html">▶ Probar el avatar que sí habla (Fotorealístico)</a>
+
+  <script>
+  // Fallback robusto: si el host de render (Pixel Streaming) no responde, la
+  // página cambia sola al avatar WEB (best.html, que habla siempre). Reintenta
+  // y vuelve al MetaHuman en cuanto el host esté online.
+  (function(){
+    var HOST='https://macbook-pro-16.tail48b61c.ts.net/';
+    var MH_SRC='https://macbook-pro-16.tail48b61c.ts.net/?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true&MatchViewportRes=true';
+    var WEB_SRC='best.html?kiosk=1';
+    var fr=document.getElementById('mh'), ask=document.querySelector('.ask'), bar=document.querySelector('.stage-bar'), foot=document.querySelector('.stage-foot');
+    var mode=null; // 'mh' | 'web'
+    function reach(){ return new Promise(function(res){
+      var ctl=new AbortController(), t=setTimeout(function(){ctl.abort();},6000);
+      fetch(HOST,{mode:'no-cors',cache:'no-store',signal:ctl.signal})
+        .then(function(){clearTimeout(t);res(true);}).catch(function(){clearTimeout(t);res(false);});
+    }); }
+    function toWeb(){ if(mode==='web')return; mode='web';
+      fr.src=WEB_SRC;
+      if(ask) ask.style.display='none';
+      if(bar) bar.innerHTML='<span style="color:#ffb454;font-weight:700">● MODO WEB</span> · host de render offline';
+      if(foot) foot.innerHTML='El MetaHuman en vivo necesita el host de render encendido. Mientras, ves el avatar web (también habla).';
+    }
+    function toMH(){ if(mode==='mh')return; mode='mh';
+      fr.src=MH_SRC;
+      if(ask) ask.style.display='';
+      if(bar) bar.innerHTML='<span class="live"><span class="dot"></span>EN VIVO</span> · MetaHuman · Pixel Streaming';
+    }
+    async function tick(){ (await reach()) ? toMH() : toWeb(); }
+    tick(); setInterval(tick, 30000);
+  })();
+  </script>
 </body>
 </html>
