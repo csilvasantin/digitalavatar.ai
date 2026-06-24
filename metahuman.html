@@ -86,18 +86,19 @@
   <script>
   (function(){
     var API='https://omnipublicity-api.csilvasantin.workers.dev', ROOM='xtanco';
+    var history=[];   // memoria de conversación (turnos previos) para preguntas de seguimiento
     var q=document.getElementById('q'), send=document.getElementById('send'), mic=document.getElementById('mic'), ans=document.getElementById('ans');
     function setAns(t,show){ ans.textContent=t; ans.classList.toggle('show',!!show); }
     async function ask(){
       var text=(q.value||'').trim(); if(!text) return;
       send.disabled=true; setAns('· respondiendo…',true); q.value='';
       try{
-        // Streaming de baja latencia: el worker llama a Grok en stream y encola las
-        // frases según se generan; el avatar empieza a hablar la 1ª en ~1s.
+        // Streaming de baja latencia + memoria de conversación (preguntas de seguimiento).
         var r=await fetch(API+'/metahuman/ask-stream',{method:'POST',headers:{'content-type':'application/json'},
-          body:JSON.stringify({question:text, room:ROOM, loc:''})});
+          body:JSON.stringify({question:text, room:ROOM, loc:'', history:history})});
         var d=await r.json(); var a=(d.answer||'').trim();
         setAns(a||'(sin respuesta)',true);   // subtítulo completo al terminar (la voz ya iba por delante)
+        if(a){ history.push({role:'user',content:text},{role:'assistant',content:a}); if(history.length>8) history=history.slice(-8); }
       }catch(e){ setAns('⚠️ error de conexión',true); }
       send.disabled=false;
     }
