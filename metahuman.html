@@ -90,16 +90,14 @@
     function setAns(t,show){ ans.textContent=t; ans.classList.toggle('show',!!show); }
     async function ask(){
       var text=(q.value||'').trim(); if(!text) return;
-      send.disabled=true; setAns('· pensando…',true);
+      send.disabled=true; setAns('· respondiendo…',true); q.value='';
       try{
-        var r=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'content-type':'application/json'},
-          body:JSON.stringify({question:text, voice:false, timestamps:false, loc:''})});
-        var d=await r.json(); var a=(d.answer||d.text||'').trim();
-        if(!a){ setAns('(sin respuesta)',true); send.disabled=false; return; }
-        setAns(a,true); q.value='';
-        // la cara lo dice (canal say → el bridge lo locuta con lip-sync)
-        await fetch(API+'/metahuman/say',{method:'POST',headers:{'content-type':'application/json'},
-          body:JSON.stringify({room:ROOM, text:a})});
+        // Streaming de baja latencia: el worker llama a Grok en stream y encola las
+        // frases según se generan; el avatar empieza a hablar la 1ª en ~1s.
+        var r=await fetch(API+'/metahuman/ask-stream',{method:'POST',headers:{'content-type':'application/json'},
+          body:JSON.stringify({question:text, room:ROOM, loc:''})});
+        var d=await r.json(); var a=(d.answer||'').trim();
+        setAns(a||'(sin respuesta)',true);   // subtítulo completo al terminar (la voz ya iba por delante)
       }catch(e){ setAns('⚠️ error de conexión',true); }
       send.disabled=false;
     }
