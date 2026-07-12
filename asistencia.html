@@ -103,7 +103,7 @@
 </div>
 
 <script>
-const WORKER = "https://yokup-rtc.csilvasantin.workers.dev";
+const WORKER = "https://rtc.digitalavatar.ai";
 const params = new URLSearchParams(location.search);
 let room = params.get("room");
 if(!room){ room = "da-" + Math.random().toString(36).slice(2,8); history.replaceState(null,"","?room="+room); }
