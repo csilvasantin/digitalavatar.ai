@@ -375,6 +375,14 @@ $('btnSend').onclick=()=>ask(); $('btnMic').onclick=toggleListen; $('q').addEven
 $('langToggle').onclick=()=>{ const nl=(LANG==='es')?'en':'es'; applyLang(nl); if(audioEl){try{audioEl.pause();}catch(e){}} stopSpeaking();
   speakFixed(nl==='es'?'Vale, seguimos en español. ¿En qué te ayudo?':'Okay, switching to English. How can I help you?'); };
 initThree(); animate(); loadAvatar(MODEL_URL); initSpeech(); applyLang(LANG); loadLocations();
+// Escucha por DEFECTO en el MUPI (Carlos, 16-jul-2026): en modo kiosko el avatar
+// arranca escuchando y se re-arma solo (manos libres desde el segundo cero).
+// Desactivable con ?listen=0. Si el permiso de micro llega tarde, reintenta.
+if (KIOSK && params.get('listen') !== '0') {
+  const autoListen = () => { try { if (recog && !listening && !speaking && !thinking) startListen(); } catch (e) {} };
+  setTimeout(autoListen, 1200);
+  setInterval(autoListen, 4000);
+}
 // Kiosko: reinicia el reloj de atracción ante cualquier interacción (táctil/teclado/voz)
 if(KIOSK){ ['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev, resetAttract, {passive:true})); $('khint').classList.add('show'); resetAttract();
   // TOCAR la cara = hablarle. En el tótem el chat está oculto, así que el gesto
