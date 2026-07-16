@@ -50,7 +50,7 @@
 
   <div class="stage">
     <div class="stage-bar"><span class="live"><span class="dot"></span>EN VIVO</span> · MetaHuman · Pixel Streaming</div>
-    <iframe id="mh" src="https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true&MatchViewportRes=true"
+    <iframe id="mh" src="https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true"
             allow="autoplay; fullscreen; microphone; camera" allowfullscreen
             referrerpolicy="no-referrer"></iframe>
     <div class="stage-foot">Si ves una pantalla en negro: pulsa play en el reproductor. El host de render debe estar encendido. <a href="https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true" target="_blank" rel="noopener">Abrir a pantalla completa ↗</a></div>
@@ -95,7 +95,7 @@
       try{
         // Streaming de baja latencia + memoria de conversación (preguntas de seguimiento).
         var r=await fetch(API+'/metahuman/ask-stream',{method:'POST',headers:{'content-type':'application/json'},
-          body:JSON.stringify({question:text, room:ROOM, loc:'', history:history})});
+          body:JSON.stringify({question:text, room:ROOM, loc:'', persona:'neo', history:history})});
         var d=await r.json(); var a=(d.answer||'').trim();
         setAns(a||'(sin respuesta)',true);   // subtítulo completo al terminar (la voz ya iba por delante)
         if(a){ history.push({role:'user',content:text},{role:'assistant',content:a}); if(history.length>8) history=history.slice(-8); }
@@ -134,7 +134,7 @@
   // y vuelve al MetaHuman en cuanto el host esté online.
   (function(){
     var HOST='https://macbook-pro-16.tail48b61c.ts.net:8443/';
-    var MH_SRC='https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true&MatchViewportRes=true';
+    var MH_SRC='https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true';
     var WEB_SRC='best.html?kiosk=1';
     var fr=document.getElementById('mh'), ask=document.querySelector('.ask'), bar=document.querySelector('.stage-bar'), foot=document.querySelector('.stage-foot');
     var mode=null; // 'mh' | 'web'
