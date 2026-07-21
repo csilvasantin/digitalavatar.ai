@@ -23,6 +23,7 @@
   .step a{ color:var(--accent); text-decoration:none; font-weight:600; font-size:.8rem }
   .cta{ display:inline-block; margin-top:4px; padding:11px 20px; border-radius:12px; border:1px solid #2a7fa6; background:linear-gradient(180deg,#0e3550,#0a2335); color:var(--accent); font-weight:700; text-decoration:none }
   .note{ color:var(--muted); font-size:.78rem; max-width:620px; text-align:center }
+  .alt{ color:var(--muted); font-size:.8rem; text-align:center } .alt a{ color:var(--accent); text-decoration:none; font-weight:600 }
 </style>
 </head>
 <body>
@@ -45,35 +46,56 @@
   var cur=(f==='good.html')?'2d':(f==='better.html')?'3d':(f==='best.html')?'foto':(f==='vectorial.html')?'vectorial':'metahuman';
   document.querySelectorAll('#evo a').forEach(function(a){if(a.getAttribute('data-evo')===cur)a.classList.add('on');});})();</script>
 
-  <h1><span class="pulse"></span><b>Metahuman</b> · Unreal Engine 5</h1>
-  <p class="sub">Humano digital <b>MetaHuman</b> renderizado en <b>Unreal Engine 5</b> y emitido en tiempo real por <b>Pixel Streaming</b>. El stream de abajo es en vivo desde el host de render — pulsa <b>play</b> para conectar.</p>
+  <h1><span class="pulse"></span>Habla con <b>Neo</b> · MetaHuman en vivo</h1>
+  <p class="sub">Un <b>humano digital MetaHuman</b> renderizado en <b>Unreal Engine 5</b> y emitido en tiempo real por <b>Pixel Streaming</b>. No es un vídeo: <b>pregúntale y te responde con voz y lip-sync</b> al momento.</p>
 
-  <div class="stage">
-    <div class="stage-bar"><span class="live"><span class="dot"></span>EN VIVO</span> · MetaHuman · Pixel Streaming</div>
-    <iframe id="mh" src="https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true"
-            allow="autoplay; fullscreen; microphone; camera" allowfullscreen
-            referrerpolicy="no-referrer"></iframe>
-    <div class="stage-foot">Si ves una pantalla en negro: pulsa play en el reproductor. El host de render debe estar encendido. <a href="https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true" target="_blank" rel="noopener">Abrir a pantalla completa ↗</a></div>
+  <div class="studio">
+    <div class="stage">
+      <div class="stage-bar"><span class="live"><span class="dot"></span>EN VIVO</span> · MetaHuman · Pixel Streaming</div>
+      <iframe id="mh" src="https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true"
+              allow="autoplay; fullscreen; microphone; camera" allowfullscreen
+              referrerpolicy="no-referrer"></iframe>
+      <div class="stage-foot">Si ves negro: pulsa <b>play</b> en el reproductor (el host de render debe estar encendido). <a href="https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true" target="_blank" rel="noopener">Pantalla completa ↗</a></div>
+    </div>
+
+    <div class="convo">
+      <div class="convo-head">
+        <h2>Conversa con <b>Neo</b></h2>
+        <p>Escribe o pulsa el micro. Recuerda el hilo de la charla.</p>
+      </div>
+      <div class="ask">
+        <div class="askrow">
+          <input id="q" type="text" placeholder="Pregúntale algo a Neo…" autocomplete="off">
+          <button id="mic" title="Hablar">🎤</button>
+          <button id="send">Preguntar</button>
+        </div>
+        <div id="ans" class="ans"></div>
+      </div>
+      <div class="chips" aria-label="Sugerencias">
+        <button class="chip">¿Quién eres?</button>
+        <button class="chip">¿Qué es un MetaHuman?</button>
+        <button class="chip">Cuéntame algo de Matrix</button>
+      </div>
+    </div>
   </div>
   <style>
-    .stage{ width:100%; max-width:430px; background:var(--panel); border:1px solid var(--line); border-radius:18px; overflow:hidden; backdrop-filter:blur(10px); box-shadow:0 18px 50px rgba(0,0,0,.5) }
+    .studio{ display:flex; flex-wrap:wrap; gap:22px; justify-content:center; align-items:flex-start; width:100%; max-width:900px }
+    .stage{ flex:0 1 380px; max-width:100%; background:var(--panel); border:1px solid var(--line); border-radius:18px; overflow:hidden; backdrop-filter:blur(10px); box-shadow:0 18px 50px rgba(0,0,0,.5) }
     .stage-bar{ display:flex; align-items:center; gap:8px; padding:10px 14px; font-size:.74rem; color:var(--muted); border-bottom:1px solid var(--line) }
     .live{ display:inline-flex; align-items:center; gap:6px; color:var(--ok); font-weight:700; letter-spacing:.04em }
     .live .dot{ width:8px; height:8px; border-radius:50%; background:var(--ok); box-shadow:0 0 10px var(--ok); animation:p 1.3s infinite }
     #mh{ display:block; width:100%; aspect-ratio:9/16; border:0; background:#000 }
     .stage-foot{ padding:10px 14px; font-size:.72rem; color:var(--muted); line-height:1.5 } .stage-foot a{ color:var(--accent); text-decoration:none; font-weight:600 }
+    .convo{ flex:1 1 320px; min-width:280px; max-width:440px; display:flex; flex-direction:column; gap:13px }
+    .convo-head h2{ margin:0 0 3px; font-size:1.08rem } .convo-head h2 b{ color:var(--accent) }
+    .convo-head p{ margin:0; color:var(--muted); font-size:.82rem; line-height:1.5 }
+    .chips{ display:flex; flex-wrap:wrap; gap:7px }
+    .chip{ background:var(--panel); border:1px solid var(--line); color:var(--muted); border-radius:999px; padding:7px 13px; font-size:.78rem; cursor:pointer; transition:border-color .15s, color .15s }
+    .chip:hover{ border-color:var(--accent); color:var(--txt) }
+    @media(max-width:820px){ .studio{ flex-direction:column; align-items:center; gap:16px } .stage,.convo{ width:100%; max-width:430px } }
   </style>
-
-  <div class="ask">
-    <div class="askrow">
-      <input id="q" type="text" placeholder="Pregúntale algo al avatar…" autocomplete="off">
-      <button id="mic" title="Hablar">🎤</button>
-      <button id="send">Preguntar</button>
-    </div>
-    <div id="ans" class="ans"></div>
-  </div>
   <style>
-    .ask{ width:100%; max-width:430px; display:flex; flex-direction:column; gap:8px }
+    .ask{ width:100%; display:flex; flex-direction:column; gap:8px }
     .askrow{ display:flex; gap:7px }
     .ask input{ flex:1; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 14px; color:var(--txt); font-size:.92rem; outline:none }
     .ask input:focus{ border-color:var(--accent) }
@@ -114,6 +136,10 @@
       rec.onend=function(){ mic.classList.remove('rec'); rec=null; };
       rec.start();
     }; } else { mic.style.display='none'; }
+    // chips de sugerencia: un clic rellena y pregunta
+    document.querySelectorAll('.chip').forEach(function(c){ c.onclick=function(){ q.value=c.textContent; ask(); q.scrollIntoView({behavior:'smooth',block:'center'}); }; });
+    // CTA inferior: enfoca la caja de preguntas en vez de mandar a otro avatar
+    var cta=document.getElementById('ctaAsk'); if(cta) cta.onclick=function(e){ e.preventDefault(); q.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(function(){q.focus();},350); };
   })();
   </script>
 
@@ -121,12 +147,13 @@
     <div class="step done"><div class="tag">✓ Vectorial</div><h3>2D vectorial</h3><p>Cara de canvas con lip-sync. El origen.</p><a href="vectorial.html">Ver →</a></div>
     <div class="step done"><div class="tag">✓ 2D</div><h3>Vídeo</h3><p>Vídeos madre/padre + lip-sync 2D.</p><a href="good.html">Ver →</a></div>
     <div class="step done"><div class="tag">✓ 3D</div><h3>Malla 3D</h3><p>Cara 3D con 52 blendshapes (facecap).</p><a href="better.html">Ver →</a></div>
-    <div class="step now"><div class="tag">● Metahuman (en vivo)</div><h3>MetaHuman Unreal</h3><p>Piel/ojos foto-reales por Pixel Streaming. Lip-sync en afinado.</p></div>
-    <div class="step done"><div class="tag">✓ Fotorealístico</div><h3>Humano rigged</h3><p>Avatar Ready Player Me hablando en tiempo real.</p><a href="best.html">Ver →</a></div>
+    <div class="step now"><div class="tag">● Metahuman (en vivo)</div><h3>MetaHuman Unreal</h3><p>Piel y ojos foto-reales por Pixel Streaming. Habla con voz y lip-sync en tiempo real (persona «Neo»).</p></div>
+    <div class="step done"><div class="tag">✓ Fotorealístico</div><h3>Humano rigged</h3><p>Avatar web Ready Player Me: habla siempre, sin host de render.</p><a href="best.html">Ver →</a></div>
   </div>
 
   <p class="note">Cada versión se conserva como histórico (URL propia + etiquetas git): la evolución nunca se pierde.</p>
-  <a class="cta" href="best.html">▶ Probar el avatar que sí habla (Fotorealístico)</a>
+  <a class="cta" href="#" id="ctaAsk">▶ Pregúntale a Neo</a>
+  <span class="alt">¿El host de render está apagado? <a href="best.html">Prueba el avatar web →</a></span>
 
   <script>
   // Fallback robusto: si el host de render (Pixel Streaming) no responde, la
