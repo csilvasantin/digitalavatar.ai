@@ -27,8 +27,8 @@
 </head>
 <body>
   <nav id="evo" aria-label="Evolución del avatar">
-    <a data-evo="2d" href="good.html">Vectorial</a>
-    <a data-evo="vectorial" href="vectorial.html">2D</a>
+    <a data-evo="vectorial" href="vectorial.html">Vectorial</a>
+    <a data-evo="2d" href="good.html">2D</a>
     <a data-evo="3d" href="better.html">3D</a>
     <a data-evo="foto" href="best.html">Realista</a>
     <a data-evo="metahuman" href="metahuman.html">Metahuman</a>
@@ -133,15 +133,20 @@
   // página cambia sola al avatar WEB (best.html, que habla siempre). Reintenta
   // y vuelve al MetaHuman en cuanto el host esté online.
   (function(){
-    var HOST='https://macbook-pro-16.tail48b61c.ts.net:8443/';
-    var MH_SRC='https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true';
+    var BASE='https://macbook-pro-16.tail48b61c.ts.net:8443/';
+    var PROBE=BASE+'images/favicon-32x32.png'; // sondeo por <img>: carga cross-origin SIN bloqueo CORS (fiable en incógnito/Safari/3os)
+    var MH_SRC=BASE+'uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true';
     var WEB_SRC='best.html?kiosk=1';
     var fr=document.getElementById('mh'), ask=document.querySelector('.ask'), bar=document.querySelector('.stage-bar'), foot=document.querySelector('.stage-foot');
-    var mode=null; // 'mh' | 'web'
+    var mode=null, fails=0; // mode: 'mh' | 'web'
+    // El antiguo fetch{mode:'no-cors'} daba FALSO-negativo (los navegadores capan peticiones de 3os) y tiraba a
+    // web con el host VIVO. Un <img> cross-origin no sufre ese bloqueo → sondeo fiable.
     function reach(){ return new Promise(function(res){
-      var ctl=new AbortController(), t=setTimeout(function(){ctl.abort();},6000);
-      fetch(HOST,{mode:'no-cors',cache:'no-store',signal:ctl.signal})
-        .then(function(){clearTimeout(t);res(true);}).catch(function(){clearTimeout(t);res(false);});
+      var done=false, img=new Image();
+      var t=setTimeout(function(){ if(!done){done=true; res(false);} }, 9000);
+      img.onload =function(){ if(!done){done=true; clearTimeout(t); res(true);} };
+      img.onerror=function(){ if(!done){done=true; clearTimeout(t); res(false);} };
+      img.src=PROBE+'?_='+Date.now();
     }); }
     function toWeb(){ if(mode==='web')return; mode='web';
       fr.src=WEB_SRC;
@@ -154,8 +159,14 @@
       if(ask) ask.style.display='';
       if(bar) bar.innerHTML='<span class="live"><span class="dot"></span>EN VIVO</span> · MetaHuman · Pixel Streaming';
     }
-    async function tick(){ (await reach()) ? toMH() : toWeb(); }
-    tick(); setInterval(tick, 30000);
+    // Arranca OPTIMISTA en MetaHuman (el iframe ya trae MH_SRC) y solo cae a web tras 2 fallos seguidos → sin
+    // parpadeo a web cuando el host está vivo. Recupera a MetaHuman en cuanto un sondeo vuelve a responder.
+    async function tick(){
+      if(await reach()){ fails=0; toMH(); }
+      else if(++fails>=2){ toWeb(); }
+      setTimeout(tick, mode==='web' ? 30000 : (fails===1 ? 4000 : 15000));
+    }
+    tick();
   })();
   </script>
 </body>
