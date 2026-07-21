@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Neo · MetaHuman — embed</title>
+<!--
+  digitalavatar.ai · EMBED del MetaHuman (Neo/Keanu, Pixel Streaming).
+  Página autocontenida pensada para ir DENTRO de un <iframe> en cualquier web.
+  Patrón "facade": arranca con un póster ligero y solo carga el stream al pulsar
+  (no machaca el host de render en cada carga de la web anfitriona).
+  Parámetros de URL:
+    ?ask=1        muestra la caja de preguntas (habla con Neo). Por defecto: solo ver.
+    ?autostart=1  salta el póster y carga el stream de una.
+  El sondeo de vida va por <img> cross-origin (fiable) y cae al avatar web si el host está apagado.
+-->
+<style>
+  :root{ --bg:#05080f; --panel:rgba(10,19,30,.72); --line:#1b3346; --txt:#eaf6ff; --muted:#86a6bd; --accent:#5fd0ff; --ok:#6ce6a2; }
+  *{box-sizing:border-box}
+  html,body{ margin:0; height:100%; background:transparent; color:var(--txt); font-family:ui-sans-serif,-apple-system,Segoe UI,Roboto,sans-serif }
+  .wrap{ display:flex; flex-direction:column; height:100%; min-height:0; gap:8px }
+  .stage{ position:relative; flex:1 1 auto; min-height:0; background:#000; border:1px solid var(--line); border-radius:16px; overflow:hidden; box-shadow:0 14px 40px rgba(0,0,0,.5) }
+  #mh{ display:block; width:100%; height:100%; border:0; background:#000 }
+  .bar{ position:absolute; top:0; left:0; right:0; z-index:3; display:flex; align-items:center; gap:8px; padding:8px 12px;
+    font-size:.72rem; color:var(--muted); background:linear-gradient(180deg, rgba(5,8,15,.82), rgba(5,8,15,0)); pointer-events:none }
+  .live{ display:inline-flex; align-items:center; gap:6px; color:var(--ok); font-weight:700; letter-spacing:.04em }
+  .live .dot{ width:8px; height:8px; border-radius:50%; background:var(--ok); box-shadow:0 0 10px var(--ok); animation:p 1.3s infinite }
+  @keyframes p{ 50%{opacity:.3} }
+  /* Póster (facade) — se sustituye por el stream al pulsar */
+  .facade{ position:absolute; inset:0; z-index:4; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; cursor:pointer;
+    background:radial-gradient(120% 90% at 50% 0%, #11243b 0%, #05080f 65%); text-align:center; padding:20px }
+  .facade .code{ position:absolute; inset:0; opacity:.20; overflow:hidden; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:#2ee6a6; font-size:12px; line-height:1.15; letter-spacing:2px; white-space:pre; pointer-events:none }
+  .facade .play{ width:66px; height:66px; border-radius:50%; border:1px solid #2a7fa6; background:linear-gradient(180deg,#0e3550cc,#0a2335cc); backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center; color:var(--accent); font-size:1.5rem; box-shadow:0 0 30px rgba(95,208,255,.25) }
+  .facade h2{ margin:0; font-size:1.05rem } .facade h2 b{ color:var(--accent) }
+  .facade p{ margin:0; color:var(--muted); font-size:.8rem; max-width:280px; line-height:1.5 }
+  .facade .z{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:12px }
+  /* Caja de preguntas (opcional) */
+  .ask{ flex:0 0 auto; display:none; flex-direction:column; gap:7px }
+  .ask.on{ display:flex }
+  .askrow{ display:flex; gap:6px }
+  .ask input{ flex:1; background:var(--panel); border:1px solid var(--line); border-radius:11px; padding:10px 12px; color:var(--txt); font-size:.9rem; outline:none }
+  .ask input:focus{ border-color:var(--accent) }
+  .ask button{ border:1px solid #2a7fa6; background:linear-gradient(180deg,#0e3550,#0a2335); color:var(--accent); font-weight:700; border-radius:11px; padding:0 13px; font-size:.9rem; cursor:pointer }
+  .ask button:disabled{ opacity:.5; cursor:progress }
+  .ask #mic.rec{ border-color:#ff6b6b; color:#ff6b6b }
+  .ans{ color:var(--muted); font-size:.82rem; line-height:1.45; white-space:pre-wrap }
+  .ans.show{ color:var(--txt); background:var(--panel); border:1px solid var(--line); border-radius:11px; padding:9px 12px }
+  .cred{ position:absolute; bottom:6px; right:10px; z-index:3; font-size:.62rem; color:var(--muted); opacity:.7; text-decoration:none }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="stage">
+      <div class="bar"><span class="live"><span class="dot"></span>EN VIVO</span> · MetaHuman · Pixel Streaming</div>
+      <div class="facade" id="facade">
+        <div class="code" id="code" aria-hidden="true"></div>
+        <div class="z">
+          <div class="play">▶</div>
+          <h2>Habla con <b>Neo</b></h2>
+          <p>Humano digital MetaHuman en Unreal Engine 5, en vivo. Pulsa para conectar.</p>
+        </div>
+      </div>
+      <a class="cred" href="https://digitalavatar.ai/metahuman.html" target="_blank" rel="noopener">digitalavatar.ai ↗</a>
+    </div>
+    <div class="ask" id="ask">
+      <div class="askrow">
+        <input id="q" type="text" placeholder="Pregúntale a Neo…" autocomplete="off">
+        <button id="mic" title="Hablar">🎤</button>
+        <button id="send">Preguntar</button>
+      </div>
+      <div id="ans" class="ans"></div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  var P=new URLSearchParams(location.search);
+  var showAsk = P.get('ask')==='1';
+  var autostart = P.get('autostart')==='1';
+  var BASE='https://macbook-pro-16.tail48b61c.ts.net:8443/';
+  var PROBE=BASE+'images/favicon-32x32.png';                 // <img> cross-origin = sondeo fiable (no fetch no-cors)
+  var MH_SRC=BASE+'uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true';
+  var WEB_SRC='https://digitalavatar.ai/best.html?kiosk=1';   // fallback: avatar web (habla siempre)
+  var stage=document.querySelector('.stage'), facade=document.getElementById('facade'), bar=document.querySelector('.bar');
+  var ask=document.getElementById('ask');
+  if(showAsk) ask.classList.add('on');
+
+  // lluvia Matrix del póster (barata, decorativa)
+  (function(){ var el=document.getElementById('code'); if(!el) return;
+    var cols=26, rows=40, g='01<>/{}[]=+*·#'; var out='';
+    for(var r=0;r<rows;r++){ var line=''; for(var c=0;c<cols;c++){ line+= g[(r*7+c*3)%g.length]+' '; } out+=line+'\n'; }
+    el.textContent=out;
+  })();
+
+  var iframe=null, mode=null, fails=0;
+  function reach(){ return new Promise(function(res){
+    var done=false, img=new Image();
+    var t=setTimeout(function(){ if(!done){done=true; res(false);} }, 9000);
+    img.onload =function(){ if(!done){done=true; clearTimeout(t); res(true);} };
+    img.onerror=function(){ if(!done){done=true; clearTimeout(t); res(false);} };
+    img.src=PROBE+'?_='+Date.now();
+  }); }
+  function ensureIframe(){ if(iframe) return iframe;
+    iframe=document.createElement('iframe'); iframe.id='mh';
+    iframe.allow='autoplay; fullscreen; microphone; camera'; iframe.setAttribute('allowfullscreen','');
+    iframe.referrerPolicy='no-referrer';
+    stage.insertBefore(iframe, bar);   // debajo de la barra
+    return iframe;
+  }
+  function toMH(){ if(mode==='mh')return; mode='mh'; ensureIframe().src=MH_SRC;
+    if(showAsk) ask.classList.add('on');
+    bar.innerHTML='<span class="live"><span class="dot"></span>EN VIVO</span> · MetaHuman · Pixel Streaming';
+  }
+  function toWeb(){ if(mode==='web')return; mode='web'; ensureIframe().src=WEB_SRC;
+    ask.classList.remove('on');
+    bar.innerHTML='<span style="color:#ffb454;font-weight:700">● MODO WEB</span> · host de render offline';
+  }
+  async function tick(){
+    if(await reach()){ fails=0; toMH(); }
+    else if(++fails>=2){ toWeb(); }
+    setTimeout(tick, mode==='web' ? 30000 : (fails===1 ? 4000 : 15000));
+  }
+  function start(){ if(facade){ facade.remove(); } tick(); }
+  if(facade) facade.addEventListener('click', start, {once:true});
+  if(autostart) start();
+
+  // ---- caja de preguntas (misma lógica que metahuman.html) ----
+  var API='https://brain.digitalavatar.ai', ROOM='xtanco', history=[];
+  var q=document.getElementById('q'), send=document.getElementById('send'), mic=document.getElementById('mic'), ansEl=document.getElementById('ans');
+  function setAns(t,show){ ansEl.textContent=t; ansEl.classList.toggle('show',!!show); }
+  async function doAsk(){
+    var text=(q.value||'').trim(); if(!text) return;
+    if(!iframe) start();                    // preguntar también arranca el stream
+    send.disabled=true; setAns('· respondiendo…',true); q.value='';
+    try{
+      var r=await fetch(API+'/metahuman/ask-stream',{method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify({question:text, room:ROOM, loc:'', persona:'neo', history:history})});
+      var d=await r.json(), a=(d.answer||'').trim();
+      setAns(a||'(sin respuesta)',true);
+      if(a){ history.push({role:'user',content:text},{role:'assistant',content:a}); if(history.length>8) history=history.slice(-8); }
+    }catch(e){ setAns('⚠️ error de conexión',true); }
+    send.disabled=false;
+  }
+  send.onclick=doAsk;
+  q.addEventListener('keydown',function(e){ if(e.key==='Enter') doAsk(); });
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition, rec=null;
+  if(SR){ mic.onclick=function(){
+    if(rec){ rec.stop(); return; }
+    rec=new SR(); rec.lang=(navigator.language||'es').slice(0,2)==='en'?'en-US':'es-ES'; rec.interimResults=true; mic.classList.add('rec');
+    rec.onresult=function(ev){ var t=''; for(var i=0;i<ev.results.length;i++) t+=ev.results[i][0].transcript; q.value=t; if(ev.results[ev.results.length-1].isFinal){ rec.stop(); doAsk(); } };
+    rec.onend=function(){ mic.classList.remove('rec'); rec=null; }; rec.start();
+  }; } else if(mic){ mic.style.display='none'; }
+})();
+</script>
+</body>
+</html>

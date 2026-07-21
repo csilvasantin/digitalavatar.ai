@@ -155,6 +155,38 @@
   <a class="cta" href="#" id="ctaAsk">▶ Pregúntale a Neo</a>
   <span class="alt">¿El host de render está apagado? <a href="best.html">Prueba el avatar web →</a></span>
 
+  <section class="embed-doc" aria-label="Insértalo en tu web">
+    <h2>Insértalo en tu web</h2>
+    <p>Una sola línea y Neo vive en cualquier página. Patrón <i>facade</i> (solo conecta al pulsar) y caída automática al avatar web si el host de render está apagado:</p>
+    <pre id="embSnippet"><code>&lt;script src="https://digitalavatar.ai/mh-embed.js" data-ask="1" data-width="380"&gt;&lt;/script&gt;</code></pre>
+    <div class="embed-actions">
+      <button id="copyEmb" type="button">Copiar código</button>
+      <a class="embed-see" href="embed-mh.html?ask=1" target="_blank" rel="noopener">Ver el embed ↗</a>
+    </div>
+    <p class="embed-note">Atributos opcionales: <code>data-ask="1"</code> caja de preguntas · <code>data-ratio</code> 9x16 · 16x9 · 1x1 · <code>data-width</code> px · <code>data-height</code> px · <code>data-target</code> selector CSS.</p>
+  </section>
+  <style>
+    .embed-doc{ width:100%; max-width:640px; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 20px; backdrop-filter:blur(10px) }
+    .embed-doc h2{ margin:0 0 6px; font-size:1.05rem } .embed-doc>p{ margin:0 0 12px; color:var(--muted); font-size:.85rem; line-height:1.55 }
+    .embed-doc pre{ margin:0; background:#05080f; border:1px solid var(--line); border-radius:10px; padding:12px 14px; overflow-x:auto }
+    .embed-doc code{ font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.8rem; color:#bfe9ff }
+    .embed-actions{ display:flex; gap:10px; align-items:center; margin:12px 0 0 }
+    .embed-actions button{ border:1px solid #2a7fa6; background:linear-gradient(180deg,#0e3550,#0a2335); color:var(--accent); font-weight:700; border-radius:11px; padding:9px 15px; font-size:.85rem; cursor:pointer }
+    .embed-actions button.ok{ border-color:#1f5a3a; color:var(--ok) }
+    .embed-see{ color:var(--accent); text-decoration:none; font-weight:600; font-size:.85rem }
+    .embed-note{ margin:12px 0 0; color:var(--muted); font-size:.74rem; line-height:1.6 } .embed-note code{ font-size:.72rem }
+  </style>
+  <script>
+    (function(){ var b=document.getElementById('copyEmb'), snip=document.getElementById('embSnippet');
+      if(!b||!snip) return;
+      b.onclick=function(){ var t=snip.textContent;
+        (navigator.clipboard&&navigator.clipboard.writeText ? navigator.clipboard.writeText(t) : Promise.reject())
+          .then(function(){ b.textContent='¡Copiado!'; b.classList.add('ok'); setTimeout(function(){ b.textContent='Copiar código'; b.classList.remove('ok'); },1600); })
+          .catch(function(){ var r=document.createRange(); r.selectNode(snip); var s=getSelection(); s.removeAllRanges(); s.addRange(r); try{document.execCommand('copy');}catch(e){} s.removeAllRanges(); b.textContent='¡Copiado!'; setTimeout(function(){ b.textContent='Copiar código'; },1600); });
+      };
+    })();
+  </script>
+
   <script>
   // Fallback robusto: si el host de render (Pixel Streaming) no responde, la
   // página cambia sola al avatar WEB (best.html, que habla siempre). Reintenta
