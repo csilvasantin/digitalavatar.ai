@@ -16,9 +16,16 @@
   digitalavatar.ai llegan solas a quien lo embebe. Cae al avatar web si el host está apagado.
 */
 (function(){
+  // currentScript funciona con inserción por el parser; es null si el <script> se
+  // añade dinámicamente (p.ej. una demo que reconfigura el embed). En ese caso
+  // buscamos NUESTRO propio script aún sin procesar (marcado con data-mhe-done).
   var s = document.currentScript;
-  if(!s){ var all=document.getElementsByTagName('script'); s=all[all.length-1]; }
-  function attr(n,d){ var v=s.getAttribute(n); return (v==null||v==='')?d:v; }
+  if(!s){
+    var cands=[].slice.call(document.querySelectorAll('script[src*="mh-embed.js"]:not([data-mhe-done])'));
+    s = cands[cands.length-1] || document.getElementsByTagName('script')[document.getElementsByTagName('script').length-1];
+  }
+  if(s && s.setAttribute) s.setAttribute('data-mhe-done','1');
+  function attr(n,d){ var v=s?s.getAttribute(n):null; return (v==null||v==='')?d:v; }
 
   var ask       = attr('data-ask','0')==='1';
   var autostart = attr('data-autostart','0')==='1';
