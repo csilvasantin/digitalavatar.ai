@@ -78,6 +78,25 @@
   var P=new URLSearchParams(location.search);
   var showAsk = P.get('ask')==='1';
   var autostart = P.get('autostart')==='1';
+  // Idioma: ?lang=es|en lo fuerza la web anfitriona; si no, el del visitante.
+  var LANG = (P.get('lang')||'').slice(0,2).toLowerCase();
+  if(LANG!=='es' && LANG!=='en') LANG = ((navigator.language||'es').slice(0,2)==='es') ? 'es' : 'en';
+  var EN = LANG==='en';
+  var T = {
+    live:      EN ? 'LIVE'          : 'EN VIVO',
+    modeWeb:   EN ? '● WEB MODE'    : '● MODO WEB',
+    offline:   EN ? 'render host offline' : 'host de render offline',
+    facadeH2:  EN ? 'Talk to <b>Neo</b>' : 'Habla con <b>Neo</b>',
+    facadeP:   EN ? 'A MetaHuman digital human in Unreal Engine 5, live. Tap to connect.'
+                  : 'Humano digital MetaHuman en Unreal Engine 5, en vivo. Pulsa para conectar.',
+    ph:        EN ? 'Ask Neo…'      : 'Pregúntale a Neo…',
+    micT:      EN ? 'Speak'         : 'Hablar',
+    send:      EN ? 'Ask'           : 'Preguntar',
+    thinking:  EN ? '· thinking…'   : '· respondiendo…',
+    noAnswer:  EN ? '(no answer)'   : '(sin respuesta)',
+    connErr:   EN ? '⚠️ connection error' : '⚠️ error de conexión'
+  };
+  document.documentElement.lang = LANG;
   var BASE='https://macbook-pro-16.tail48b61c.ts.net:8443/';
   var PROBE=BASE+'images/favicon-32x32.png';                 // <img> cross-origin = sondeo fiable (no fetch no-cors)
   var MH_SRC=BASE+'uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true';
@@ -85,6 +104,16 @@
   var stage=document.querySelector('.stage'), facade=document.getElementById('facade'), bar=document.querySelector('.bar');
   var ask=document.getElementById('ask');
   if(showAsk) ask.classList.add('on');
+
+  // Textos estáticos según idioma
+  (function(){
+    var h2=document.querySelector('.facade h2'), fp=document.querySelector('.facade p');
+    if(h2) h2.innerHTML=T.facadeH2;
+    if(fp) fp.textContent=T.facadeP;
+    bar.innerHTML='<span class="live"><span class="dot"></span>'+T.live+'</span> · MetaHuman · Pixel Streaming';
+    var qi=document.getElementById('q'), mi=document.getElementById('mic'), sb=document.getElementById('send');
+    if(qi) qi.placeholder=T.ph; if(mi) mi.title=T.micT; if(sb) sb.textContent=T.send;
+  })();
 
   // lluvia Matrix del póster (barata, decorativa)
   (function(){ var el=document.getElementById('code'); if(!el) return;
@@ -110,11 +139,11 @@
   }
   function toMH(){ if(mode==='mh')return; mode='mh'; ensureIframe().src=MH_SRC;
     if(showAsk) ask.classList.add('on');
-    bar.innerHTML='<span class="live"><span class="dot"></span>EN VIVO</span> · MetaHuman · Pixel Streaming';
+    bar.innerHTML='<span class="live"><span class="dot"></span>'+T.live+'</span> · MetaHuman · Pixel Streaming';
   }
   function toWeb(){ if(mode==='web')return; mode='web'; ensureIframe().src=WEB_SRC;
     ask.classList.remove('on');
-    bar.innerHTML='<span style="color:#ffb454;font-weight:700">● MODO WEB</span> · host de render offline';
+    bar.innerHTML='<span style="color:#ffb454;font-weight:700">'+T.modeWeb+'</span> · '+T.offline;
   }
   async function tick(){
     if(await reach()){ fails=0; toMH(); }
@@ -132,14 +161,17 @@
   async function doAsk(){
     var text=(q.value||'').trim(); if(!text) return;
     if(!iframe) start();                    // preguntar también arranca el stream
-    send.disabled=true; setAns('· respondiendo…',true); q.value='';
+    send.disabled=true; setAns(T.thinking,true); q.value='';
     try{
+      // `lang` + petición explícita en el texto si es EN: Neo contesta en el idioma
+      // del visitante aunque el backend ignore el campo.
+      var qOut = EN ? (text+'\n\n(Please answer in English.)') : text;
       var r=await fetch(API+'/metahuman/ask-stream',{method:'POST',headers:{'content-type':'application/json'},
-        body:JSON.stringify({question:text, room:ROOM, loc:'', persona:'neo', history:history})});
+        body:JSON.stringify({question:qOut, room:ROOM, loc:'', persona:'neo', lang:LANG, history:history})});
       var d=await r.json(), a=(d.answer||'').trim();
-      setAns(a||'(sin respuesta)',true);
+      setAns(a||T.noAnswer,true);
       if(a){ history.push({role:'user',content:text},{role:'assistant',content:a}); if(history.length>8) history=history.slice(-8); }
-    }catch(e){ setAns('⚠️ error de conexión',true); }
+    }catch(e){ setAns(T.connErr,true); }
     send.disabled=false;
   }
   send.onclick=doAsk;
@@ -147,7 +179,7 @@
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition, rec=null;
   if(SR){ mic.onclick=function(){
     if(rec){ rec.stop(); return; }
-    rec=new SR(); rec.lang=(navigator.language||'es').slice(0,2)==='en'?'en-US':'es-ES'; rec.interimResults=true; mic.classList.add('rec');
+    rec=new SR(); rec.lang = EN ? 'en-US' : 'es-ES'; rec.interimResults=true; mic.classList.add('rec');
     rec.onresult=function(ev){ var t=''; for(var i=0;i<ev.results.length;i++) t+=ev.results[i][0].transcript; q.value=t; if(ev.results[ev.results.length-1].isFinal){ rec.stop(); doAsk(); } };
     rec.onend=function(){ mic.classList.remove('rec'); rec=null; }; rec.start();
   }; } else if(mic){ mic.style.display='none'; }

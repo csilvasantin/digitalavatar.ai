@@ -110,26 +110,27 @@
   <div class="top">
     <div class="brand">digital<b>avatar</b>.ai<span class="tag">MetaHuman · Neo</span></div>
     <div class="sp"></div>
-    <a class="home" href="/index.html">← Home</a>
-    <a class="home" href="/metahuman.html">Neo a pantalla completa ↗</a>
+    <a class="home" href="/index.html" data-i18n="navHome">← Home</a>
+    <a class="home" href="/metahuman.html" data-i18n="navFull">Neo a pantalla completa ↗</a>
+    <button class="home" id="langBtn" type="button" title="Cambiar idioma / Switch language" style="cursor:pointer;font-family:inherit;font-weight:800;letter-spacing:.06em">EN</button>
   </div>
 
   <!-- HERO + demo en vivo -->
   <div class="hero">
     <div>
-      <h1>Pon a <b>Neo</b> en tu web<br>con una sola línea.</h1>
-      <p class="lead">Un humano digital <b>MetaHuman</b> renderizado en Unreal Engine 5, en vivo, que
+      <h1 data-i18n="h1">Pon a <b>Neo</b> en tu web<br>con una sola línea.</h1>
+      <p class="lead" data-i18n="lead">Un humano digital <b>MetaHuman</b> renderizado en Unreal Engine 5, en vivo, que
         responde a tus visitantes por texto o voz. Sin SDK, sin cuenta, sin build. Pegas un
         <code>&lt;script&gt;</code> y listo.</p>
       <div class="badges">
-        <span class="badge"><b>●</b> Stream en vivo compartido</span>
-        <span class="badge">Responsive</span>
-        <span class="badge">Carga diferida (facade)</span>
-        <span class="badge">Fallback a avatar web</span>
+        <span class="badge" data-i18n="b1"><b>●</b> Stream en vivo compartido</span>
+        <span class="badge" data-i18n="b2">Responsive</span>
+        <span class="badge" data-i18n="b3">Carga diferida (facade)</span>
+        <span class="badge" data-i18n="b4">Fallback a avatar web</span>
       </div>
       <div class="cta">
-        <a class="btn" href="#snippet">Copiar el snippet ↓</a>
-        <a class="btn ghost" href="#variantes">Ver variantes</a>
+        <a class="btn" href="#snippet" data-i18n="cta1">Copiar el snippet ↓</a>
+        <a class="btn ghost" href="#variantes" data-i18n="cta2">Ver variantes</a>
       </div>
     </div>
     <div class="demoCard">
@@ -139,30 +140,38 @@
 
   <!-- VARIANTES -->
   <section id="variantes">
-    <h2><span class="n">1</span>Elige la variante</h2>
-    <p class="sub">Cambia las opciones y el snippet + la demo de arriba se actualizan solos.</p>
+    <h2><span class="n">1</span><span data-i18n="s1">Elige la variante</span></h2>
+    <p class="sub" data-i18n="s1sub">Cambia las opciones y el snippet + la demo de arriba se actualizan solos.</p>
     <div class="controls">
       <div class="ctl">
-        <span class="lbl">Orientación</span>
+        <span class="lbl" data-i18n="lOrient">Orientación</span>
         <div class="seg" data-group="ratio">
-          <button data-val="9x16" class="on">Retrato 9:16</button>
-          <button data-val="16x9">Horizontal 16:9</button>
-          <button data-val="1x1">Cuadrado 1:1</button>
+          <button data-val="9x16" class="on" data-i18n="oPort">Retrato 9:16</button>
+          <button data-val="16x9" data-i18n="oLand">Horizontal 16:9</button>
+          <button data-val="1x1" data-i18n="oSq">Cuadrado 1:1</button>
         </div>
       </div>
       <div class="ctl">
-        <span class="lbl">Preguntas</span>
+        <span class="lbl" data-i18n="lAsk">Preguntas</span>
         <div class="seg" data-group="ask">
-          <button data-val="1" class="on">Con preguntas</button>
-          <button data-val="0">Solo ver</button>
+          <button data-val="1" class="on" data-i18n="oAskOn">Con preguntas</button>
+          <button data-val="0" data-i18n="oAskOff">Solo ver</button>
         </div>
       </div>
       <div class="ctl">
-        <span class="lbl">Ancho máx.</span>
+        <span class="lbl" data-i18n="lWidth">Ancho máx.</span>
         <div class="seg" data-group="width">
           <button data-val="320">320</button>
           <button data-val="360" class="on">360</button>
           <button data-val="480">480</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <span class="lbl" data-i18n="lLang">Idioma de Neo</span>
+        <div class="seg" data-group="lang">
+          <button data-val="" class="on" data-i18n="oLangAuto">Auto</button>
+          <button data-val="es">ES</button>
+          <button data-val="en">EN</button>
         </div>
       </div>
     </div>
@@ -170,8 +179,8 @@
 
   <!-- SNIPPET -->
   <section id="snippet">
-    <h2><span class="n">2</span>Copia y pega</h2>
-    <p class="sub">En el <code>&lt;body&gt;</code> de tu web, donde quieras que aparezca Neo.</p>
+    <h2><span class="n">2</span><span data-i18n="s2">Copia y pega</span></h2>
+    <p class="sub" data-i18n="s2sub">En el <code>&lt;body&gt;</code> de tu web, donde quieras que aparezca Neo.</p>
     <div class="snipWrap">
       <div class="snipBar">
         <span class="dot3"><i></i><i></i><i></i></span>
@@ -183,29 +192,30 @@
     </div>
 
     <table class="attrs">
-      <thead><tr><th>Atributo</th><th>Qué hace</th><th>Valores</th></tr></thead>
+      <thead><tr><th data-i18n="thA">Atributo</th><th data-i18n="thB">Qué hace</th><th data-i18n="thC">Valores</th></tr></thead>
       <tbody>
-        <tr><td><code>data-ask</code></td><td>Muestra la caja de preguntas (hablar con Neo).</td><td><span class="def">0 (def.) · 1</span></td></tr>
-        <tr><td><code>data-ratio</code></td><td>Proporción del cuadro.</td><td><span class="def">9x16 (def.) · 16x9 · 1x1</span></td></tr>
-        <tr><td><code>data-width</code></td><td>Ancho máximo en px (responsive por debajo).</td><td><span class="def">360 (def.)</span></td></tr>
-        <tr><td><code>data-height</code></td><td>Alto fijo en px. Prioritario sobre data-ratio.</td><td><span class="def">— (opcional)</span></td></tr>
-        <tr><td><code>data-target</code></td><td>Selector CSS donde montar el embed.</td><td><span class="def">donde está el &lt;script&gt;</span></td></tr>
-        <tr><td><code>data-autostart</code></td><td>Salta el póster y conecta al cargar. ⚠ ocupa el host en cada visita.</td><td><span class="def">0 (def.) · 1</span></td></tr>
+        <tr><td><code>data-ask</code></td><td data-i18n="aAsk">Muestra la caja de preguntas (hablar con Neo).</td><td><span class="def">0 (def.) · 1</span></td></tr>
+        <tr><td><code>data-ratio</code></td><td data-i18n="aRatio">Proporción del cuadro.</td><td><span class="def">9x16 (def.) · 16x9 · 1x1</span></td></tr>
+        <tr><td><code>data-width</code></td><td data-i18n="aWidth">Ancho máximo en px (responsive por debajo).</td><td><span class="def">360 (def.)</span></td></tr>
+        <tr><td><code>data-height</code></td><td data-i18n="aHeight">Alto fijo en px. Prioritario sobre data-ratio.</td><td><span class="def">— (opcional)</span></td></tr>
+        <tr><td><code>data-lang</code></td><td data-i18n="aLang">Idioma del embed y de las respuestas de Neo.</td><td><span class="def">es · en · <span data-i18n="autoDef">auto (def.)</span></span></td></tr>
+        <tr><td><code>data-target</code></td><td data-i18n="aTarget">Selector CSS donde montar el embed.</td><td><span class="def">donde está el &lt;script&gt;</span></td></tr>
+        <tr><td><code>data-autostart</code></td><td data-i18n="aAuto">Salta el póster y conecta al cargar. ⚠ ocupa el host en cada visita.</td><td><span class="def">0 (def.) · 1</span></td></tr>
       </tbody>
     </table>
   </section>
 
   <!-- PITCH -->
   <section>
-    <h2><span class="n">3</span>Por qué engancha</h2>
-    <p class="sub">Lo que un cliente saca al pegar esa línea.</p>
+    <h2><span class="n">3</span><span data-i18n="s3">Por qué engancha</span></h2>
+    <p class="sub" data-i18n="s3sub">Lo que un cliente saca al pegar esa línea.</p>
     <div class="grid3">
-      <div class="card"><div class="ic">⚡</div><h3>Cero fricción</h3><p>Una etiqueta <code>&lt;script&gt;</code>. Sin SDK, sin claves, sin build ni backend en tu lado.</p></div>
-      <div class="card"><div class="ic">🎭</div><h3>Presencia real</h3><p>No es un vídeo ni un chatbot: es un MetaHuman en vivo que te mira y te contesta.</p></div>
-      <div class="card"><div class="ic">🔄</div><h3>Mejora sola</h3><p>El render vive en digitalavatar.ai. Cada mejora llega a todos los embeds sin tocar nada.</p></div>
-      <div class="card"><div class="ic">📱</div><h3>Responsive</h3><p>Retrato, horizontal o cuadrado. Se adapta a la columna donde lo pongas.</p></div>
-      <div class="card"><div class="ic">🛟</div><h3>Nunca cae</h3><p>Si el host de render está apagado, cae solo al avatar web — que siempre habla.</p></div>
-      <div class="card"><div class="ic">🗣️</div><h3>Voz y texto</h3><p>Tus visitantes escriben o hablan por micro. Neo responde con la voz de la casa.</p></div>
+      <div class="card"><div class="ic">⚡</div><h3 data-i18n="c1h">Cero fricción</h3><p data-i18n="c1p">Una etiqueta <code>&lt;script&gt;</code>. Sin SDK, sin claves, sin build ni backend en tu lado.</p></div>
+      <div class="card"><div class="ic">🎭</div><h3 data-i18n="c2h">Presencia real</h3><p data-i18n="c2p">No es un vídeo ni un chatbot: es un MetaHuman en vivo que te mira y te contesta.</p></div>
+      <div class="card"><div class="ic">🔄</div><h3 data-i18n="c3h">Mejora sola</h3><p data-i18n="c3p">El render vive en digitalavatar.ai. Cada mejora llega a todos los embeds sin tocar nada.</p></div>
+      <div class="card"><div class="ic">📱</div><h3 data-i18n="c4h">Responsive</h3><p data-i18n="c4p">Retrato, horizontal o cuadrado. Se adapta a la columna donde lo pongas.</p></div>
+      <div class="card"><div class="ic">🛟</div><h3 data-i18n="c5h">Nunca cae</h3><p data-i18n="c5p">Si el host de render está apagado, cae solo al avatar web — que siempre habla.</p></div>
+      <div class="card"><div class="ic">🗣️</div><h3 data-i18n="c6h">Voz y texto</h3><p data-i18n="c6p">Tus visitantes escriben o hablan por micro. Neo responde con la voz de la casa.</p></div>
     </div>
   </section>
 
@@ -219,7 +229,7 @@
 
 <script>
 (function(){
-  var state = { ratio:'9x16', ask:'1', width:'360' };
+  var state = { ratio:'9x16', ask:'1', width:'360', lang:'' };   // lang '' = autodetecta el del visitante
   var mount = document.getElementById('liveMount');
   var codeEl = document.getElementById('snippet-code');
   var copyBtn = document.getElementById('copyBtn');
@@ -232,6 +242,7 @@
     if(state.ask==='1') a.push('data-ask="1"');
     a.push('data-ratio="'+state.ratio+'"');
     a.push('data-width="'+state.width+'"');
+    if(state.lang) a.push('data-lang="'+state.lang+'"');
     return '<script '+a.join(' ')+'><\/script>';
   }
   // versión coloreada (para mostrar)
@@ -253,6 +264,7 @@
     if(state.ask==='1') s.setAttribute('data-ask','1');
     s.setAttribute('data-ratio', state.ratio);
     s.setAttribute('data-width', state.width);
+    if(state.lang) s.setAttribute('data-lang', state.lang);
     s.setAttribute('data-target', '#liveMount');
     // recargar el script cada vez fuerza re-ejecución del IIFE
     mount.appendChild(s);
@@ -283,6 +295,47 @@
   function fallback(txt){ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} ta.remove(); }
 
   refresh();
+
+  // ── i18n ES/EN ──────────────────────────────────────────────────────────────
+  // El HTML viene en ES: lo cosechamos como diccionario base y sólo definimos EN.
+  var EN = {
+    h1:'Put <b>Neo</b> on your site<br>with a single line.',
+    lead:'A <b>MetaHuman</b> digital human rendered in Unreal Engine 5, live, answering your visitors by text or voice. No SDK, no account, no build. You paste a <code>&lt;script&gt;</code> and that is it.',
+    b1:'<b>●</b> Shared live stream', b2:'Responsive', b3:'Lazy loading (facade)', b4:'Falls back to web avatar',
+    cta1:'Copy the snippet ↓', cta2:'See variants',
+    navHome:'← Home', navFull:'Neo fullscreen ↗',
+    s1:'Pick your variant', s1sub:'Change the options and both the snippet and the demo above update by themselves.',
+    lOrient:'Orientation', oPort:'Portrait 9:16', oLand:'Landscape 16:9', oSq:'Square 1:1',
+    lAsk:'Questions', oAskOn:'With questions', oAskOff:'Watch only',
+    lWidth:'Max width', lLang:'Neo’s language', oLangAuto:'Auto',
+    s2:'Copy and paste', s2sub:'Into the <code>&lt;body&gt;</code> of your site, wherever you want Neo to show up.',
+    thA:'Attribute', thB:'What it does', thC:'Values',
+    aAsk:'Shows the question box (talk to Neo).', aRatio:'Aspect ratio of the frame.',
+    aWidth:'Max width in px (responsive below that).', aHeight:'Fixed height in px. Takes priority over data-ratio.',
+    aLang:'Language of the embed and of Neo’s answers.', autoDef:'auto (def.)',
+    aTarget:'CSS selector to mount the embed into.', aAuto:'Skips the poster and connects on load. ⚠ takes the host on every visit.',
+    s3:'Why it lands', s3sub:'What a client gets out of pasting that line.',
+    c1h:'Zero friction', c1p:'One <code>&lt;script&gt;</code> tag. No SDK, no keys, no build and no backend on your side.',
+    c2h:'Real presence', c2p:'Not a video and not a chatbot: a live MetaHuman that looks at you and answers.',
+    c3h:'Improves on its own', c3p:'The render lives at digitalavatar.ai. Every improvement reaches all embeds without touching anything.',
+    c4h:'Responsive', c4p:'Portrait, landscape or square. It adapts to whatever column you drop it in.',
+    c5h:'Never goes down', c5p:'If the render host is off, it falls back to the web avatar — which always talks.',
+    c6h:'Voice and text', c6p:'Your visitors type or talk through the mic. Neo answers with the house voice.'
+  };
+  var ES={}, langBtn=document.getElementById('langBtn');
+  function harvest(){ document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.dataset.i18n; if(!(k in ES)) ES[k]=el.innerHTML; }); }
+  function applyLang(l){
+    var D = l==='en' ? EN : ES;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){ var v=D[el.dataset.i18n]; if(v!=null) el.innerHTML=v; });
+    document.documentElement.lang=l;
+    if(langBtn) langBtn.textContent = l==='en' ? 'ES' : 'EN';
+    try{ localStorage.setItem('da_lang', l); }catch(e){}
+    window.DA_LANG=l;
+  }
+  harvest();
+  var sv=null; try{ sv=localStorage.getItem('da_lang'); }catch(e){}
+  applyLang(sv || ((navigator.language||'es').slice(0,2)==='es' ? 'es' : 'en'));
+  if(langBtn) langBtn.onclick=function(){ applyLang(window.DA_LANG==='en'?'es':'en'); };
 })();
 </script>
 </body>

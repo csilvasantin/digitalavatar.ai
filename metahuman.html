@@ -46,8 +46,16 @@
   var cur=(f==='good.html')?'2d':(f==='better.html')?'3d':(f==='best.html')?'foto':(f==='vectorial.html')?'vectorial':'metahuman';
   document.querySelectorAll('#evo a').forEach(function(a){if(a.getAttribute('data-evo')===cur)a.classList.add('on');});})();</script>
 
-  <h1><span class="pulse"></span>Habla con <b>Neo</b> · MetaHuman en vivo</h1>
-  <p class="sub">Un <b>humano digital MetaHuman</b> renderizado en <b>Unreal Engine 5</b> y emitido en tiempo real por <b>Pixel Streaming</b>. No es un vídeo: <b>pregúntale y te responde con voz y lip-sync</b> al momento.</p>
+  <button id="langBtn" type="button" title="Cambiar idioma / Switch language">EN</button>
+  <style>
+    #langBtn{ position:fixed; top:11px; right:12px; z-index:70; background:rgba(6,14,24,.82); border:1px solid #1b3346;
+      color:#86a6bd; font-weight:800; font-size:.68rem; letter-spacing:.06em; border-radius:999px; padding:6px 12px; cursor:pointer;
+      -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); font-family:inherit }
+    #langBtn:hover{ border-color:var(--accent); color:var(--accent) }
+  </style>
+
+  <h1><span class="pulse"></span><span data-i18n="h1">Habla con <b>Neo</b> · MetaHuman en vivo</span></h1>
+  <p class="sub" data-i18n="sub">Un <b>humano digital MetaHuman</b> renderizado en <b>Unreal Engine 5</b> y emitido en tiempo real por <b>Pixel Streaming</b>. No es un vídeo: <b>pregúntale y te responde con voz y lip-sync</b> al momento.</p>
 
   <div class="studio">
     <div class="stage">
@@ -55,26 +63,26 @@
       <iframe id="mh" src="https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true"
               allow="autoplay; fullscreen; microphone; camera" allowfullscreen
               referrerpolicy="no-referrer"></iframe>
-      <div class="stage-foot">Si ves negro: pulsa <b>play</b> en el reproductor (el host de render debe estar encendido). <a href="https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true" target="_blank" rel="noopener">Pantalla completa ↗</a></div>
+      <div class="stage-foot"><span data-i18n="foot">Si ves negro: pulsa <b>play</b> en el reproductor (el host de render debe estar encendido).</span> <a href="https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true" target="_blank" rel="noopener" data-i18n="footLink">Pantalla completa ↗</a></div>
     </div>
 
     <div class="convo">
       <div class="convo-head">
-        <h2>Conversa con <b>Neo</b></h2>
-        <p>Escribe o pulsa el micro. Recuerda el hilo de la charla.</p>
+        <h2 data-i18n="convoH2">Conversa con <b>Neo</b></h2>
+        <p data-i18n="convoP">Escribe o pulsa el micro. Recuerda el hilo de la charla.</p>
       </div>
       <div class="ask">
         <div class="askrow">
-          <input id="q" type="text" placeholder="Pregúntale algo a Neo…" autocomplete="off">
-          <button id="mic" title="Hablar">🎤</button>
-          <button id="send">Preguntar</button>
+          <input id="q" type="text" data-i18n-ph="qPh" placeholder="Pregúntale algo a Neo…" autocomplete="off">
+          <button id="mic" data-i18n-title="micT" title="Hablar">🎤</button>
+          <button id="send" data-i18n="sendT">Preguntar</button>
         </div>
         <div id="ans" class="ans"></div>
       </div>
       <div class="chips" aria-label="Sugerencias">
-        <button class="chip">¿Quién eres?</button>
-        <button class="chip">¿Qué es un MetaHuman?</button>
-        <button class="chip">Cuéntame algo de Matrix</button>
+        <button class="chip" data-i18n="chip1">¿Quién eres?</button>
+        <button class="chip" data-i18n="chip2">¿Qué es un MetaHuman?</button>
+        <button class="chip" data-i18n="chip3">Cuéntame algo de Matrix</button>
       </div>
     </div>
   </div>
@@ -113,15 +121,19 @@
     function setAns(t,show){ ans.textContent=t; ans.classList.toggle('show',!!show); }
     async function ask(){
       var text=(q.value||'').trim(); if(!text) return;
-      send.disabled=true; setAns('· respondiendo…',true); q.value='';
+      var en = window.DA_LANG==='en';
+      send.disabled=true; setAns(en?'· thinking…':'· respondiendo…',true); q.value='';
       try{
         // Streaming de baja latencia + memoria de conversación (preguntas de seguimiento).
+        // Mandamos `lang` y, si es EN, lo pedimos también en el propio texto: así Neo
+        // contesta en inglés aunque el backend ignore el campo.
+        var qOut = en ? (text+'\n\n(Please answer in English.)') : text;
         var r=await fetch(API+'/metahuman/ask-stream',{method:'POST',headers:{'content-type':'application/json'},
-          body:JSON.stringify({question:text, room:ROOM, loc:'', persona:'neo', history:history})});
+          body:JSON.stringify({question:qOut, room:ROOM, loc:'', persona:'neo', lang:(en?'en':'es'), history:history})});
         var d=await r.json(); var a=(d.answer||'').trim();
-        setAns(a||'(sin respuesta)',true);   // subtítulo completo al terminar (la voz ya iba por delante)
+        setAns(a||(en?'(no answer)':'(sin respuesta)'),true);   // subtítulo completo al terminar (la voz ya iba por delante)
         if(a){ history.push({role:'user',content:text},{role:'assistant',content:a}); if(history.length>8) history=history.slice(-8); }
-      }catch(e){ setAns('⚠️ error de conexión',true); }
+      }catch(e){ setAns(en?'⚠️ connection error':'⚠️ error de conexión',true); }
       send.disabled=false;
     }
     send.onclick=ask;
@@ -130,7 +142,7 @@
     var SR=window.SpeechRecognition||window.webkitSpeechRecognition, rec=null;
     if(SR){ mic.onclick=function(){
       if(rec){ rec.stop(); return; }
-      rec=new SR(); rec.lang=(navigator.language||'es').slice(0,2)==='en'?'en-US':'es-ES'; rec.interimResults=true;
+      rec=new SR(); rec.lang = (window.DA_LANG==='en') ? 'en-US' : 'es-ES'; rec.interimResults=true;   // sigue al selector, no al navegador
       mic.classList.add('rec');
       rec.onresult=function(ev){ var t=''; for(var i=0;i<ev.results.length;i++) t+=ev.results[i][0].transcript; q.value=t; if(ev.results[ev.results.length-1].isFinal){ rec.stop(); ask(); } };
       rec.onend=function(){ mic.classList.remove('rec'); rec=null; };
@@ -144,26 +156,26 @@
   </script>
 
   <div class="steps">
-    <div class="step done"><div class="tag">✓ Vectorial</div><h3>2D vectorial</h3><p>Cara de canvas con lip-sync. El origen.</p><a href="vectorial.html">Ver →</a></div>
-    <div class="step done"><div class="tag">✓ 2D</div><h3>Vídeo</h3><p>Vídeos madre/padre + lip-sync 2D.</p><a href="good.html">Ver →</a></div>
-    <div class="step done"><div class="tag">✓ 3D</div><h3>Malla 3D</h3><p>Cara 3D con 52 blendshapes (facecap).</p><a href="better.html">Ver →</a></div>
-    <div class="step now"><div class="tag">● Metahuman (en vivo)</div><h3>MetaHuman Unreal</h3><p>Piel y ojos foto-reales por Pixel Streaming. Habla con voz y lip-sync en tiempo real (persona «Neo»).</p></div>
-    <div class="step done"><div class="tag">✓ Fotorealístico</div><h3>Humano rigged</h3><p>Avatar web Ready Player Me: habla siempre, sin host de render.</p><a href="best.html">Ver →</a></div>
+    <div class="step done"><div class="tag">✓ Vectorial</div><h3 data-i18n="s1h">2D vectorial</h3><p data-i18n="s1p">Cara de canvas con lip-sync. El origen.</p><a href="vectorial.html" data-i18n="see">Ver →</a></div>
+    <div class="step done"><div class="tag">✓ 2D</div><h3 data-i18n="s2h">Vídeo</h3><p data-i18n="s2p">Vídeos madre/padre + lip-sync 2D.</p><a href="good.html" data-i18n="see">Ver →</a></div>
+    <div class="step done"><div class="tag">✓ 3D</div><h3 data-i18n="s3h">Malla 3D</h3><p data-i18n="s3p">Cara 3D con 52 blendshapes (facecap).</p><a href="better.html" data-i18n="see">Ver →</a></div>
+    <div class="step now"><div class="tag" data-i18n="s4tag">● Metahuman (en vivo)</div><h3>MetaHuman Unreal</h3><p data-i18n="s4p">Piel y ojos foto-reales por Pixel Streaming. Habla con voz y lip-sync en tiempo real (persona «Neo»).</p></div>
+    <div class="step done"><div class="tag">✓ Fotorealístico</div><h3 data-i18n="s5h">Humano rigged</h3><p data-i18n="s5p">Avatar web Ready Player Me: habla siempre, sin host de render.</p><a href="best.html" data-i18n="see">Ver →</a></div>
   </div>
 
-  <p class="note">Cada versión se conserva como histórico (URL propia + etiquetas git): la evolución nunca se pierde.</p>
-  <a class="cta" href="#" id="ctaAsk">▶ Pregúntale a Neo</a>
-  <span class="alt">¿El host de render está apagado? <a href="best.html">Prueba el avatar web →</a></span>
+  <p class="note" data-i18n="note">Cada versión se conserva como histórico (URL propia + etiquetas git): la evolución nunca se pierde.</p>
+  <a class="cta" href="#" id="ctaAsk" data-i18n="cta">▶ Pregúntale a Neo</a>
+  <span class="alt" data-i18n="alt">¿El host de render está apagado? <a href="best.html">Prueba el avatar web →</a></span>
 
   <section class="embed-doc" aria-label="Insértalo en tu web">
-    <h2>Insértalo en tu web</h2>
-    <p>Una sola línea y Neo vive en cualquier página. Patrón <i>facade</i> (solo conecta al pulsar) y caída automática al avatar web si el host de render está apagado:</p>
+    <h2 data-i18n="embH2">Insértalo en tu web</h2>
+    <p data-i18n="embP">Una sola línea y Neo vive en cualquier página. Patrón <i>facade</i> (solo conecta al pulsar) y caída automática al avatar web si el host de render está apagado:</p>
     <pre id="embSnippet"><code>&lt;script src="https://digitalavatar.ai/mh-embed.js" data-ask="1" data-width="380"&gt;&lt;/script&gt;</code></pre>
     <div class="embed-actions">
-      <button id="copyEmb" type="button">Copiar código</button>
-      <a class="embed-see" href="embed-mh.html?ask=1" target="_blank" rel="noopener">Ver el embed ↗</a>
+      <button id="copyEmb" type="button" data-i18n="copyBtn">Copiar código</button>
+      <a class="embed-see" href="embed-mh.html?ask=1" target="_blank" rel="noopener" data-i18n="seeEmb">Ver el embed ↗</a>
     </div>
-    <p class="embed-note">Atributos opcionales: <code>data-ask="1"</code> caja de preguntas · <code>data-ratio</code> 9x16 · 16x9 · 1x1 · <code>data-width</code> px · <code>data-height</code> px · <code>data-target</code> selector CSS.</p>
+    <p class="embed-note" data-i18n="embNote">Atributos opcionales: <code>data-ask="1"</code> caja de preguntas · <code>data-ratio</code> 9x16 · 16x9 · 1x1 · <code>data-width</code> px · <code>data-height</code> px · <code>data-target</code> selector CSS.</p>
   </section>
   <style>
     .embed-doc{ width:100%; max-width:640px; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 20px; backdrop-filter:blur(10px) }
@@ -226,6 +238,56 @@
       setTimeout(tick, mode==='web' ? 30000 : (fails===1 ? 4000 : 15000));
     }
     tick();
+  })();
+  </script>
+
+  <script>
+  // ── i18n ES/EN ───────────────────────────────────────────────────────────────
+  // El HTML viene en ES; guardamos esos textos como diccionario base y sólo
+  // definimos el EN. Idioma = localStorage > idioma del navegador. window.DA_LANG
+  // lo lee la caja de preguntas para que Neo CONTESTE en el idioma del visitante.
+  (function(){
+    var EN = {
+      h1:'Talk to <b>Neo</b> · live MetaHuman',
+      sub:'A <b>MetaHuman digital human</b> rendered in <b>Unreal Engine 5</b> and streamed in real time over <b>Pixel Streaming</b>. It is not a video: <b>ask him and he answers with voice and lip-sync</b> instantly.',
+      foot:'Black screen? Hit <b>play</b> in the player (the render host must be switched on).',
+      footLink:'Fullscreen ↗',
+      convoH2:'Chat with <b>Neo</b>', convoP:'Type or tap the mic. He remembers the thread of the conversation.',
+      qPh:'Ask Neo something…', micT:'Speak', sendT:'Ask',
+      chip1:'Who are you?', chip2:'What is a MetaHuman?', chip3:'Tell me something about the Matrix',
+      s1h:'2D vector', s1p:'Canvas face with lip-sync. Where it started.',
+      s2h:'Video', s2p:'Mother/father videos + 2D lip-sync.',
+      s3h:'3D mesh', s3p:'3D face with 52 blendshapes (facecap).',
+      s4tag:'● Metahuman (live)', s4p:'Photo-real skin and eyes over Pixel Streaming. Speaks with voice and lip-sync in real time (persona “Neo”).',
+      s5h:'Rigged human', s5p:'Ready Player Me web avatar: always talks, no render host needed.',
+      see:'See →',
+      note:'Every version is kept as history (its own URL + git tags): the evolution is never lost.',
+      cta:'▶ Ask Neo', alt:'Is the render host off? <a href="best.html">Try the web avatar →</a>',
+      embH2:'Embed it in your site',
+      embP:'One single line and Neo lives on any page. <i>Facade</i> pattern (it only connects on click) and automatic fallback to the web avatar if the render host is off:',
+      copyBtn:'Copy code', seeEmb:'Open the embed ↗',
+      embNote:'Optional attributes: <code>data-ask="1"</code> question box · <code>data-ratio</code> 9x16 · 16x9 · 1x1 · <code>data-width</code> px · <code>data-height</code> px · <code>data-target</code> CSS selector.'
+    };
+    var ES = {}, btn = document.getElementById('langBtn');
+    function harvest(){
+      document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.dataset.i18n; if(!(k in ES)) ES[k]=el.innerHTML; });
+      document.querySelectorAll('[data-i18n-ph]').forEach(function(el){ var k=el.dataset.i18nPh; if(!(k in ES)) ES[k]=el.placeholder; });
+      document.querySelectorAll('[data-i18n-title]').forEach(function(el){ var k=el.dataset.i18nTitle; if(!(k in ES)) ES[k]=el.title; });
+    }
+    function apply(lang){
+      var D = lang==='en' ? EN : ES;
+      document.querySelectorAll('[data-i18n]').forEach(function(el){ var v=D[el.dataset.i18n]; if(v!=null) el.innerHTML=v; });
+      document.querySelectorAll('[data-i18n-ph]').forEach(function(el){ var v=D[el.dataset.i18nPh]; if(v!=null) el.placeholder=v; });
+      document.querySelectorAll('[data-i18n-title]').forEach(function(el){ var v=D[el.dataset.i18nTitle]; if(v!=null) el.title=v; });
+      document.documentElement.lang = lang;
+      window.DA_LANG = lang;                      // lo usa la caja de preguntas
+      if(btn) btn.textContent = lang==='en' ? 'ES' : 'EN';   // muestra el idioma AL QUE cambias
+      try{ localStorage.setItem('da_lang', lang); }catch(e){}
+    }
+    harvest();
+    var saved=null; try{ saved=localStorage.getItem('da_lang'); }catch(e){}
+    apply(saved || ((navigator.language||'es').slice(0,2)==='es' ? 'es' : 'en'));
+    if(btn) btn.onclick=function(){ apply(window.DA_LANG==='en' ? 'es' : 'en'); };
   })();
   </script>
 </body>

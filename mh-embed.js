@@ -11,6 +11,8 @@
     data-height         alto fijo en px (útil con data-ask="1", p.ej. 720). Prioritario sobre data-ratio.
     data-autostart="1"  carga el stream sin póster (⚠ machaca el host de render en cada visita).
     data-target="#id"   CSS selector donde montar; por defecto se inserta donde está el <script>.
+    data-lang="es|en"   fuerza el idioma del embed (y el de las respuestas de Neo).
+                        Si no lo pones, autodetecta el idioma del visitante.
 
   Nota: es un stream EN VIVO compartido (una instancia de render). Las mejoras hechas en
   digitalavatar.ai llegan solas a quien lo embebe. Cae al avatar web si el host está apagado.
@@ -33,9 +35,11 @@
   var width     = parseInt(attr('data-width','360'),10) || 360;
   var height    = parseInt(attr('data-height',''),10) || 0;
   var targetSel = attr('data-target','');
+  var lang      = (attr('data-lang','')||'').slice(0,2).toLowerCase();   // '' = autodetecta el del visitante
 
   var base='https://digitalavatar.ai/embed-mh.html';
   var qp=[]; if(ask) qp.push('ask=1'); if(autostart) qp.push('autostart=1');
+  if(lang==='es'||lang==='en') qp.push('lang='+lang);
   var src=base + (qp.length?('?'+qp.join('&')):'');
 
   var pad = ({'16x9':56.25,'1x1':100,'9x16':177.78})[ratio] || 177.78;
