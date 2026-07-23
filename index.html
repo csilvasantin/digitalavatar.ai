@@ -414,6 +414,19 @@ function ensureAudioGraph(el){
 }
 
 function setStatus(m,c){ const s=$('status'); s.textContent=m||''; s.className='status'+(c?' '+c:''); }
+// Autoplay bloqueado: en vez de cantar el error del navegador, dejamos armado el audio para
+// que suene en cuanto el usuario toque algo (un solo disparo, y limpia sus propios listeners).
+function armarAudioEnPrimerGesto(el){
+  if(!el || window.__audioArmado) return;
+  window.__audioArmado = true;
+  const arrancar = () => {
+    try{ if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); }catch(e){}
+    try{ el.play().catch(()=>{}); }catch(e){}
+    window.__audioArmado = false;
+    ['pointerdown','keydown','touchstart'].forEach(ev=>document.removeEventListener(ev, arrancar, true));
+  };
+  ['pointerdown','keydown','touchstart'].forEach(ev=>document.addEventListener(ev, arrancar, {capture:true, once:false}));
+}
 function setLive(on){ $('livedot').classList.toggle('on',on); }
 
 /* caption with progressive highlight synced to audio */
@@ -450,7 +463,11 @@ async function ask(question){
       setCaptionProgressive(answer, j.alignment||null);
       audioEl.onplay=()=>{ startSpeaking(tr); tickCaption(); };
       audioEl.onended=()=>{ stopSpeaking(); setStatus(''); };
-      await audioEl.play();
+      // El navegador BLOQUEA el autoplay hasta que el usuario interactúa. Ese rechazo no es
+      // un error de red: se traga en silencio (antes caía al catch de abajo y pintaba el
+      // mensaje del navegador en la interfaz) y el audio arranca solo en el primer gesto.
+      try{ await audioEl.play(); }
+      catch(err){ armarAudioEnPrimerGesto(audioEl); }
       setStatus('');
     } else {
       setCaption(answer); setStatus(T[LANG].noVoice,'warn');
