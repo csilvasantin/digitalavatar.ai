@@ -27,9 +27,13 @@
   .live .dot{ width:8px; height:8px; border-radius:50%; background:var(--ok); box-shadow:0 0 10px var(--ok); animation:p 1.3s infinite }
   @keyframes p{ 50%{opacity:.3} }
   /* Póster (facade) — se sustituye por el stream al pulsar */
-  .facade{ position:absolute; inset:0; z-index:4; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; cursor:pointer;
-    background:radial-gradient(120% 90% at 50% 0%, #11243b 0%, #05080f 65%); text-align:center; padding:20px }
-  .facade .code{ position:absolute; inset:0; opacity:.20; overflow:hidden; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:#2ee6a6; font-size:12px; line-height:1.15; letter-spacing:2px; white-space:pre; pointer-events:none }
+  /* Póster real de Neo (frame capturado del propio MetaHuman) + velo para que el play y el texto se lean. */
+  .facade{ position:absolute; inset:0; z-index:4; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:14px; cursor:pointer;
+    text-align:center; padding:20px 20px 26px;
+    background-color:#05080f;
+    background-image:linear-gradient(to bottom, rgba(5,8,15,.30) 0%, rgba(5,8,15,.20) 38%, rgba(5,8,15,.86) 76%, rgba(5,8,15,.96) 100%), url('assets/neo-poster.jpg');
+    background-size:cover, cover; background-position:center top, center top; background-repeat:no-repeat,no-repeat }
+  .facade .code{ position:absolute; inset:0; opacity:.07; overflow:hidden; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:#2ee6a6; font-size:12px; line-height:1.15; letter-spacing:2px; white-space:pre; pointer-events:none }
   .facade .play{ width:66px; height:66px; border-radius:50%; border:1px solid #2a7fa6; background:linear-gradient(180deg,#0e3550cc,#0a2335cc); backdrop-filter:blur(6px);
     display:flex; align-items:center; justify-content:center; color:var(--accent); font-size:1.5rem; box-shadow:0 0 30px rgba(95,208,255,.25) }
   .facade h2{ margin:0; font-size:1.05rem } .facade h2 b{ color:var(--accent) }
