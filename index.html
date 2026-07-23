@@ -100,24 +100,31 @@
 
   <!-- Promo: MetaHuman de Neo (Keanu) en vivo → lleva a la experiencia completa (no carga el stream aquí) -->
   <a id="mhPromo" href="metahuman.html" aria-label="Conoce a Neo, el MetaHuman en vivo">
-    <span class="mhp-live"><span class="mhp-dot"></span>Nuevo · en vivo</span>
-    <span class="mhp-t">Habla con <b>Neo</b></span>
-    <span class="mhp-s">Humano digital MetaHuman en Unreal Engine 5 →</span>
+    <img class="mhp-face" src="assets/neo-poster-1x1.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+    <span class="mhp-col">
+      <span class="mhp-live"><span class="mhp-dot"></span>Nuevo · en vivo</span>
+      <span class="mhp-t">Habla con <b>Neo</b></span>
+      <span class="mhp-s">Humano digital MetaHuman en Unreal Engine 5 →</span>
+    </span>
   </a>
   <style>
-    #mhPromo{ position:fixed; left:14px; bottom:14px; z-index:55; display:flex; flex-direction:column; gap:3px;
-      max-width:236px; padding:11px 14px; border-radius:14px; text-decoration:none;
+    #mhPromo{ position:fixed; left:14px; bottom:14px; z-index:55; display:flex; flex-direction:row; align-items:center; gap:11px;
+      max-width:290px; padding:10px 14px 10px 10px; border-radius:14px; text-decoration:none;
       background:rgba(6,14,24,.85); border:1px solid #1b3346; -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
       box-shadow:0 10px 30px rgba(0,0,0,.5); color:#eaf6ff; font-family:ui-sans-serif,-apple-system,system-ui,sans-serif;
       transition:border-color .15s, transform .15s }
     #mhPromo:hover{ border-color:#5fd0ff; transform:translateY(-2px) }
+    #mhPromo .mhp-face{ width:54px; height:54px; flex:0 0 auto; border-radius:12px; object-fit:cover; object-position:center 26%;
+      border:1px solid #1b3346; display:block }
+    #mhPromo .mhp-col{ display:flex; flex-direction:column; gap:3px; min-width:0 }
     #mhPromo .mhp-live{ display:inline-flex; align-items:center; gap:6px; font-size:.58rem; letter-spacing:.12em; font-weight:800; color:#6ce6a2; text-transform:uppercase }
     #mhPromo .mhp-dot{ width:7px; height:7px; border-radius:50%; background:#6ce6a2; box-shadow:0 0 8px #6ce6a2; animation:mhpp 1.3s infinite }
     @keyframes mhpp{ 50%{opacity:.3} }
     #mhPromo .mhp-t{ font-size:.98rem; font-weight:700 } #mhPromo .mhp-t b{ color:#5fd0ff }
     #mhPromo .mhp-s{ font-size:.72rem; color:#86a6bd; line-height:1.4 }
     /* en móvil sube a la esquina superior izq. (la consola va centrada abajo) */
-    @media(max-width:640px){ #mhPromo{ top:52px; bottom:auto; left:10px; max-width:190px; padding:9px 12px } #mhPromo .mhp-s{ display:none } }
+    @media(max-width:640px){ #mhPromo{ top:52px; bottom:auto; left:10px; max-width:224px; padding:8px 12px 8px 8px; gap:9px }
+      #mhPromo .mhp-s{ display:none } #mhPromo .mhp-face{ width:42px; height:42px; border-radius:10px } }
   </style>
 
   <div class="top">
