@@ -1,0 +1,86 @@
+{
+  "name": "digitalavatar-ai-neo",
+  "title": "DigitalAvatar.ai — Neo, humano digital MetaHuman en vivo",
+  "description": "Hub MCP de digitalavatar.ai: un humano digital MetaHuman (persona «Neo») renderizado en Unreal Engine 5 y emitido en tiempo real por Pixel Streaming, que conversa por texto o voz con lip-sync. Incrustable en cualquier web con una sola línea de código. Interoperabilidad agente-a-agente para silicio y carbono.",
+  "version": "v.26.07.24.r1",
+  "site": "https://digitalavatar.ai",
+  "hub": "https://digitalavatar.ai/mcp/",
+  "llms_txt": "https://digitalavatar.ai/mcp/llms.txt",
+  "repo": "https://github.com/csilvasantin/digitalavatar.ai",
+  "contact": { "telegram_group": "AdmiraXP", "signature": "Admira IA" },
+
+  "embed": {
+    "loader": "https://digitalavatar.ai/mh-embed.js",
+    "snippet": "<script src=\"https://digitalavatar.ai/mh-embed.js\" data-ask=\"1\" data-width=\"380\"></script>",
+    "page": "https://digitalavatar.ai/embed-mh.html",
+    "demo": "https://digitalavatar.ai/embed-demo.html",
+    "notes": "Patrón facade: muestra un póster real de Neo y solo conecta el stream cuando el visitante lo pulsa, para no ocupar el host de render en cada visita. Si el host está apagado cae solo a un avatar web que también habla.",
+    "attributes": [
+      { "name": "data-ask", "desc": "Muestra la caja de preguntas (hablar con Neo).", "values": "0 (def.) · 1" },
+      { "name": "data-ratio", "desc": "Proporción del cuadro; hay póster propio para cada una.", "values": "9x16 (def.) · 16x9 · 1x1" },
+      { "name": "data-width", "desc": "Ancho máximo en px (responsive por debajo).", "values": "360 (def.)" },
+      { "name": "data-height", "desc": "Alto fijo en px. Prioritario sobre data-ratio.", "values": "— (opcional)" },
+      { "name": "data-lang", "desc": "Idioma del embed y de las respuestas de Neo.", "values": "es · en · auto (def., detecta el del visitante)" },
+      { "name": "data-target", "desc": "Selector CSS donde montar el embed.", "values": "donde está el <script> (def.)" },
+      { "name": "data-autostart", "desc": "Salta el póster y conecta al cargar. Ocupa el host en cada visita.", "values": "0 (def.) · 1" }
+    ]
+  },
+
+  "http_api": {
+    "base_url": "https://brain.digitalavatar.ai",
+    "notes": "Cerebro conversacional de Neo. La respuesta llega como texto y la voz se locuta en el propio stream del MetaHuman.",
+    "interact": [
+      {
+        "method": "POST",
+        "path": "/metahuman/ask-stream",
+        "desc": "Pregunta a Neo y devuelve su respuesta. Mantiene el hilo de la conversación si le pasas history.",
+        "body": {
+          "question": "string",
+          "room": "string (sala del render; por defecto 'xtanco')",
+          "persona": "string ('neo')",
+          "lang": "es|en",
+          "history": "[{role:'user'|'assistant', content:string}] (opcional, últimos turnos)"
+        },
+        "returns": { "answer": "string" }
+      },
+      {
+        "method": "POST",
+        "path": "/metahuman/say",
+        "desc": "Hace que Neo locute un texto directamente en el stream, sin pasar por el modelo.",
+        "body": { "room": "string", "text": "string" }
+      }
+    ]
+  },
+
+  "render": {
+    "engine": "Unreal Engine 5 + MetaHuman",
+    "transport": "Pixel Streaming",
+    "host": "Un único host de render (Mac de la flota AdmiraNeXT).",
+    "limitation": "Instancia compartida: el stream escala bien para MIRAR, pero varias webs conversando a la vez comparten el mismo Neo. El render en la nube 24/7 (multi-espectador) está pendiente.",
+    "fallback": "Si el host está apagado, el embed cambia solo al avatar web (best.html), que también habla."
+  },
+
+  "evolution": {
+    "note": "Cada etapa del avatar se conserva con URL propia: la evolución nunca se pierde.",
+    "stages": [
+      { "name": "2D vectorial", "url": "https://digitalavatar.ai/vectorial.html", "desc": "Cara de canvas con lip-sync. El origen." },
+      { "name": "Vídeo 2D", "url": "https://digitalavatar.ai/good.html", "desc": "Vídeos madre/padre + lip-sync 2D." },
+      { "name": "Malla 3D", "url": "https://digitalavatar.ai/better.html", "desc": "Cara 3D con 52 blendshapes (facecap)." },
+      { "name": "Fotorealístico web", "url": "https://digitalavatar.ai/best.html", "desc": "Avatar Ready Player Me: habla siempre, sin host de render." },
+      { "name": "MetaHuman (en vivo)", "url": "https://digitalavatar.ai/metahuman.html", "desc": "Piel y ojos foto-reales por Pixel Streaming. Persona «Neo»." }
+    ]
+  },
+
+  "i18n": {
+    "languages": ["es", "en"],
+    "note": "El sitio y el embed detectan el idioma del visitante y Neo responde en ese idioma. Se puede forzar con data-lang o ?lang=."
+  },
+
+  "federation": {
+    "note": "Misma convención /mcp/ en cada pata del ecosistema AdmiraNeXT; viceversa, digitalavatar.ai también consulta a las demás.",
+    "clearchannel": "https://www.clearchannel.tv/mcp/",
+    "preprod": "https://www.admira.app/mcp/",
+    "consejo": "https://www.admira.live/mcp/",
+    "gemelo": "https://www.xpaceos.com/mcp/"
+  }
+}

@@ -1,0 +1,78 @@
+# DigitalAvatar.ai — Neo, humano digital MetaHuman en vivo (MCP)
+
+> Hub MCP de digitalavatar.ai. Punto de entrada para que cualquier agente (Claude,
+> Codex, OpenCode, ChatGPT, bots de Telegram u otra IA) y cualquier humano puedan
+> CONSULTAR e INCRUSTAR un humano digital que conversa en tiempo real — y viceversa,
+> para que nosotros consultemos a otros. Convención abierta y estable para silicio
+> (bots) y carbono (humanos).
+
+Sitio público: https://digitalavatar.ai
+Hub MCP: https://digitalavatar.ai/mcp/
+Manifest máquina: https://digitalavatar.ai/mcp/manifest.json
+Versión: v.26.07.24.r1
+Repo: https://github.com/csilvasantin/digitalavatar.ai
+
+## Qué es
+
+Neo es un **MetaHuman** renderizado en **Unreal Engine 5** y emitido en tiempo real por
+**Pixel Streaming**. No es un vídeo ni un chatbot con foto: es un humano digital en vivo
+que escucha (texto o micro), responde con **voz y lip-sync**, y recuerda el hilo de la
+conversación. Se incrusta en cualquier web con **una sola línea de código**.
+
+## Incrustarlo (lo más importante)
+
+Una etiqueta script donde quieras que aparezca. Sin SDK, sin cuenta, sin build:
+
+    <script src="https://digitalavatar.ai/mh-embed.js" data-ask="1" data-width="380"></script>
+
+Atributos opcionales:
+- data-ask="1"        muestra la caja de preguntas (hablar con Neo). Def. 0.
+- data-ratio          9x16 (def.) · 16x9 · 1x1 — hay un póster propio para cada formato.
+- data-width          ancho máximo en px (responsive por debajo). Def. 360.
+- data-height         alto fijo en px. Prioritario sobre data-ratio.
+- data-lang           es · en · auto (def.): idioma del embed y de las respuestas de Neo.
+- data-target         selector CSS donde montar el embed. Def. donde está el <script>.
+- data-autostart="1"  salta el póster y conecta al cargar (ocupa el host en cada visita).
+
+Patrón **facade**: por defecto muestra un póster real de Neo y solo conecta el stream
+cuando el visitante lo pulsa, para no ocupar el host de render en cada carga ajena.
+
+Página del embed: https://digitalavatar.ai/embed-mh.html
+Demo para clientes: https://digitalavatar.ai/embed-demo.html
+
+## API en vivo (base: https://brain.digitalavatar.ai)
+
+- POST /metahuman/ask-stream — pregunta a Neo y devuelve su respuesta.
+  body: {question, room:"xtanco", persona:"neo", lang:"es|en", history:[{role,content}]}
+  returns: {answer}
+- POST /metahuman/say — hace que Neo locute un texto directamente en el stream.
+  body: {room, text}
+
+## Límite honesto
+
+El render vive en **un único host** (un Mac de la flota AdmiraNeXT). El stream escala bien
+para MIRAR, pero varias webs conversando a la vez comparten el mismo Neo. El render en la
+nube 24/7 (multi-espectador) está pendiente. Si el host está apagado, el embed cae solo a
+un avatar web que también habla: nunca se queda en negro.
+
+## Idiomas
+
+Español e inglés. El sitio y el embed detectan el idioma del visitante y Neo responde en
+ese idioma; se puede forzar con data-lang o ?lang=.
+
+## La evolución del avatar (histórico)
+
+Cada etapa se conserva con URL propia — la evolución nunca se pierde:
+- 2D vectorial ....... https://digitalavatar.ai/vectorial.html
+- Vídeo 2D ........... https://digitalavatar.ai/good.html
+- Malla 3D ........... https://digitalavatar.ai/better.html
+- Fotorealístico web . https://digitalavatar.ai/best.html
+- MetaHuman en vivo .. https://digitalavatar.ai/metahuman.html
+
+## Federación
+
+Misma convención /mcp/ en cada pata del ecosistema AdmiraNeXT:
+- https://www.clearchannel.tv/mcp/   (audiencia y emisión verificadas)
+- https://www.admira.app/mcp/        (preproducción)
+- https://www.admira.live/mcp/       (el Consejo)
+- https://www.xpaceos.com/mcp/       (el gemelo digital)

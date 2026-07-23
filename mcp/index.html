@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>digitalavatar.ai MCP | Un humano digital que conversa, para agentes y humanos</title>
+<meta name="description" content="Hub MCP de digitalavatar.ai: Neo, un MetaHuman en vivo (Unreal Engine 5 + Pixel Streaming) que conversa con voz y lip-sync, incrustable en cualquier web con una sola línea.">
+<style>
+  :root{ --bg:#05080f; --panel:rgba(10,19,30,.72); --line:#1b3346; --ink:#eaf6ff; --muted:#86a6bd; --brand:#5fd0ff; --ok:#6ce6a2 }
+  *{box-sizing:border-box}
+  body{ margin:0; background:radial-gradient(120% 80% at 50% -10%, #11243b 0%, var(--bg) 55%); color:var(--ink);
+    font-family:ui-sans-serif,-apple-system,Segoe UI,Roboto,sans-serif; line-height:1.6 }
+  a{ color:var(--brand) }
+  .shell{ max-width:980px; margin:0 auto; padding:0 20px }
+  .top{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:16px 20px; border-bottom:1px solid var(--line);
+    background:rgba(5,8,15,.7); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); position:sticky; top:0; z-index:20 }
+  .brand{ display:flex; align-items:center; gap:10px; font-weight:800; text-decoration:none; color:var(--ink) }
+  .brand .logo{ width:30px; height:30px; border-radius:9px; background:linear-gradient(180deg,#12466a,#0c2c44);
+    border:1px solid #2a7fa6; display:flex; align-items:center; justify-content:center; font-size:.72rem; color:var(--brand) }
+  .top .sp{ flex:1 }
+  .btn{ display:inline-block; padding:9px 15px; border-radius:11px; text-decoration:none; font-weight:700; font-size:.82rem;
+    border:1px solid var(--line); color:var(--muted) }
+  .btn:hover{ border-color:var(--brand); color:var(--ink) }
+  .btn.primary{ border-color:#2a7fa6; background:linear-gradient(180deg,#0e3550,#0a2335); color:var(--brand) }
+  .eyebrow{ font-size:.66rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin:0 0 8px }
+  .hero{ padding:52px 20px 30px }
+  h1{ font-size:2.3rem; line-height:1.1; margin:0 0 14px; letter-spacing:-.5px } h1 span{ color:var(--brand) }
+  .lead{ color:var(--muted); max-width:640px; margin:0 0 20px; font-size:1.02rem }
+  .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:26px }
+  .stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px }
+  .stat{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px 16px }
+  .stat strong{ display:block; font-size:1.5rem; color:var(--brand); line-height:1.1 }
+  .stat span{ font-size:.76rem; color:var(--muted) }
+  .band{ border-top:1px solid var(--line); padding:34px 0 }
+  h2{ font-size:1.35rem; margin:0 0 8px; letter-spacing:-.2px }
+  p.note{ color:var(--muted); max-width:680px }
+  pre{ margin:14px 0 0; background:#05080f; border:1px solid var(--line); border-radius:12px; padding:14px 16px; overflow-x:auto }
+  code{ font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.82rem; color:#bfe9ff }
+  table{ width:100%; border-collapse:collapse; margin-top:14px; font-size:.86rem }
+  th,td{ text-align:left; padding:9px 11px; border-bottom:1px solid var(--line); vertical-align:top }
+  th{ color:var(--muted); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase }
+  td code{ color:var(--brand) }
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:14px }
+  .card{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 18px }
+  .card h3{ margin:0 0 6px; font-size:1rem } .card p{ margin:0; color:var(--muted); font-size:.86rem }
+  .warn{ border-color:#5a4a1f } .warn h3{ color:#ffce6b }
+  footer{ border-top:1px solid var(--line); padding:24px 20px 46px; color:var(--muted); font-size:.8rem; text-align:center }
+  @media(max-width:760px){ .stats{ grid-template-columns:1fr 1fr } .grid2{ grid-template-columns:1fr } h1{ font-size:1.8rem } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="https://digitalavatar.ai"><span class="logo">DA</span><span>digital<span style="color:var(--brand)">avatar</span>.ai</span></a>
+  <span class="sp"></span>
+  <a class="btn primary" href="llms.txt">llms.txt</a>
+  <a class="btn" href="manifest.json">manifest.json</a>
+  <a class="btn" href="https://digitalavatar.ai/metahuman.html">Ver a Neo ↗</a>
+</header>
+
+<main>
+  <section class="shell hero">
+    <p class="eyebrow">Model Context Protocol · para silicio y carbono</p>
+    <h1>digitalavatar.ai <span>MCP</span></h1>
+    <p class="lead">La puerta común para que cualquier agente (Claude, Codex, ChatGPT, bots…) <b>y cualquier humano</b> puedan consultar e <b>incrustar un humano digital que conversa en vivo</b> — y para que nosotros nos conectemos a otros. Toda la info, en un sitio estable.</p>
+    <div class="actions">
+      <a class="btn primary" href="llms.txt">llms.txt</a>
+      <a class="btn" href="manifest.json">manifest.json</a>
+      <a class="btn" href="https://digitalavatar.ai/embed-demo.html">Ver la demo →</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><strong>1</strong><span>línea de código para incrustarlo</span></div>
+      <div class="stat"><strong>2</strong><span>idiomas: responde en el del visitante</span></div>
+      <div class="stat"><strong>3</strong><span>formatos: retrato, horizontal y cuadrado</span></div>
+      <div class="stat"><strong>5</strong><span>etapas del avatar conservadas con URL propia</span></div>
+    </div>
+  </section>
+
+  <section class="band"><div class="shell">
+    <p class="eyebrow">Qué es</p>
+    <h2>Neo, un MetaHuman en vivo</h2>
+    <p class="note">Renderizado en <b>Unreal Engine 5</b> y emitido en tiempo real por <b>Pixel Streaming</b>. No es un vídeo ni un chatbot con foto: escucha por texto o micro, responde con <b>voz y lip-sync</b>, y recuerda el hilo de la conversación.</p>
+  </div></section>
+
+  <section class="band"><div class="shell">
+    <p class="eyebrow">Lo más importante</p>
+    <h2>Incrustarlo en tu web</h2>
+    <p class="note">Una etiqueta <code>&lt;script&gt;</code> donde quieras que aparezca. Sin SDK, sin cuenta, sin build ni backend en tu lado.</p>
+    <pre><code>&lt;script src="https://digitalavatar.ai/mh-embed.js" data-ask="1" data-width="380"&gt;&lt;/script&gt;</code></pre>
+    <table>
+      <thead><tr><th>Atributo</th><th>Qué hace</th><th>Valores</th></tr></thead>
+      <tbody>
+        <tr><td><code>data-ask</code></td><td>Muestra la caja de preguntas (hablar con Neo).</td><td>0 (def.) · 1</td></tr>
+        <tr><td><code>data-ratio</code></td><td>Proporción del cuadro; hay póster propio para cada una.</td><td>9x16 (def.) · 16x9 · 1x1</td></tr>
+        <tr><td><code>data-width</code></td><td>Ancho máximo en px (responsive por debajo).</td><td>360 (def.)</td></tr>
+        <tr><td><code>data-height</code></td><td>Alto fijo en px. Prioritario sobre data-ratio.</td><td>— (opcional)</td></tr>
+        <tr><td><code>data-lang</code></td><td>Idioma del embed y de las respuestas de Neo.</td><td>es · en · auto (def.)</td></tr>
+        <tr><td><code>data-target</code></td><td>Selector CSS donde montar el embed.</td><td>donde está el &lt;script&gt;</td></tr>
+        <tr><td><code>data-autostart</code></td><td>Salta el póster y conecta al cargar.</td><td>0 (def.) · 1</td></tr>
+      </tbody>
+    </table>
+    <div class="grid2">
+      <div class="card"><h3>Ligero por defecto</h3><p>Patrón <i>facade</i>: muestra un póster real de Neo y solo conecta el stream cuando el visitante lo pulsa, para no ocupar el host de render en cada carga ajena.</p></div>
+      <div class="card"><h3>Nunca se queda en negro</h3><p>Si el host de render está apagado, el embed cambia solo a un avatar web que también habla.</p></div>
+    </div>
+  </div></section>
+
+  <section class="band"><div class="shell">
+    <p class="eyebrow">API en vivo</p>
+    <h2>brain.digitalavatar.ai</h2>
+    <table>
+      <thead><tr><th>Método</th><th>Ruta</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td><code>POST</code></td><td><code>/metahuman/ask-stream</code></td><td>Pregunta a Neo y devuelve <code>{answer}</code>. Body: <code>{question, room, persona:"neo", lang, history}</code>. Mantiene el hilo si le pasas <code>history</code>.</td></tr>
+        <tr><td><code>POST</code></td><td><code>/metahuman/say</code></td><td>Hace que Neo locute un texto directamente en el stream. Body: <code>{room, text}</code>.</td></tr>
+      </tbody>
+    </table>
+  </div></section>
+
+  <section class="band"><div class="shell">
+    <p class="eyebrow">Transparencia</p>
+    <h2>El límite, dicho claro</h2>
+    <div class="grid2">
+      <div class="card warn"><h3>Instancia compartida</h3><p>El render vive en <b>un único host</b> (un Mac de la flota). Escala bien para <b>mirar</b>, pero varias webs conversando a la vez comparten el mismo Neo. El render en la nube 24/7 (multi-espectador) está pendiente.</p></div>
+      <div class="card"><h3>La evolución se conserva</h3><p>Cada etapa del avatar mantiene su URL propia: <a href="https://digitalavatar.ai/vectorial.html">vectorial</a> · <a href="https://digitalavatar.ai/good.html">vídeo 2D</a> · <a href="https://digitalavatar.ai/better.html">malla 3D</a> · <a href="https://digitalavatar.ai/best.html">web</a> · <a href="https://digitalavatar.ai/metahuman.html">MetaHuman</a>.</p></div>
+    </div>
+  </div></section>
+
+  <section class="band"><div class="shell">
+    <p class="eyebrow">Federación</p>
+    <h2>Misma convención en todo el ecosistema</h2>
+    <p class="note">
+      <a href="https://www.clearchannel.tv/mcp/">clearchannel.tv</a> (audiencia y emisión verificadas) ·
+      <a href="https://www.admira.app/mcp/">admira.app</a> (preproducción) ·
+      <a href="https://www.admira.live/mcp/">admira.live</a> (el Consejo) ·
+      <a href="https://www.xpaceos.com/mcp/">xpaceos.com</a> (el gemelo digital)
+    </p>
+  </div></section>
+</main>
+
+<footer>digitalavatar.ai · Neo, humano digital MetaHuman en vivo · <a href="llms.txt">llms.txt</a> · <a href="manifest.json">manifest.json</a> · v.26.07.24.r1</footer>
+</body>
+</html>
