@@ -1,0 +1,8 @@
+# digitalavatar.ai — Neo, humano digital MetaHuman en vivo
+# Abierto a buscadores y a agentes. Si eres una IA, empieza por el hub MCP:
+#   https://digitalavatar.ai/mcp/llms.txt
+
+User-agent: *
+Allow: /
+
+Sitemap: https://digitalavatar.ai/sitemap.xml
