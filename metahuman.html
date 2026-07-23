@@ -16,6 +16,9 @@
   @keyframes p{ 50%{opacity:.3} }
   .steps{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; width:100%; max-width:1000px }
   .step{ flex:1 1 170px; max-width:200px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:15px; backdrop-filter:blur(10px) }
+  .step-thumb{ display:block; width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:10px; margin:0 0 10px;
+    border:1px solid var(--line); background:#05080f }
+  .step.now .step-thumb{ border-color:var(--accent); box-shadow:0 0 18px rgba(95,208,255,.18) }
   .step .tag{ font-size:.56rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted) }
   .step h3{ margin:5px 0 6px; font-size:.98rem } .step p{ margin:0; color:var(--muted); font-size:.8rem; line-height:1.45 }
   .step.done{ border-color:#1f5a3a } .step.done .tag{ color:var(--ok) }
@@ -156,11 +159,11 @@
   </script>
 
   <div class="steps">
-    <div class="step done"><div class="tag">✓ Vectorial</div><h3 data-i18n="s1h">2D vectorial</h3><p data-i18n="s1p">Cara de canvas con lip-sync. El origen.</p><a href="vectorial.html" data-i18n="see">Ver →</a></div>
-    <div class="step done"><div class="tag">✓ 2D</div><h3 data-i18n="s2h">Vídeo</h3><p data-i18n="s2p">Vídeos madre/padre + lip-sync 2D.</p><a href="good.html" data-i18n="see">Ver →</a></div>
-    <div class="step done"><div class="tag">✓ 3D</div><h3 data-i18n="s3h">Malla 3D</h3><p data-i18n="s3p">Cara 3D con 52 blendshapes (facecap).</p><a href="better.html" data-i18n="see">Ver →</a></div>
-    <div class="step now"><div class="tag" data-i18n="s4tag">● Metahuman (en vivo)</div><h3>MetaHuman Unreal</h3><p data-i18n="s4p">Piel y ojos foto-reales por Pixel Streaming. Habla con voz y lip-sync en tiempo real (persona «Neo»).</p></div>
-    <div class="step done"><div class="tag">✓ Fotorealístico</div><h3 data-i18n="s5h">Humano rigged</h3><p data-i18n="s5p">Avatar web Ready Player Me: habla siempre, sin host de render.</p><a href="best.html" data-i18n="see">Ver →</a></div>
+    <div class="step done"><img class="step-thumb" src="assets/thumb-vectorial.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async"><div class="tag">✓ Vectorial</div><h3 data-i18n="s1h">2D vectorial</h3><p data-i18n="s1p">Cara de canvas con lip-sync. El origen.</p><a href="vectorial.html" data-i18n="see">Ver →</a></div>
+    <div class="step done"><img class="step-thumb" src="assets/thumb-2d.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async"><div class="tag">✓ 2D</div><h3 data-i18n="s2h">Vídeo</h3><p data-i18n="s2p">Vídeos madre/padre + lip-sync 2D.</p><a href="good.html" data-i18n="see">Ver →</a></div>
+    <div class="step done"><img class="step-thumb" src="assets/thumb-3d.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async"><div class="tag">✓ 3D</div><h3 data-i18n="s3h">Malla 3D</h3><p data-i18n="s3p">Cara 3D con 52 blendshapes (facecap).</p><a href="better.html" data-i18n="see">Ver →</a></div>
+    <div class="step now"><img class="step-thumb" src="assets/neo-poster-1x1.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async"><div class="tag" data-i18n="s4tag">● Metahuman (en vivo)</div><h3>MetaHuman Unreal</h3><p data-i18n="s4p">Piel y ojos foto-reales por Pixel Streaming. Habla con voz y lip-sync en tiempo real (persona «Neo»).</p></div>
+    <div class="step done"><img class="step-thumb" src="assets/thumb-web.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async"><div class="tag">✓ Fotorealístico</div><h3 data-i18n="s5h">Humano rigged</h3><p data-i18n="s5p">Avatar web Ready Player Me: habla siempre, sin host de render.</p><a href="best.html" data-i18n="see">Ver →</a></div>
   </div>
 
   <p class="note" data-i18n="note">Cada versión se conserva como histórico (URL propia + etiquetas git): la evolución nunca se pierde.</p>
