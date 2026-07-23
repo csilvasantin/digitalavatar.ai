@@ -102,6 +102,18 @@
     .grid3{grid-template-columns:1fr}
     .hero h1{font-size:1.8rem}
   }
+  /* En móvil la barra superior no cabe en una fila: el enlace largo se partía en 3 líneas
+     dentro de su pastilla. Dejamos que la barra envuelva y que cada pastilla vaya en una línea. */
+  @media(max-width:560px){
+    .wrap{padding:18px 16px 60px}
+    .top{flex-wrap:wrap; gap:8px; margin-bottom:22px}
+    .top .sp{display:none}
+    .top .brand{width:100%}
+    .top a.home, .top #langBtn{white-space:nowrap; font-size:.7rem; padding:6px 11px}
+    .hero h1{font-size:1.62rem}
+    .attrs th,.attrs td{padding:8px 9px}
+    .attrs td code{font-size:.74rem}
+  }
 </style>
 </head>
 <body>
