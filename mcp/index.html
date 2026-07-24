@@ -148,6 +148,26 @@
   </div></section>
 
   <section class="band"><div class="shell">
+    <p class="eyebrow">Salud</p>
+    <h2>Qué se vigila, y por qué existe</h2>
+    <p class="note">Neo estuvo semanas sin responder porque el frontend llamaba a un endpoint que devolvía 404, y nadie lo vio: se verificaba que la web <b>se viera</b>, no que <b>funcionara</b>. Estas comprobaciones llaman a los servicios de verdad.</p>
+    <table>
+      <thead><tr><th>Comprobación</th><th>Qué mira</th></tr></thead>
+      <tbody>
+        <tr><td><code>cerebro-neo</code></td><td>Que <code>POST /metahuman/ask</code> devuelva una respuesta real, no vacía.</td></tr>
+        <tr><td><code>mcp-server</code></td><td>Que el servidor MCP liste sus herramientas por JSON-RPC.</td></tr>
+        <tr><td><code>consejo-mini-externo</code></td><td>Que el Consejo responda <b>visto desde fuera</b> del tailnet, no solo desde dentro.</td></tr>
+        <tr><td><code>manifest</code></td><td>Que este manifest siga siendo JSON válido.</td></tr>
+        <tr><td><code>proof-of-play</code></td><td>La antigüedad del último dato de emisión y audiencia (avisa a los 3 días).</td></tr>
+      </tbody>
+    </table>
+    <div class="grid2" style="margin-top:16px">
+      <div class="card warn"><h3>Hoy no están instalados</h3><p>Los dos vigilantes existen y están probados, pero <b>solo se ejecutan a mano</b>. Activarlos como tarea programada requiere el OK del dueño de la máquina: es configuración persistente y publica avisos al grupo.</p></div>
+      <div class="card"><h3>Cuatro lecciones, por si montas algo igual</h3><p>Usa <b>curl</b>, no urllib (Cloudflare le da 403 y parece que el sistema falla). Al probar algo del <b>tailnet</b>, fuerza la IP pública del Funnel: desde dentro siempre sale verde. Prueba con el <b>método correcto</b> (un GET a un endpoint POST parece roto sin estarlo). Y una alerta diaria acaba <b>silenciada</b>: avisa solo al cambiar de estado.</p></div>
+    </div>
+  </div></section>
+
+  <section class="band"><div class="shell">
     <p class="eyebrow">Federación</p>
     <h2>Misma convención en todo el ecosistema</h2>
     <p class="note">

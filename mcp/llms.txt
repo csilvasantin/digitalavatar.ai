@@ -69,6 +69,35 @@ Cada etapa se conserva con URL propia — la evolución nunca se pierde:
 - Fotorealístico web . https://digitalavatar.ai/best.html
 - MetaHuman en vivo .. https://digitalavatar.ai/metahuman.html
 
+## Salud y monitorización
+
+Esto nace de un caso real: Neo estuvo semanas sin responder porque el frontend llamaba a
+un endpoint que devolvía 404, y nadie lo vio — se verificaba que la web **se viera**, no
+que **funcionara**. Estas comprobaciones llaman a los servicios de verdad.
+
+Qué se vigila:
+- cerebro-neo ........... POST /metahuman/ask devuelve ok:true con answer no vacía.
+- mcp-server ........... POST JSON-RPC tools/list a mcp.admira.store/mcp devuelve herramientas.
+- consejo-mini-externo . /api/council/health del Mac Mini responde 200 VISTO DESDE FUERA del tailnet.
+- manifest ............. este manifest.json sigue siendo JSON válido.
+- proof-of-play ........ antigüedad del dato más reciente en /emit y /audience (avisa a los 3 días).
+
+Con qué: `tools/promesas-watch.sh` (las 4 primeras) y `tools/telemetry-watch.sh` (la última),
+en el repo de la flota. Ambos avisan por AgoraMatrix solo cuando algo CAMBIA de estado.
+
+**Estado honesto: los vigilantes NO están instalados como tarea programada.** Existen y están
+probados, pero hoy solo se ejecutan a mano. Activarlos necesita el OK del dueño de la máquina,
+porque es configuración persistente y publica avisos recurrentes al grupo.
+
+Cuatro lecciones de método, por si montas algo parecido:
+1. Usa **curl**, no urllib ni requests: Cloudflare les devuelve 403 y genera falsos negativos
+   que parecen fallos del sistema y son de quien llama.
+2. Para probar un servicio del **tailnet**, fuerza la IP pública del Funnel (`curl --resolve`).
+   Desde dentro siempre da verde aunque un agente externo no llegue: probar desde dentro no es probar.
+3. Prueba con el **método correcto**: un GET a un endpoint streamable-http (que usa POST)
+   devuelve 404 y parece roto sin estarlo.
+4. Una alerta que salta **todos los días** acaba silenciada. Avisa solo al cambiar de estado.
+
 ## Federación
 
 Misma convención /mcp/ en cada pata del ecosistema AdmiraNeXT:

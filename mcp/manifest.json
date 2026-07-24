@@ -76,6 +76,25 @@
     "note": "El sitio y el embed detectan el idioma del visitante y Neo responde en ese idioma. Se puede forzar con data-lang o ?lang=."
   },
 
+  "health": {
+    "note": "Qué se vigila y cómo. Nace de un caso real: Neo estuvo semanas sin responder porque el frontend llamaba a un endpoint que devolvía 404, y nadie lo vio porque se verificaba que la web SE VIERA, no que FUNCIONARA.",
+    "installed": false,
+    "installed_note": "IMPORTANTE: hoy los vigilantes NO están instalados como tarea programada. Existen y están probados, pero solo se ejecutan a mano. Activarlos requiere el OK del dueño de la máquina (config persistente + avisos recurrentes al grupo).",
+    "checks": [
+      { "name": "cerebro-neo", "what": "POST /metahuman/ask devuelve ok:true con answer no vacía.", "script": "tools/promesas-watch.sh" },
+      { "name": "mcp-server", "what": "POST JSON-RPC tools/list a mcp.admira.store/mcp devuelve herramientas.", "script": "tools/promesas-watch.sh" },
+      { "name": "consejo-mini-externo", "what": "/api/council/health del Mac Mini responde 200 VISTO DESDE FUERA del tailnet.", "script": "tools/promesas-watch.sh" },
+      { "name": "manifest", "what": "Este mismo manifest.json sigue siendo JSON válido.", "script": "tools/promesas-watch.sh" },
+      { "name": "proof-of-play", "what": "Antigüedad del dato más reciente en /emit y /audience; avisa si pasa de 3 días.", "script": "tools/telemetry-watch.sh" }
+    ],
+    "lessons": [
+      "Usa curl, no urllib ni requests: Cloudflare devuelve 403 a esos clientes y produce falsos negativos ('no hay datos', 'está roto') que parecen fallos del sistema y son del que llama.",
+      "Para probar un servicio del tailnet, fuerza la IP pública del Funnel (curl --resolve). Desde dentro del tailnet siempre da verde, aunque un agente externo no llegue: probar desde dentro no es probar.",
+      "Prueba con el método correcto: un GET a un endpoint streamable-http (que usa POST) devuelve 404 y parece roto sin estarlo.",
+      "Una alerta que salta todos los días acaba silenciada. Avisa solo al CAMBIAR de estado, con recordatorio espaciado."
+    ]
+  },
+
   "federation": {
     "note": "Misma convención /mcp/ en cada pata del ecosistema AdmiraNeXT; viceversa, digitalavatar.ai también consulta a las demás.",
     "clearchannel": "https://www.clearchannel.tv/mcp/",
