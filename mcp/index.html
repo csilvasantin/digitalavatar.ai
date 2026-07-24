@@ -132,7 +132,7 @@
     <table>
       <thead><tr><th>Método</th><th>Ruta</th><th>Qué hace</th></tr></thead>
       <tbody>
-        <tr><td><code>POST</code></td><td><code>/metahuman/ask-stream</code></td><td>Pregunta a Neo y devuelve <code>{answer}</code>. Body: <code>{question, room, persona:"neo", lang, history}</code>. Mantiene el hilo si le pasas <code>history</code>.</td></tr>
+        <tr><td><code>POST</code></td><td><code>/metahuman/ask</code></td><td>Pregunta a Neo y devuelve <code>{answer}</code>. Body: <code>{question, room, persona:"neo", lang, history}</code>. Mantiene el hilo si le pasas <code>history</code>.</td></tr>
         <tr><td><code>POST</code></td><td><code>/metahuman/say</code></td><td>Hace que Neo locute un texto directamente en el stream. Body: <code>{room, text}</code>.</td></tr>
       </tbody>
     </table>

@@ -32,7 +32,7 @@
     "interact": [
       {
         "method": "POST",
-        "path": "/metahuman/ask-stream",
+        "path": "/metahuman/ask",
         "desc": "Pregunta a Neo y devuelve su respuesta. Mantiene el hilo de la conversación si le pasas history.",
         "body": {
           "question": "string",

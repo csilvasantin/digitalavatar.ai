@@ -42,7 +42,7 @@ Demo para clientes: https://digitalavatar.ai/embed-demo.html
 
 ## API en vivo (base: https://brain.digitalavatar.ai)
 
-- POST /metahuman/ask-stream — pregunta a Neo y devuelve su respuesta.
+- POST /metahuman/ask — pregunta a Neo y devuelve su respuesta.
   body: {question, room:"xtanco", persona:"neo", lang:"es|en", history:[{role,content}]}
   returns: {answer}
 - POST /metahuman/say — hace que Neo locute un texto directamente en el stream.
