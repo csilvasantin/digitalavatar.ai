@@ -181,7 +181,7 @@
       // del visitante aunque el backend ignore el campo.
       // Mismo apaño que en metahuman.html: el cerebro ignora `persona` y se presentaba como «Alex».
       var qOut = text + (EN
-        ? '\n\n(Your name is Neo. You are the digital human of digitalavatar.ai. Always introduce yourself as Neo, never by any other name. Answer in English.)'
+        ? '\n\n(You are Neo, the digital human of digitalavatar.ai. Always answer as Neo. Please answer in English.)'
         : '\n\n(Eres Neo, el humano digital de digitalavatar.ai. Responde siempre como Neo.)');
       var r=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'content-type':'application/json'},
         body:JSON.stringify({question:qOut, room:ROOM, loc:'', persona:'neo', lang:LANG, history:history})});

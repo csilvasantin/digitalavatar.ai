@@ -156,7 +156,7 @@
         // Hasta que se arregle en el worker, la identidad va en el propio texto (probado: así sí
         // contesta como Neo), junto con el idioma. Es un apaño de cliente, no el arreglo de fondo.
         var qOut = text + (en
-          ? '\n\n(Your name is Neo. You are the digital human of digitalavatar.ai. Always introduce yourself as Neo, never by any other name. Answer in English.)'
+          ? '\n\n(You are Neo, the digital human of digitalavatar.ai. Always answer as Neo. Please answer in English.)'
           : '\n\n(Eres Neo, el humano digital de digitalavatar.ai. Responde siempre como Neo.)');
         var r=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'content-type':'application/json'},
           body:JSON.stringify({question:qOut, room:ROOM, loc:'', persona:'neo', lang:(en?'en':'es'), history:history})});
