@@ -152,7 +152,12 @@
         // Streaming de baja latencia + memoria de conversación (preguntas de seguimiento).
         // Mandamos `lang` y, si es EN, lo pedimos también en el propio texto: así Neo
         // contesta en inglés aunque el backend ignore el campo.
-        var qOut = en ? (text+'\n\n(Please answer in English.)') : text;
+        // El cerebro IGNORA el campo persona: preguntado su nombre respondía «Me llamo Alex».
+        // Hasta que se arregle en el worker, la identidad va en el propio texto (probado: así sí
+        // contesta como Neo), junto con el idioma. Es un apaño de cliente, no el arreglo de fondo.
+        var qOut = text + (en
+          ? '\n\n(You are Neo, the digital human of digitalavatar.ai. Always answer as Neo. Please answer in English.)'
+          : '\n\n(Eres Neo, el humano digital de digitalavatar.ai. Responde siempre como Neo.)');
         var r=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'content-type':'application/json'},
           body:JSON.stringify({question:qOut, room:ROOM, loc:'', persona:'neo', lang:(en?'en':'es'), history:history})});
         var d=await r.json(); var a=(d.answer||'').trim();
