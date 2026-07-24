@@ -153,7 +153,7 @@
         // Mandamos `lang` y, si es EN, lo pedimos también en el propio texto: así Neo
         // contesta en inglés aunque el backend ignore el campo.
         var qOut = en ? (text+'\n\n(Please answer in English.)') : text;
-        var r=await fetch(API+'/metahuman/ask-stream',{method:'POST',headers:{'content-type':'application/json'},
+        var r=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'content-type':'application/json'},
           body:JSON.stringify({question:qOut, room:ROOM, loc:'', persona:'neo', lang:(en?'en':'es'), history:history})});
         var d=await r.json(); var a=(d.answer||'').trim();
         setAns(a||(en?'(no answer)':'(sin respuesta)'),true);   // subtítulo completo al terminar (la voz ya iba por delante)
