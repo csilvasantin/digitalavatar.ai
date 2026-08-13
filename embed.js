@@ -191,7 +191,13 @@ export function mount(cfg = {}) {
     if (!C.brainUrl) { cap.textContent = "(sin cerebro configurado)"; return; }
     try {
       const r = await fetch(C.brainUrl, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ question: q, lang: C.lang }) });
-      const d = await r.json(); const text = d.text || d.answer || "No he podido responder.";
+      const d = await r.json().catch(() => ({}));
+      let text = d.text || d.answer || "";
+      if (!text) {
+        if (r.status === 401 || d.error === "unauthorized") text = "Sesión caducada. Recarga e entra otra vez.";
+        else if (!r.ok) text = "El cerebro falló. Prueba de nuevo.";
+        else text = "No he podido responder.";
+      }
       cap.textContent = text; speak(text);
     } catch (e) { cap.textContent = "Sin conexión."; }
   }
