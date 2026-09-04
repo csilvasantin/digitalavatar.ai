@@ -152,7 +152,8 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 // Proxy en pixer-eleven (/da/*) → reenvía a omnipublicity-api por la malla interna
 // de Cloudflare. Esquiva el bloqueo ISP español de workers.dev: pixer-eleven SÍ es
 // alcanzable desde redes ES, omnipublicity directo no siempre lo es.
-const API = 'https://pixer-eleven.csilvasantin.workers.dev/da';
+// dominio propio: LaLiga bloquea workers.dev en horas de fútbol, FLT-1633
+const API = 'https://api.admira.store/da';
 const $ = id => document.getElementById(id);
 
 // Avatar RPM por defecto AUTO-ALOJADO (siempre carga, sin depender de readyplayer.me).

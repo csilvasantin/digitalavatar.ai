@@ -37,7 +37,7 @@ datos (KV) que ya alimentan el gemelo 2D. Identifica el punto por `?loc=<id>`.
 ```
 
 - **Cerebro + voz** (etapas 2-3): ya hechos. Endpoint
-  `POST https://omnipublicity-api.csilvasantin.workers.dev/metahuman/ask`.
+  `POST https://brain.digitalavatar.ai/metahuman/ask`.
 - **Cara** (etapa 4): la monta el dev UE con MetaHuman + Audio2Face (ACE). Ver
   [`docs/integration-UE.md`](docs/integration-UE.md).
 

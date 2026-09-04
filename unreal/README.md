@@ -7,11 +7,11 @@ Ver la spec completa: [`../docs/integration-UE.md`](../docs/integration-UE.md). 
 
 1. **Entorno** de tienda fotorrealista (prefab de Fab/Marketplace redecorado como Xtanco).
 2. **Config por punto:** lee `?loc=<id>` (Pixel Streaming / Remote Control) → `fetch` al KV
-   `https://omnipublicity-api.csilvasantin.workers.dev/locations` → nombre/dirección en rótulos,
+   `https://brain.digitalavatar.ai/locations` → nombre/dirección en rótulos,
    nº de pantallas, hilo musical, cámaras, equipo.
 3. **Pantallas = signage real:** `MediaTexture` con polling a
-   `https://pixer-eleven.csilvasantin.workers.dev/signage/feed?screen=<id>&limit=1`.
-4. **MetaHuman + voz:** `POST https://omnipublicity-api.csilvasantin.workers.dev/metahuman/ask`
+   `https://api.admira.store/signage/feed?screen=<id>&limit=1`.
+4. **MetaHuman + voz:** `POST https://brain.digitalavatar.ai/metahuman/ask`
    `{loc, question}` → `{answer, audioBase64, mime}`. Reproducir el audio en un `SoundWave` y
    alimentarlo a **Nvidia Audio2Face (ACE)** para el lip-sync.
 5. **Pixel Streaming:** empaquetar con el plugin, levantar el Signalling server y exponerlo
