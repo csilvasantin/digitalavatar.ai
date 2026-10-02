@@ -55,13 +55,14 @@ export function mount(cfg = {}) {
 #da-panel{position:absolute;right:0;bottom:0;width:320px;background:#02080d;border:1px solid ${C.accent}4d;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6);display:none;flex-direction:column}
 #da-av.open #da-panel{display:flex}#da-av.open #da-bubble{display:none}
 #da-head{position:relative;height:220px;background:radial-gradient(120% 90% at 50% 10%,#12324a,#040c14)}
-#da-head canvas{display:block;width:100%;height:100%}
-#da-hdr{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;z-index:2}
+#da-head canvas{display:block;width:100%;height:100%;position:absolute;inset:0;z-index:1}
+#da-still{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 28%;z-index:2;background:#040c14}
+#da-hdr{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;z-index:3}
 #da-hdr .t{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#dff8ff;display:flex;align-items:center;gap:7px}
 #da-hdr .t i{width:7px;height:7px;border-radius:50%;background:${C.accent};box-shadow:0 0 12px ${C.accent}}
 #da-hdr .x{cursor:pointer;color:#75aab9;font-size:15px;background:none;border:0}#da-hdr .x:hover{color:#ff8866}
-#da-cap{position:absolute;left:0;right:0;bottom:0;padding:10px 12px;font-family:system-ui,sans-serif;font-size:13px;line-height:1.4;color:#eef7ff;background:linear-gradient(0deg,rgba(2,8,13,.92),transparent);min-height:34px;z-index:2}
-#da-ld{position:absolute;inset:0;display:grid;place-items:center;color:#4d7a88;font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:0 20px}
+#da-cap{position:absolute;left:0;right:0;bottom:0;padding:10px 12px;font-family:system-ui,sans-serif;font-size:13px;line-height:1.4;color:#eef7ff;background:linear-gradient(0deg,rgba(2,8,13,.92),transparent);min-height:34px;z-index:3}
+#da-ld{display:none}
 #da-bar{display:flex;gap:7px;padding:11px;border-top:1px solid ${C.accent}24}
 #da-in{flex:1;background:#0a1620;border:1px solid ${C.accent}29;border-radius:9px;color:#dff8ff;font-family:system-ui,sans-serif;font-size:13px;padding:9px 11px;outline:none}
 #da-in:focus{border-color:${C.accent}}
@@ -73,7 +74,7 @@ export function mount(cfg = {}) {
   wrap.innerHTML = `<style>${css}</style>
 <div id="da-bubble" title="${C.title}"><span class="pulse"></span><b>🤖</b></div>
 <div id="da-panel">
-  <div id="da-head"><div id="da-ld">cargando avatar…</div>
+  <div id="da-head"><img id="da-still" alt="" src="${SELF}assets/thumb-3d.jpg"><div id="da-ld"></div>
     <div id="da-hdr"><div class="t"><i></i>${C.title}</div><button class="x" title="cerrar">✕</button></div>
     <div id="da-cap">${C.greeting}</div>
   </div>
@@ -94,16 +95,21 @@ export function mount(cfg = {}) {
 
   async function initThree() {
     let THREE, GLTFLoader, KTX2Loader, MeshoptDecoder, RoomEnvironment;
+    // esm.sh devuelve un reexport de unas decenas de bytes y el grafo no
+    // termina: el rótulo «cargando» se quedaba puesto (visto a los 4 s en
+    // #4882). jsDelivr entrega el módulo ya empaquetado. La foto de la misma
+    // cara (thumb-3d.jpg) está visible desde el primer frame.
     try {
-      const base = `https://esm.sh/three@${V}`;
+      const base = `https://cdn.jsdelivr.net/npm/three@${V}`;
+      const esm = (path) => `${base}/${path}/+esm`;
       [THREE, { GLTFLoader }, { KTX2Loader }, { MeshoptDecoder }, { RoomEnvironment }] = await Promise.all([
-        import(base),
-        import(`${base}/examples/jsm/loaders/GLTFLoader.js`),
-        import(`${base}/examples/jsm/loaders/KTX2Loader.js`),
-        import(`${base}/examples/jsm/libs/meshopt_decoder.module.js`),
-        import(`${base}/examples/jsm/environments/RoomEnvironment.js`),
+        import(`${base}/+esm`),
+        import(esm("examples/jsm/loaders/GLTFLoader.js")),
+        import(esm("examples/jsm/loaders/KTX2Loader.js")),
+        import(esm("examples/jsm/libs/meshopt_decoder.module.js")),
+        import(esm("examples/jsm/environments/RoomEnvironment.js")),
       ]);
-    } catch (e) { $("#da-ld").textContent = "avatar 3D no disponible · sigo funcionando"; if (!greeted) greet(); return; }
+    } catch (e) { if (!greeted) greet(); return; }
     const host = $("#da-head");
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(2, devicePixelRatio)); renderer.setSize(host.clientWidth, host.clientHeight);
@@ -118,7 +124,7 @@ export function mount(cfg = {}) {
     scene.add(new THREE.HemisphereLight(0xdff1ff, 0x0b1622, .55));
     clock = new THREE.Clock();
     addEventListener("resize", () => { if (!renderer) return; camera.aspect = host.clientWidth / host.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(host.clientWidth, host.clientHeight); });
-    const ktx2 = new KTX2Loader().setTranscoderPath(`https://unpkg.com/three@${V}/examples/jsm/libs/basis/`).detectSupport(renderer);
+    const ktx2 = new KTX2Loader().setTranscoderPath(`https://cdn.jsdelivr.net/npm/three@${V}/examples/jsm/libs/basis/`).detectSupport(renderer);
     const loader = new GLTFLoader(); loader.setKTX2Loader(ktx2); loader.setMeshoptDecoder(MeshoptDecoder);
     loader.load(C.model, (gltf) => {
       const root = gltf.scene;
@@ -129,8 +135,9 @@ export function mount(cfg = {}) {
       const box = new THREE.Box3().setFromObject(root), size = box.getSize(new THREE.Vector3()), center = box.getCenter(new THREE.Vector3());
       root.position.sub(center); const h = size.y || .3; const bs = h / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))); const dist = bs / .62; const eyeY = h * .18;
       camera.position.set(0, eyeY + h * .04, dist); camera.lookAt(0, eyeY - h * .16, 0); camera.updateProjectionMatrix();
+      const still = $("#da-still"); if (still) still.style.display = "none";
       $("#da-ld").style.display = "none"; animate(); if (!greeted) greet();
-    }, undefined, () => { $("#da-ld").textContent = "avatar 3D no disponible · sigo funcionando"; if (!greeted) greet(); });
+    }, undefined, () => { if (!greeted) greet(); });
 
     function animate() {
       requestAnimationFrame(animate);
