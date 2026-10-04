@@ -21,7 +21,13 @@
   html,body{ margin:0; height:100%; background:transparent; color:var(--txt); font-family:ui-sans-serif,-apple-system,Segoe UI,Roboto,sans-serif }
   .wrap{ display:flex; flex-direction:column; height:100%; min-height:0; gap:8px }
   .stage{ position:relative; flex:1 1 auto; min-height:0; background:#000; border:1px solid var(--line); border-radius:16px; overflow:hidden; box-shadow:0 14px 40px rgba(0,0,0,.5) }
-  #mh{ display:block; width:100%; height:100%; border:0; background:#000 }
+  .da-neo-fit{ position:relative }
+  #mh{ position:absolute; inset:0; display:block; width:100%; height:100%; border:0; background:#000 }
+  .vstate{ min-height:1em; font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted) }
+  .vstate[data-s="escuchando"]{ color:#ff9bb8 }
+  .vstate[data-s="pensando"],.vstate[data-s="activando"]{ color:var(--accent) }
+  .vstate[data-s="hablando"]{ color:var(--ok) }
+  .vstate[data-s="error"],.vstate[data-s="cortada"]{ color:#ff8a7a }
   .bar{ position:absolute; top:0; left:0; right:0; z-index:3; display:flex; align-items:center; gap:8px; padding:8px 12px;
     font-size:.72rem; color:var(--muted); background:linear-gradient(180deg, rgba(5,8,15,.82), rgba(5,8,15,0)); pointer-events:none }
   .live{ display:inline-flex; align-items:center; gap:6px; color:var(--ok); font-weight:700; letter-spacing:.04em }
@@ -57,7 +63,7 @@
 </head>
 <body>
   <div class="wrap">
-    <div class="stage">
+    <div class="stage da-neo-fit" id="mhFit">
       <div class="bar"><span class="live"><span class="dot"></span>EN VIVO</span> · MetaHuman · Pixel Streaming</div>
       <div class="facade" id="facade">
         <picture>
@@ -76,15 +82,19 @@
       <a class="cred" href="https://digitalavatar.ai/metahuman.html" target="_blank" rel="noopener">digitalavatar.ai ↗</a>
     </div>
     <div class="ask" id="ask">
+      <div class="vstate" id="vstate" data-s="listo">Listo</div>
       <div class="askrow">
         <input id="q" type="text" placeholder="Pregúntale a Neo…" autocomplete="off">
         <button id="mic" title="Hablar" aria-label="Hablar por micrófono">🎤</button>
+        <button id="cut" type="button">Cortar</button>
         <button id="send">Preguntar</button>
       </div>
       <div id="ans" class="ans"></div>
     </div>
   </div>
 
+<script src="/assets/da-neo-player.js?v=20261004-audio-3"></script>
+<script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
 <script>
 (function(){
   var P=new URLSearchParams(location.search);
@@ -96,23 +106,33 @@
   var EN = LANG==='en';
   var T = {
     live:      EN ? 'LIVE'          : 'EN VIVO',
-    modeWeb:   EN ? '● WEB MODE'    : '● MODO WEB',
-    offline:   EN ? 'render host offline' : 'host de render offline',
     facadeH2:  EN ? 'Talk to <b>Neo</b>' : 'Habla con <b>Neo</b>',
     facadeP:   EN ? 'A MetaHuman digital human in Unreal Engine 5, live. Tap to connect.'
                   : 'Humano digital MetaHuman en Unreal Engine 5, en vivo. Pulsa para conectar.',
     ph:        EN ? 'Ask Neo…'      : 'Pregúntale a Neo…',
     micT:      EN ? 'Speak'         : 'Hablar',
     send:      EN ? 'Ask'           : 'Preguntar',
+    cut:       EN ? 'Cut'           : 'Cortar',
     thinking:  EN ? '· thinking…'   : '· respondiendo…',
     noAnswer:  EN ? '(no answer)'   : '(sin respuesta)',
-    connErr:   EN ? '⚠️ connection error' : '⚠️ error de conexión'
+    connErr:   EN ? 'Connection error' : 'Error de conexión',
+    listo:     EN ? 'Ready'         : 'Listo',
+    escuchando:EN ? 'Listening'     : 'Escuchando',
+    pensando:  EN ? 'Thinking'      : 'Pensando',
+    hablando:  EN ? 'Speaking'      : 'Hablando',
+    activando: EN ? 'Turning voice on' : 'Activando voz',
+    cortada:   EN ? 'Voice cut'     : 'Voz cortada',
+    micNo:     EN ? 'This browser has no dictation. Type the question.' : 'Este navegador no tiene dictado. Escribe la pregunta.',
+    micDenied: EN ? 'Microphone blocked. Allow it, or type.' : 'Micro bloqueado. Permite el micrófono o escribe.',
+    micFail:   EN ? 'The microphone failed. Type the question.' : 'No se pudo usar el micrófono. Escribe la pregunta.',
+    micEmpty:  EN ? 'Nothing was heard. Try again or type.' : 'No se oyó nada. Prueba otra vez o escribe.',
+    audioBlocked: EN ? 'The browser blocked audio. Tap again to hear the reply.' : 'El navegador bloqueó el audio. Pulsa de nuevo para oír la respuesta.',
+    noVoice:   EN ? 'No voice: the brain returned no audio.' : 'Sin voz: el cerebro no devolvió audio.',
+    modeWeb:   EN ? '● WEB MODE'    : '● MODO WEB',
+    offline:   EN ? 'render host offline — voice plays here' : 'host de render offline — la voz suena aquí'
   };
   document.documentElement.lang = LANG;
-  var BASE='https://macbook-pro-16.tail48b61c.ts.net:8443/';
-  var PROBE=BASE+'images/favicon-32x32.png';                 // <img> cross-origin = sondeo fiable (no fetch no-cors)
-  var MH_SRC=BASE+'uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true';
-  var WEB_SRC='https://digitalavatar.ai/best.html?kiosk=1';   // fallback: avatar web (habla siempre)
+  var PROBE=DANeoPlayer.probe; // <img> cross-origin: sondeo fiable (no fetch no-cors)
   var stage=document.querySelector('.stage'), facade=document.getElementById('facade'), bar=document.querySelector('.bar');
   var ask=document.getElementById('ask');
   if(showAsk) ask.classList.add('on');
@@ -127,6 +147,8 @@
     if(qi) qi.placeholder=T.ph;
     if(mi){ mi.title=T.micT; mi.setAttribute('aria-label', EN?'Speak into the microphone':'Hablar por micrófono'); }
     if(sb) sb.textContent=T.send;
+    var cb=document.getElementById('cut'); if(cb) cb.textContent=T.cut;
+    var vs=document.getElementById('vstate'); if(vs) vs.textContent=T.listo;
   })();
 
   // lluvia Matrix del póster (barata, decorativa)
@@ -136,7 +158,15 @@
     el.textContent=out;
   })();
 
-  var iframe=null, mode=null, fails=0;
+  var iframe=null, mode=null, fails=0, started=false, talkTimer=null, seq=0;
+  var vstate=document.getElementById('vstate');
+  var SHORT={listo:1,escuchando:1,pensando:1,hablando:1,activando:1,cortada:1};
+  function paint(s, text){
+    if(!vstate) return;
+    vstate.dataset.s=s; vstate.textContent=text||T[s]||s;
+    if(SHORT[s] && DADemo.state()!==s) DADemo.setState(s);
+  }
+  DADemo.onState(function(s){ if(SHORT[s]) paint(s); });
   function reach(){ return new Promise(function(res){
     var done=false, img=new Image();
     var t=setTimeout(function(){ if(!done){done=true; res(false);} }, 9000);
@@ -148,15 +178,32 @@
     iframe=document.createElement('iframe'); iframe.id='mh';
     iframe.allow='autoplay; fullscreen; microphone; camera'; iframe.setAttribute('allowfullscreen','');
     iframe.referrerPolicy='no-referrer';
-    stage.insertBefore(iframe, bar);   // debajo de la barra
+    stage.insertBefore(iframe, bar);
+    DANeoPlayer.bindFit(iframe);
     return iframe;
   }
-  function toMH(){ if(mode==='mh')return; mode='mh'; ensureIframe().src=MH_SRC;
+  function toMH(){
+    window.__daHostUp=true;
+    if(mode==='mh') return;
+    var wasWeb=mode==='web';
+    mode='mh';
+    var fr=ensureIframe();
+    fr.dataset.mode='mh';
+    var muted=wasWeb ? true : (window.__daStreamUnmuted ? false : window.__daPreferMuted!==false);
+    if(wasWeb) window.__daStreamUnmuted=false;
+    var want=DANeoPlayer.src({muted:muted});
+    if(fr.src!==want) fr.src=want;
+    DANeoPlayer.fit(fr);
     if(showAsk) ask.classList.add('on');
     bar.innerHTML='<span class="live"><span class="dot"></span>'+T.live+'</span> · MetaHuman · Pixel Streaming';
   }
-  function toWeb(){ if(mode==='web')return; mode='web'; ensureIframe().src=WEB_SRC;
-    ask.classList.remove('on');
+  function toWeb(){ if(mode==='web')return; mode='web';
+    window.__daHostUp=false; window.__daStreamUnmuted=false;
+    var fr=ensureIframe();
+    fr.dataset.mode='web';
+    DANeoPlayer.fill(fr);
+    fr.src=DANeoPlayer.webFallback;
+    if(showAsk) ask.classList.add('on');
     bar.innerHTML='<span style="color:#ffb454;font-weight:700">'+T.modeWeb+'</span> · '+T.offline;
   }
   async function tick(){
@@ -164,42 +211,103 @@
     else if(++fails>=2){ toWeb(); }
     setTimeout(tick, mode==='web' ? 30000 : (fails===1 ? 4000 : 15000));
   }
-  function start(){ if(facade){ facade.remove(); } tick(); }
-  if(facade) facade.addEventListener('click', start, {once:true});
-  if(autostart) start();
+  function start(muted){
+    if(started) return;
+    started=true;
+    DADemo.unlock();
+    window.__daPreferMuted=!!muted;
+    if(!muted) window.__daStreamUnmuted=true;
+    if(facade&&facade.parentNode) facade.remove();
+    tick();
+  }
+  if(facade) facade.addEventListener('click', function(){ start(false); }, {once:true});
+  if(autostart) start(true);
 
-  // ---- caja de preguntas (misma lógica que metahuman.html) ----
+  function armStream(muted){
+    if(!iframe || iframe.dataset.mode==='web' || window.__daHostUp===false) return Promise.resolve();
+    var want=DANeoPlayer.src({muted:!!muted});
+    window.__daStreamUnmuted=!muted;
+    if(iframe.src===want){ DANeoPlayer.fit(iframe); return Promise.resolve(); }
+    return new Promise(function(res){
+      var done=false;
+      function finish(){ if(done) return; done=true; iframe.removeEventListener('load', finish); if(iframe.dataset.mode!=='web') DANeoPlayer.fit(iframe); res(); }
+      iframe.addEventListener('load', finish);
+      iframe.src=want;
+      setTimeout(finish, 4500);
+    });
+  }
+
   var API='https://brain.digitalavatar.ai', ROOM='xtanco', history=[];
-  var q=document.getElementById('q'), send=document.getElementById('send'), mic=document.getElementById('mic'), ansEl=document.getElementById('ans');
+  var q=document.getElementById('q'), send=document.getElementById('send'), mic=document.getElementById('mic'), ansEl=document.getElementById('ans'), cut=document.getElementById('cut');
   function setAns(t,show){ ansEl.textContent=t; ansEl.classList.toggle('show',!!show); }
   async function doAsk(){
     var text=(q.value||'').trim(); if(!text) return;
-    if(!iframe) start();                    // preguntar también arranca el stream
-    send.disabled=true; setAns(T.thinking,true); q.value='';
+    var mine=++seq;
+    if(!started) start(false);
+    DADemo.unlock(); DADemo.stop(); clearTimeout(talkTimer);
+    send.disabled=true; paint('pensando'); setAns(T.thinking,true); q.value='';
     try{
-      // `lang` + petición explícita en el texto si es EN: Neo contesta en el idioma
-      // del visitante aunque el backend ignore el campo.
-      // Mismo apaño que en metahuman.html: el cerebro ignora `persona` y se presentaba como «Alex».
+      var host=window.__daHostUp;
+      if(host!==true && host!==false) host=await DANeoPlayer.whenHost(12000);
+      if(mine!==seq) return;
+      var offline=host===false;
+      if(!offline && !window.__daStreamUnmuted){
+        paint('activando');
+        await armStream(false);
+        if(mine!==seq) return;
+        paint('pensando');
+      }
       var qOut = text + (EN
         ? '\n\n(You are Neo, the digital human of digitalavatar.ai. Always answer as Neo. Please answer in English.)'
         : '\n\n(Eres Neo, el humano digital de digitalavatar.ai. Responde siempre como Neo.)');
       var r=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'content-type':'application/json'},
-        body:JSON.stringify({question:qOut, room:ROOM, loc:'', persona:'neo', lang:LANG, history:history})});
+        body:JSON.stringify({question:qOut, room:ROOM, loc:'', persona:'neo', lang:LANG, history:history, voice:true, timestamps:true, voiceId:DADemo.voiceId(LANG)})});
       var d=await r.json(), a=(d.answer||'').trim();
+      if(mine!==seq) return;
       setAns(a||T.noAnswer,true);
       if(a){ history.push({role:'user',content:text},{role:'assistant',content:a}); if(history.length>8) history=history.slice(-8); }
-    }catch(e){ setAns(T.connErr,true); }
-    send.disabled=false;
+      if(offline && d.audioBase64){
+        var audio=DADemo.load(d.audioBase64, d.mime);
+        audio.onended=function(){ if(mine===seq) paint('listo'); };
+        try{ await DADemo.start(audio); paint('hablando'); }
+        catch(err){
+          paint('error', T.audioBlocked);
+          DADemo.armRetry(function(){ DADemo.start(audio).then(function(){ paint('hablando'); }).catch(function(){ paint('error', T.audioBlocked); }); });
+        }
+      } else if(!offline && (d.audioBase64||a)){
+        DADemo.setState('hablando');
+        var ms=d.audioBase64?DANeoPlayer.clipMs(d.audioBase64):Math.min(12000, Math.max(1500, a.length*70));
+        talkTimer=setTimeout(function(){ if(mine===seq && vstate && vstate.dataset.s==='hablando') paint('listo'); }, ms);
+      } else paint('error', T.noVoice);
+    }catch(e){ if(mine===seq){ setAns('⚠️ '+T.connErr,true); paint('error', T.connErr); } }
+    finally{ if(mine===seq) send.disabled=false; }
+  }
+  function doCut(){
+    seq++; clearTimeout(talkTimer); DADemo.stop();
+    if(window.__daStreamUnmuted) armStream(true);
+    paint('cortada'); send.disabled=false;
+  }
+  function micError(code){
+    mic.classList.remove('rec');
+    var msg=code==='unsupported'?T.micNo:(code==='not-allowed'||code==='service-not-allowed')?T.micDenied:code==='no-speech'?T.micEmpty:T.micFail;
+    paint('error', msg); setAns(msg, true);
   }
   send.onclick=doAsk;
+  if(cut) cut.onclick=doCut;
   q.addEventListener('keydown',function(e){ if(e.key==='Enter') doAsk(); });
-  var SR=window.SpeechRecognition||window.webkitSpeechRecognition, rec=null;
-  if(SR){ mic.onclick=function(){
-    if(rec){ rec.stop(); return; }
-    rec=new SR(); rec.lang = EN ? 'en-US' : 'es-ES'; rec.interimResults=true; mic.classList.add('rec');
-    rec.onresult=function(ev){ var t=''; for(var i=0;i<ev.results.length;i++) t+=ev.results[i][0].transcript; q.value=t; if(ev.results[ev.results.length-1].isFinal){ rec.stop(); doAsk(); } };
-    rec.onend=function(){ mic.classList.remove('rec'); rec=null; }; rec.start();
-  }; } else if(mic){ mic.style.display='none'; }
+  mic.onclick=function(){
+    if(DADemo.state()==='escuchando'){ DADemo.cancelListen(); mic.classList.remove('rec'); paint('listo'); return; }
+    if(!started) start(false);
+    clearTimeout(talkTimer);
+    var ok=DADemo.listen({
+      lang:LANG,
+      onPartial:function(t){ q.value=t; paint('escuchando'); },
+      onFinal:function(t){ mic.classList.remove('rec'); q.value=t; doAsk(); },
+      onError:micError,
+      onEnd:function(){ mic.classList.remove('rec'); }
+    });
+    if(ok){ mic.classList.add('rec'); paint('escuchando'); }
+  };
 })();
 </script>
 </body>

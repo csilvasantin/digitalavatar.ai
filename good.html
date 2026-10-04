@@ -58,6 +58,7 @@
   button.act.alt { background:#06121c; color:var(--muted); border-color:var(--line); }
   button.act:hover:not(:disabled) { border-color:var(--accent); box-shadow:0 0 14px rgba(95,208,255,.25); }
   button.act:disabled { opacity:.45; cursor:default; }
+  button.act.rec { border-color:#ff5b8a; color:#ff9bb8; }
   label { display:block; font-size:.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin:14px 0 5px; }
   select, textarea { width:100%; background:#06121c; color:var(--txt); border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-family:inherit; font-size:.86rem; }
   textarea { resize:vertical; min-height:50px; }
@@ -68,10 +69,10 @@
   a { color:var(--accent); }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.04.10.2026.r2.20:49">
+<meta name="admiranext-version" content="v.04.10.2026.r3.21:14">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
-<link rel="stylesheet" href="/assets/da-shell.css?v=20261004-experto-2">
-<script defer src="/assets/da-shell.js?v=20261004-experto-2" data-section="/ 2d" data-section-en="/ 2d"></script>
+<link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
+<script defer src="/assets/da-shell.js?v=20261004-audio-3" data-section="/ 2d" data-section-en="/ 2d"></script>
 </head>
 <body>
   <!-- Conmutador de EVOLUCIÓN (good→better→best) · histórico siempre accesible -->
@@ -125,8 +126,10 @@
       <div class="av" id="avM"><div class="inset" id="insM"><span class="live"><i></i><span class="lt"></span></span><canvas id="faceM"></canvas></div><div class="name" id="nameM"></div><div class="pick" id="pickM"></div></div>
     </div>
     <div class="row">
-      <button class="act" id="btnAsk"></button>
-      <button class="act alt" id="btnDemo"></button>
+      <button class="act" id="btnMic" type="button">🎤</button>
+      <button class="act" id="btnAsk" type="button"></button>
+      <button class="act alt" id="btnStop" type="button"></button>
+      <button class="act alt" id="btnDemo" type="button"></button>
     </div>
     <label for="loc" id="locLabel"></label>
     <select id="loc"></select>
@@ -137,6 +140,7 @@
     <p class="foot" id="foot"></p>
   </div>
 
+<script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
 <script src="lipsync-avatar.js"></script>
 <script>
 const API = 'https://brain.digitalavatar.ai';
@@ -151,7 +155,14 @@ const T = {
     locLabel:'Xpacio (punto de Admira.app)', qLabel:'Pregunta al avatar',
     qPlaceholder:'¿Cuánta gente vive en Madrid?', qDefault:'¿Cuánta gente vive en Madrid?',
     noPts:'(sin puntos en el KV)', errPts:'(error cargando puntos)',
-    writeQ:'Escribe una pregunta.', thinking:'Pensando…',
+    writeQ:'Escribe una pregunta.', thinking:'Pensando…', listening:'Escuchando…', speaking:'Hablando',
+    stop:'Cortar voz',
+    micNo:'Este navegador no tiene dictado. Escribe la pregunta.',
+    micDenied:'Micro bloqueado. Permite el micrófono en el navegador o escribe.',
+    micFail:'No se pudo usar el micrófono. Escribe la pregunta.',
+    micEmpty:'No se oyó nada. Prueba otra vez o escribe.',
+    audioBlocked:'El navegador bloqueó el audio. Pulsa de nuevo para oír la respuesta.',
+    noVoice:'Sin voz: el cerebro no devolvió audio de ElevenLabs.',
     okVoice:'✓ Respuesta con voz — lip-sync del avatar seleccionado.',
     xai:'⚠️ Falta XAI_API_KEY en el worker. El lip-sync ya va con ▶ Demo.',
     net:'❌ Error de red: ', demoMsg:'Demo de lip-sync en los dos recuadros.', speechLang:'es-ES',
@@ -165,7 +176,14 @@ const T = {
     locLabel:'Xpacio (Admira.app location)', qLabel:'Ask the avatar',
     qPlaceholder:'How many people live in Madrid?', qDefault:'How many people live in Madrid?',
     noPts:'(no locations in KV)', errPts:'(error loading locations)',
-    writeQ:'Type a question.', thinking:'Thinking…',
+    writeQ:'Type a question.', thinking:'Thinking…', listening:'Listening…', speaking:'Speaking',
+    stop:'Cut voice',
+    micNo:'This browser has no dictation. Type the question.',
+    micDenied:'Microphone blocked. Allow it in the browser, or type.',
+    micFail:'The microphone failed. Type the question.',
+    micEmpty:'Nothing was heard. Try again or type.',
+    audioBlocked:'The browser blocked audio. Tap again to hear the reply.',
+    noVoice:'No voice: the brain returned no ElevenLabs audio.',
     okVoice:'✓ Reply with voice — the selected avatar lip-syncs.',
     xai:'⚠️ The worker is missing the xAI key. Lip-sync already works via ▶ Demo.',
     net:'❌ Network error: ', demoMsg:'Lip-sync demo in both insets.', speechLang:'en-US',
@@ -179,12 +197,6 @@ let LANG = (localStorage.getItem('da_lang') === 'es') ? 'es' : 'en';
 let SPEAKER = (localStorage.getItem('da_speaker') === 'male') ? 'male' : 'female';
 const VIDEO_AVAILABLE = { 'female-es':1, 'female-en':1, 'male-es':1, 'male-en':1 };
 function vkey(gender){ const k=gender+'-'+LANG; return VIDEO_AVAILABLE[k] ? k : gender+'-es'; }
-
-// Voces ElevenLabs por sexo×idioma.
-const VOICES = {
-  'female-es':'dNjJKg63Fr5AXwIdkATa', 'female-en':'qSeXEcewz7tA0Q0qk9fH',
-  'male-es':'qUPtETgSYRhCRb2pfOla',   'male-en':'wAGzRVkxKEs8La0lmdrE',
-};
 
 const avatarF = new LipSyncAvatar($('faceF'), { accent:'#5fd0ff', gender:'female' });
 const avatarM = new LipSyncAvatar($('faceM'), { accent:'#5fd0ff', gender:'male' });
@@ -236,7 +248,8 @@ function applyLang(l){
   $('appTitle').innerHTML=t.title; $('sub').textContent=t.sub;
   $('whoF').textContent=t.mother; $('whoM').textContent=t.father;
   $('nameF').textContent=t.mother; $('nameM').textContent=t.father;
-  $('btnAsk').textContent=t.ask; $('btnDemo').textContent=t.demo;
+  $('btnAsk').textContent=t.ask; $('btnDemo').textContent=t.demo; $('btnStop').textContent=t.stop;
+  $('btnMic').title=t.listening;
   $('locLabel').textContent=t.locLabel; $('qLabel').textContent=t.qLabel;
   const q=$('q'); q.placeholder=t.qPlaceholder;
   if(!q.value.trim()||q.value===T.es.qDefault||q.value===T.en.qDefault) q.value=t.qDefault;
@@ -271,7 +284,7 @@ fetch(API+'/locations',{cache:'no-store'}).then(r=>r.json()).then(d=>{
   list.forEach(l=>{ const o=document.createElement('option'); o.value=l.id; o.textContent=(l.name||l.id)+(l.addr?' · '+l.addr:''); sel.appendChild(o); });
 }).catch(()=>{ $('loc').innerHTML='<option value="">'+T[LANG].errPts+'</option>'; });
 
-function stopAll(){ if(askAudio){try{askAudio.pause();}catch(e){}} if(synthF){try{synthF.stop();}catch(e){}synthF=null;} if(synthM){try{synthM.stop();}catch(e){}synthM=null;} setLiveF(false); setLiveM(false); }
+function stopAll(){ if(window.DADemo) DADemo.stop(); if(askAudio){try{askAudio.pause();}catch(e){}} if(synthF){try{synthF.stop();}catch(e){}synthF=null;} if(synthM){try{synthM.stop();}catch(e){}synthM=null;} setLiveF(false); setLiveM(false); $('btnMic').classList.remove('rec'); }
 
 function babble(avatar, onend){
   const ctx=avatar.ensureAudio(), sr=ctx.sampleRate, dur=3.0;
@@ -291,32 +304,61 @@ function playDemo(){ stopAll();
   setStatus(T[LANG].demoMsg,'ok');
 }
 
-// La madre responde (voz femenina del idioma). Solo su recuadro hace lip-sync.
+function micError(code){
+  const t=T[LANG];
+  if(code==='unsupported') setStatus(t.micNo,'err');
+  else if(code==='not-allowed'||code==='service-not-allowed') setStatus(t.micDenied,'err');
+  else if(code==='no-speech') setStatus(t.micEmpty,'warn');
+  else setStatus(t.micFail,'err');
+  $('btnMic').classList.remove('rec');
+}
+function toggleMic(){
+  if(DADemo.state()==='escuchando'){ DADemo.cancelListen(); $('btnMic').classList.remove('rec'); setStatus(''); return; }
+  stopAll();
+  const ok=DADemo.listen({
+    lang:LANG,
+    onPartial:function(text){ $('q').value=text; setStatus(T[LANG].listening); },
+    onFinal:function(text){ $('btnMic').classList.remove('rec'); $('q').value=text; ask(); },
+    onError:micError
+  });
+  if(ok){ $('btnMic').classList.add('rec'); setStatus(T[LANG].listening); }
+}
+
+// Misma voz ElevenLabs que better y Neo. El recuadro elegido hace el lip-sync.
 async function ask(){
+  DADemo.unlock();
+  avatarF.ensureAudio(); avatarM.ensureAudio();
   stopAll(); const t=T[LANG]; const question=$('q').value.trim();
   if(!question){ setStatus(t.writeQ,'warn'); return; }
-  $('btnAsk').disabled=true; $('answer').textContent=''; setStatus(t.thinking);
+  $('btnAsk').disabled=true; $('answer').textContent=''; setStatus(t.thinking); DADemo.setState('pensando');
   try{
     const res=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({loc:$('loc').value,question,lang:LANG,voice:true,voiceId:VOICES[SPEAKER+'-'+LANG]||''})});
+      body:JSON.stringify({loc:$('loc').value,question,lang:LANG,voice:true,timestamps:true,voiceId:DADemo.voiceId(LANG)})});
     const j=await res.json().catch(()=>({}));
     if(j.ok){
       $('answer').innerHTML='🤖 '+(j.answer||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
       if(j.audioBase64){
-        askAudio=new Audio('data:'+(j.mime||'audio/mpeg')+';base64,'+j.audioBase64);
         const av = SPEAKER==='female'?avatarF:avatarM;
         const setLive = SPEAKER==='female'?setLiveF:setLiveM;
-        av.connectAudioElement(askAudio); askAudio.onended=()=>setLive(false);
-        await askAudio.play(); setLive(true); setStatus(t.okVoice,'ok');
-      } else setStatus('Sin audio.','warn');
+        askAudio=DADemo.load(j.audioBase64, j.mime);
+        av.connectAudioElement(askAudio);
+        askAudio.onended=function(){ setLive(false); DADemo.setState('listo'); if($('status').textContent===t.speaking) setStatus(''); };
+        try{
+          await DADemo.start(askAudio); setLive(true); setStatus(t.speaking);
+        }catch(err){
+          setStatus(t.audioBlocked,'err');
+          DADemo.armRetry(function(){ DADemo.start(askAudio).then(function(){ setLive(true); setStatus(t.speaking); }).catch(function(){ setStatus(t.audioBlocked,'err'); }); });
+        }
+      } else setStatus(t.noVoice,'warn');
     } else if(j.error==='xai_key_not_set'){ setStatus(t.xai,'warn'); }
     else setStatus('❌ '+(j.error||('HTTP '+res.status)),'err');
   }catch(e){ setStatus(t.net+(e.message||e),'err'); }
-  finally{ $('btnAsk').disabled=false; }
+  finally{ $('btnAsk').disabled=false; if(DADemo.state()==='pensando') DADemo.setState('listo'); }
 }
 
-$('btnDemo').onclick=playDemo; $('btnAsk').onclick=ask;
-$('q').addEventListener('keydown',e=>{ if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)) ask(); });
+$('btnDemo').onclick=playDemo; $('btnAsk').onclick=ask; $('btnMic').onclick=toggleMic;
+$('btnStop').onclick=function(){ stopAll(); setStatus(''); };
+$('q').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); ask(); } });
 applyLang(LANG);
 </script>
 </body>
