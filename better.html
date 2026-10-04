@@ -74,8 +74,13 @@
   .livedot{display:inline-block; width:8px; height:8px; border-radius:50%; background:#33506a; margin-left:8px; vertical-align:middle}
   .livedot.on{background:var(--ok); box-shadow:0 0 9px var(--ok); animation:micpulse 1.1s infinite}
 </style>
+<!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
+<meta name="admiranext-version" content="v.04.10.2026.r1.20:37">
+<link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
+<link rel="stylesheet" href="/assets/da-shell.css?v=20261004-meta-1">
+<script defer src="/assets/da-shell.js?v=20261004-meta-1" data-section="/ 3d" data-section-en="/ 3d"></script>
 </head>
-<body>
+<body data-da-stage>
   <!-- Conmutador de EVOLUCIÓN (good→better→best) · histórico siempre accesible -->
   <nav id="evo" aria-label="Evolución del avatar">
     <a data-evo="vectorial" href="vectorial.html">Vectorial</a>
@@ -98,7 +103,7 @@
   document.querySelectorAll('#evo a').forEach(function(a){if(a.getAttribute('data-evo')===cur)a.classList.add('on');});})();</script>
   <div id="stage"></div>
 
-  <div class="top">
+  <div class="top" data-da-replace>
     <div class="brand"><b>DigitalAvatar</b>.ai<span class="livedot" id="livedot"></span><span class="tag" id="tag">avatar digital en tiempo real</span></div>
     <div class="sp"></div>
     <div class="seg" id="langSeg"><button id="langToggle" title="Cambiar idioma / switch language">EN</button></div>
