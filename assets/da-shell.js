@@ -64,20 +64,27 @@
   ];
 
   /* Las 11 herramientas viven en /help del CLI, no como baldosas. */
+  /* Mismo mapa que el cargador de la suite (admiranext.com/assets/avatar.js):
+     good = calvo 3D (hoy better.html), better = chica RPM (hoy best.html),
+     best = Neo (metahuman.html, con caída a la chica si el host está apagado).
+     Los nombres viejos (2d, 3d, realista, metahuman) siguen abriendo su página. */
   var NIVELES = {
     vectorial: '/vectorial.html',
     '2d': '/good.html',
     '3d': '/better.html',
     realista: '/best.html',
-    metahuman: '/metahuman.html'
+    metahuman: '/metahuman.html',
+    good: '/better.html',
+    better: '/best.html',
+    best: '/metahuman.html'
   };
   var NIVEL_POR_RUTA = {
     '/vectorial.html': 'vectorial', '/vectorial': 'vectorial',
     '/good.html': '2d', '/good': '2d',
-    '/better.html': '3d', '/better': '3d',
-    '/': '3d', '/index.html': '3d',
-    '/best.html': 'realista', '/best': 'realista',
-    '/metahuman.html': 'metahuman', '/metahuman': 'metahuman'
+    '/better.html': 'good', '/better': 'good',
+    '/': 'good', '/index.html': 'good',
+    '/best.html': 'better', '/best': 'better',
+    '/metahuman.html': 'best', '/metahuman': 'best'
   };
   var GO = {
     vectorial: '/vectorial.html',
@@ -92,7 +99,7 @@
     roadmap: '/roadmap/',
     ayuda: '/help/'
   };
-  var VERBS = ['help', 'nivel', 'neo', 'say', 'estado', 'mcp', 'embed', 'roadmap', 'ayuda', 'limpiar', 'version', 'idioma', 'vectorial', '2d', '3d', 'realista', 'metahuman', 'embedmh'];
+  var VERBS = ['help', 'nivel', 'avatar', 'avataron', 'avataroff', 'neo', 'say', 'estado', 'mcp', 'embed', 'roadmap', 'ayuda', 'limpiar', 'version', 'idioma', 'vectorial', '2d', '3d', 'realista', 'metahuman', 'good', 'better', 'best', 'embedmh'];
   var BRAIN = 'https://brain.digitalavatar.ai';
   var HOST_PROBE = 'https://macbook-pro-16.tail48b61c.ts.net:8443/images/favicon-32x32.png';
   var hostState = 'comprobando…';
@@ -181,7 +188,12 @@
   function helpText() {
     if (lang() === 'en') {
       return '/help — this list\n' +
-        '/nivel <vectorial|2d|3d|realista|metahuman> — avatar level\n' +
+        '/avatar — status and the three levels\n' +
+        '/avatar good — bald 3D face (facecap, 52 blendshapes)\n' +
+        '/avatar better — web girl (Ready Player Me, glasses)\n' +
+        '/avatar best — Neo, MetaHuman; the girl takes over if the render host is off\n' +
+        '/avatarON shows the panel on the other suite sites · /avatarOFF hides it\n' +
+        '/nivel <good|better|best|vectorial|2d|3d|realista|metahuman> — same map; old names still open their page\n' +
         '/neo — open Neo (MetaHuman)\n' +
         '/say <text> — ask Neo and print the answer\n' +
         '/estado — engine card and MetaHuman host probe\n' +
@@ -192,10 +204,15 @@
         '/limpiar — clear the log (alias: /clear /cls)\n' +
         '/version — release stamp\n' +
         '/idioma en|es — language\n' +
-        'Tools: /vectorial /2d /3d /realista /metahuman /neo /mcp /embed /embedmh /roadmap /ayuda';
+        'Tools: /avatar /good /better /best /vectorial /2d /3d /realista /metahuman /neo /mcp /embed /embedmh /roadmap /ayuda';
     }
     return '/help — esta lista\n' +
-      '/nivel <vectorial|2d|3d|realista|metahuman> — nivel del avatar\n' +
+      '/avatar — estado y las tres opciones\n' +
+      '/avatar good — el calvo, cara 3D (facecap, 52 blendshapes)\n' +
+      '/avatar better — la chica web (Ready Player Me, gafas)\n' +
+      '/avatar best — Neo, MetaHuman; si el host de render está apagado, entra la chica\n' +
+      '/avatarON muestra el panel en el resto de la suite · /avatarOFF lo oculta\n' +
+      '/nivel <good|better|best|vectorial|2d|3d|realista|metahuman> — el mismo mapa; los nombres viejos siguen abriendo su página\n' +
       '/neo — abre Neo (MetaHuman)\n' +
       '/say <texto> — pregunta a Neo y muestra la respuesta\n' +
       '/estado — ficha del motor y sondeo del host MetaHuman\n' +
@@ -206,7 +223,7 @@
       '/limpiar — vacía el registro (alias: /clear /cls)\n' +
       '/version — sello del release\n' +
       '/idioma en|es — idioma\n' +
-      'Herramientas: /vectorial /2d /3d /realista /metahuman /neo /mcp /embed /embedmh /roadmap /ayuda';
+      'Herramientas: /avatar /good /better /best /vectorial /2d /3d /realista /metahuman /neo /mcp /embed /embedmh /roadmap /ayuda';
   }
 
   function nivelActual() {
@@ -416,10 +433,31 @@
       });
       return;
     }
+    if (verb === 'avataron' || verb === 'avataroff') {
+      log(lang() === 'en'
+        ? 'On digitalavatar.ai the avatar is the page. /avatar good|better|best changes level. /avatarON and /avatarOFF show or hide the panel on the other suite sites.'
+        : 'En digitalavatar.ai el avatar es la página. /avatar good|better|best cambia de nivel. /avatarON y /avatarOFF muestran u ocultan el panel en el resto de la suite.');
+      return;
+    }
+    if (verb === 'avatar') {
+      var avatarArg = (p.args || '').toLowerCase();
+      if (!avatarArg || avatarArg === 'estado' || avatarArg === 'status') {
+        log(helpText().split('\n').slice(1, 6).join('\n'));
+        return;
+      }
+      if (avatarArg === 'on' || avatarArg === 'off' || avatarArg === 'reset') {
+        log(lang() === 'en'
+          ? 'On digitalavatar.ai the avatar is the page. Use /avatar good, /avatar better or /avatar best.'
+          : 'En digitalavatar.ai el avatar es la página. Usa /avatar good, /avatar better o /avatar best.');
+        return;
+      }
+      verb = 'nivel';
+      p.args = avatarArg;
+    }
     if (verb === 'nivel' || verb === 'level') {
       var nivel = (p.args || '').toLowerCase();
       if (!NIVELES[nivel]) {
-        log('Uso: /nivel <vectorial|2d|3d|realista|metahuman>', 'err');
+        log('Uso: /nivel <good|better|best|vectorial|2d|3d|realista|metahuman>  ·  /avatar <good|better|best>', 'err');
         return;
       }
       try { sessionStorage.setItem('da_nivel', nivel); } catch (e) {}
