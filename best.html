@@ -81,8 +81,13 @@
   html.kiosk .khint.show{ display:block }
   @keyframes khb{ 50%{ transform:translateX(-50%) translateY(-5px); opacity:.7 } }
 </style>
+<!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
+<meta name="admiranext-version" content="v.04.10.2026.r1.20:37">
+<link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
+<link rel="stylesheet" href="/assets/da-shell.css?v=20261004-meta-1">
+<script defer src="/assets/da-shell.js?v=20261004-meta-1" data-section="/ realista" data-section-en="/ realistic"></script>
 </head>
-<body>
+<body data-da-stage>
   <!-- Conmutador de EVOLUCIÓN (good→better→best) · histórico siempre accesible -->
   <nav id="evo" aria-label="Evolución del avatar">
     <a data-evo="vectorial" href="vectorial.html">Vectorial</a>
@@ -107,7 +112,7 @@
   <div id="stage"></div>
   <div class="exp">Fotorealístico · Ready Player Me</div>
 
-  <div class="top">
+  <div class="top" data-da-replace>
     <div class="brand"><b>DigitalAvatar</b>.ai<span class="livedot" id="livedot"></span><span class="tag" id="tag">avatar foto-real en tiempo real</span></div>
     <div class="sp"></div>
     <div class="seg" id="langSeg"><button id="langToggle" title="Cambiar idioma / switch language">EN</button></div>
