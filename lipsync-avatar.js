@@ -31,7 +31,12 @@
     _ensureCtx() {
       if (this.ctx) return;
       const AC = global.AudioContext || global.webkitAudioContext;
-      this.ctx = new AC();
+      // El mismo contexto que desbloquea el primer clic (DADemo). Si este
+      // naciera después del fetch, Chrome lo dejaría suspendido y la voz no sonaría.
+      if (!global.__daAudioCtx) {
+        try { global.__daAudioCtx = new AC(); } catch (e) { return; }
+      }
+      this.ctx = global.__daAudioCtx;
       this.analyser = this.ctx.createAnalyser();
       this.analyser.fftSize = 1024;
       this.analyser.smoothingTimeConstant = 0.55;

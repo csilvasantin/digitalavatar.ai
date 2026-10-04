@@ -51,10 +51,10 @@
   .alt{ color:var(--muted); font-size:.8rem; text-align:center } .alt a{ color:var(--accent); text-decoration:none; font-weight:600 }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.04.10.2026.r2.20:49">
+<meta name="admiranext-version" content="v.04.10.2026.r3.21:14">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
-<link rel="stylesheet" href="/assets/da-shell.css?v=20261004-experto-2">
-<script defer src="/assets/da-shell.js?v=20261004-experto-2" data-section="/ metahuman" data-section-en="/ metahuman"></script>
+<link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
+<script defer src="/assets/da-shell.js?v=20261004-audio-3" data-section="/ metahuman" data-section-en="/ metahuman"></script>
 </head>
 <body>
   <nav id="evo" aria-label="Evolución del avatar">
@@ -90,10 +90,12 @@
   <div class="studio">
     <div class="stage">
       <div class="stage-bar"><span class="live"><span class="dot"></span>EN VIVO</span> · MetaHuman · Pixel Streaming</div>
-      <iframe id="mh" src="https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true"
+      <div class="da-neo-fit" id="mhFit">
+      <iframe id="mh" src="https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&amp;AutoPlayVideo=true&amp;StartVideoMuted=true&amp;HoveringMouse=true&amp;MatchViewportRes=true&amp;ViewportResolutionScale=1&amp;MinQP=4&amp;MaxQP=18&amp;WebRTCMinBitrate=8000&amp;WebRTCMaxBitrate=20000&amp;WebRTCFPS=60"
               allow="autoplay; fullscreen; microphone; camera" allowfullscreen
               referrerpolicy="no-referrer"></iframe>
-      <div class="stage-foot"><span data-i18n="foot">Si ves negro: pulsa <b>play</b> en el reproductor (el host de render debe estar encendido).</span> <a href="https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true" target="_blank" rel="noopener" data-i18n="footLink">Pantalla completa ↗</a></div>
+      </div>
+      <div class="stage-foot"><span data-i18n="foot">Si ves negro: pulsa <b>play</b> en el reproductor (el host de render debe estar encendido).</span> <a id="mhFull" href="https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&amp;AutoPlayVideo=true&amp;StartVideoMuted=false&amp;HoveringMouse=true&amp;MatchViewportRes=true&amp;ViewportResolutionScale=1&amp;MinQP=4&amp;MaxQP=18&amp;WebRTCMinBitrate=8000&amp;WebRTCMaxBitrate=20000&amp;WebRTCFPS=60" target="_blank" rel="noopener" data-i18n="footLink">Pantalla completa ↗</a></div>
     </div>
 
     <div class="convo">
@@ -102,9 +104,11 @@
         <p data-i18n="convoP">Escribe o pulsa el micro. Recuerda el hilo de la charla.</p>
       </div>
       <div class="ask">
+        <div class="vstate" id="vstate" data-s="listo">Listo</div>
         <div class="askrow">
           <input id="q" type="text" data-i18n-ph="qPh" placeholder="Pregúntale algo a Neo…" autocomplete="off">
           <button id="mic" data-i18n-title="micT" title="Hablar" aria-label="Hablar por micrófono">🎤</button>
+          <button id="cut" type="button" data-i18n="cutT">Cortar</button>
           <button id="send" data-i18n="sendT">Preguntar</button>
         </div>
         <div id="ans" class="ans"></div>
@@ -122,7 +126,13 @@
     .stage-bar{ display:flex; align-items:center; gap:8px; padding:10px 14px; font-size:.74rem; color:var(--muted); border-bottom:1px solid var(--line) }
     .live{ display:inline-flex; align-items:center; gap:6px; color:var(--ok); font-weight:700; letter-spacing:.04em }
     .live .dot{ width:8px; height:8px; border-radius:50%; background:var(--ok); box-shadow:0 0 10px var(--ok); animation:p 1.3s infinite }
-    #mh{ display:block; width:100%; aspect-ratio:9/16; border:0; background:#000 }
+    .da-neo-fit{ position:relative; width:100%; aspect-ratio:9/16; overflow:hidden; background:#000 }
+    #mh{ position:absolute; inset:0; width:100%; height:100%; display:block; border:0; background:#000 }
+    .vstate{ min-height:1.1em; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted) }
+    .vstate[data-s="escuchando"]{ color:#ff9bb8 }
+    .vstate[data-s="pensando"],.vstate[data-s="activando"]{ color:var(--accent) }
+    .vstate[data-s="hablando"]{ color:var(--ok) }
+    .vstate[data-s="error"],.vstate[data-s="cortada"]{ color:#ff8a7a }
     .stage-foot{ padding:10px 14px; font-size:.72rem; color:var(--muted); line-height:1.5 } .stage-foot a{ color:var(--accent); text-decoration:none; font-weight:600 }
     .convo{ flex:1 1 320px; min-width:280px; max-width:440px; display:flex; flex-direction:column; gap:13px }
     .convo-head h2{ margin:0 0 3px; font-size:1.08rem } .convo-head h2 b{ color:var(--accent) }
@@ -134,8 +144,8 @@
   </style>
   <style>
     .ask{ width:100%; display:flex; flex-direction:column; gap:8px }
-    .askrow{ display:flex; gap:7px }
-    .ask input{ flex:1; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 14px; color:var(--txt); font-size:.92rem; outline:none }
+    .askrow{ display:flex; gap:7px; flex-wrap:wrap }
+    .ask input{ flex:1 1 160px; min-width:0; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 14px; color:var(--txt); font-size:.92rem; outline:none }
     .ask input:focus{ border-color:var(--accent) }
     .ask button{ border:1px solid #2a7fa6; background:linear-gradient(180deg,#0e3550,#0a2335); color:var(--accent); font-weight:700; border-radius:12px; padding:0 15px; font-size:.92rem; cursor:pointer }
     .ask button:disabled{ opacity:.5; cursor:progress }
@@ -143,49 +153,150 @@
     .ans{ min-height:0; color:var(--muted); font-size:.86rem; line-height:1.5; padding:0 4px; white-space:pre-wrap }
     .ans.show{ color:var(--txt); background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:11px 14px }
   </style>
+  <script src="/assets/da-neo-player.js?v=20261004-audio-3"></script>
+  <script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
   <script>
   (function(){
     var API='https://brain.digitalavatar.ai', ROOM='xtanco';
-    var history=[];   // memoria de conversación (turnos previos) para preguntas de seguimiento
+    var history=[];
     var q=document.getElementById('q'), send=document.getElementById('send'), mic=document.getElementById('mic'), ans=document.getElementById('ans');
+    var cut=document.getElementById('cut'), vstate=document.getElementById('vstate');
+    var talkTimer=null, seq=0;
+    var LABELS={
+      es:{ listo:'Listo', escuchando:'Escuchando', pensando:'Pensando', hablando:'Hablando', activando:'Activando voz', cortada:'Voz cortada',
+        micNo:'Este navegador no tiene dictado. Escribe la pregunta.',
+        micDenied:'Micro bloqueado. Permite el micrófono o escribe.',
+        micFail:'No se pudo usar el micrófono. Escribe la pregunta.',
+        micEmpty:'No se oyó nada. Prueba otra vez o escribe.',
+        audioBlocked:'El navegador bloqueó el audio. Pulsa de nuevo para oír la respuesta.',
+        noVoice:'Sin voz: el cerebro no devolvió audio.',
+        conn:'Error de conexión', thinking:'· respondiendo…', noAnswer:'(sin respuesta)' },
+      en:{ listo:'Ready', escuchando:'Listening', pensando:'Thinking', hablando:'Speaking', activando:'Turning voice on', cortada:'Voice cut',
+        micNo:'This browser has no dictation. Type the question.',
+        micDenied:'Microphone blocked. Allow it, or type.',
+        micFail:'The microphone failed. Type the question.',
+        micEmpty:'Nothing was heard. Try again or type.',
+        audioBlocked:'The browser blocked audio. Tap again to hear the reply.',
+        noVoice:'No voice: the brain returned no audio.',
+        conn:'Connection error', thinking:'· thinking…', noAnswer:'(no answer)' }
+    };
+    function lang(){ return window.DA_LANG==='en'?'en':'es'; }
+    function L(){ return LABELS[lang()]; }
+    var SHORT={listo:1,escuchando:1,pensando:1,hablando:1,activando:1,cortada:1};
+    function paint(s, text){
+      if(!vstate) return;
+      vstate.dataset.s=s;
+      vstate.textContent=text || (L()[s]||s);
+      if(SHORT[s] && DADemo.state()!==s) DADemo.setState(s);
+    }
+    window.__daRefreshVoice=function(){ var s=vstate&&vstate.dataset.s; if(SHORT[s]) paint(s); };
+    DADemo.onState(function(s){ if(SHORT[s]) paint(s); });
     function setAns(t,show){ ans.textContent=t; ans.classList.toggle('show',!!show); }
+    function armStream(muted){
+      var fr=document.getElementById('mh');
+      if(!fr||!window.DANeoPlayer) return Promise.resolve();
+      if(fr.dataset.mode==='web'||window.__daHostUp===false) return Promise.resolve();
+      var want=DANeoPlayer.src({muted:!!muted});
+      window.__daStreamUnmuted=!muted;
+      if(fr.src===want){ DANeoPlayer.fit(fr); return Promise.resolve(); }
+      return new Promise(function(res){
+        var done=false;
+        function finish(){ if(done) return; done=true; fr.removeEventListener('load', finish); if(fr.dataset.mode!=='web') DANeoPlayer.fit(fr); res(); }
+        fr.addEventListener('load', finish);
+        fr.src=want;
+        setTimeout(finish, 4500);
+      });
+    }
+    window.__daArmStream=armStream;
     async function ask(){
       var text=(q.value||'').trim(); if(!text) return;
-      var en = window.DA_LANG==='en';
-      send.disabled=true; setAns(en?'· thinking…':'· respondiendo…',true); q.value='';
+      var mine=++seq;
+      var lab=L();
+      DADemo.unlock();
+      DADemo.stop();
+      clearTimeout(talkTimer);
+      send.disabled=true; paint('pensando'); setAns(lab.thinking,true); q.value='';
       try{
-        // Streaming de baja latencia + memoria de conversación (preguntas de seguimiento).
-        // Mandamos `lang` y, si es EN, lo pedimos también en el propio texto: así Neo
-        // contesta en inglés aunque el backend ignore el campo.
-        // El cerebro IGNORA el campo persona: preguntado su nombre respondía «Me llamo Alex».
-        // Hasta que se arregle en el worker, la identidad va en el propio texto (probado: así sí
-        // contesta como Neo), junto con el idioma. Es un apaño de cliente, no el arreglo de fondo.
-        var qOut = text + (en
+        var host=window.__daHostUp;
+        if(host!==true && host!==false) host=await DANeoPlayer.whenHost(12000);
+        if(mine!==seq) return;
+        var offline=host===false;
+        if(!offline && !window.__daStreamUnmuted){
+          paint('activando');
+          await armStream(false);
+          if(mine!==seq) return;
+          paint('pensando');
+        }
+        var en=lang()==='en';
+        var qOut=text+(en
           ? '\n\n(You are Neo, the digital human of digitalavatar.ai. Always answer as Neo. Please answer in English.)'
           : '\n\n(Eres Neo, el humano digital de digitalavatar.ai. Responde siempre como Neo.)');
         var r=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'content-type':'application/json'},
-          body:JSON.stringify({question:qOut, room:ROOM, loc:'', persona:'neo', lang:(en?'en':'es'), history:history})});
-        var d=await r.json(); var a=(d.answer||'').trim();
-        setAns(a||(en?'(no answer)':'(sin respuesta)'),true);   // subtítulo completo al terminar (la voz ya iba por delante)
+          body:JSON.stringify({question:qOut, room:ROOM, loc:'', persona:'neo', lang:(en?'en':'es'), history:history, voice:true, timestamps:true, voiceId:DADemo.voiceId(en?'en':'es')})});
+        var d=await r.json();
+        if(mine!==seq) return;
+        var a=(d.answer||'').trim();
+        setAns(a||lab.noAnswer,true);
         if(a){ history.push({role:'user',content:text},{role:'assistant',content:a}); if(history.length>8) history=history.slice(-8); }
-      }catch(e){ setAns(en?'⚠️ connection error':'⚠️ error de conexión',true); }
+        if(offline && d.audioBase64){
+          var audio=DADemo.load(d.audioBase64, d.mime);
+          audio.onended=function(){ if(mine===seq) paint('listo'); };
+          try{
+            await DADemo.start(audio);
+            paint('hablando');
+          }catch(err){
+            paint('error', lab.audioBlocked);
+            DADemo.armRetry(function(){ DADemo.start(audio).then(function(){ paint('hablando'); }).catch(function(){ paint('error', lab.audioBlocked); }); });
+          }
+        } else if(!offline && (d.audioBase64||a)){
+          // La boca la mueve Unreal con el audio de la sala. No reproducimos el MP3 aquí.
+          DADemo.setState('hablando');
+          var ms=d.audioBase64?DANeoPlayer.clipMs(d.audioBase64):Math.min(12000, Math.max(1500, a.length*70));
+          talkTimer=setTimeout(function(){ if(mine===seq && vstate.dataset.s==='hablando') paint('listo'); }, ms);
+        } else if(d.audioBase64){
+          paint('error', lab.noVoice);
+        } else {
+          paint('error', lab.noVoice);
+        }
+      }catch(e){
+        if(mine!==seq) return;
+        setAns('⚠️ '+L().conn,true);
+        paint('error', L().conn);
+      }finally{
+        if(mine===seq) send.disabled=false;
+      }
+    }
+    function doCut(){
+      seq++;
+      clearTimeout(talkTimer);
+      DADemo.stop();
+      if(window.__daStreamUnmuted) armStream(true);
+      paint('cortada');
       send.disabled=false;
     }
+    function micError(code){
+      mic.classList.remove('rec');
+      var lab=L();
+      var msg=code==='unsupported'?lab.micNo:(code==='not-allowed'||code==='service-not-allowed')?lab.micDenied:code==='no-speech'?lab.micEmpty:lab.micFail;
+      paint('error', msg);
+      setAns(msg, true);
+    }
     send.onclick=ask;
+    if(cut) cut.onclick=doCut;
     q.addEventListener('keydown',function(e){ if(e.key==='Enter') ask(); });
-    // dictado por voz (Web Speech API)
-    var SR=window.SpeechRecognition||window.webkitSpeechRecognition, rec=null;
-    if(SR){ mic.onclick=function(){
-      if(rec){ rec.stop(); return; }
-      rec=new SR(); rec.lang = (window.DA_LANG==='en') ? 'en-US' : 'es-ES'; rec.interimResults=true;   // sigue al selector, no al navegador
-      mic.classList.add('rec');
-      rec.onresult=function(ev){ var t=''; for(var i=0;i<ev.results.length;i++) t+=ev.results[i][0].transcript; q.value=t; if(ev.results[ev.results.length-1].isFinal){ rec.stop(); ask(); } };
-      rec.onend=function(){ mic.classList.remove('rec'); rec=null; };
-      rec.start();
-    }; } else { mic.style.display='none'; }
-    // chips de sugerencia: un clic rellena y pregunta
+    mic.onclick=function(){
+      if(DADemo.state()==='escuchando'){ DADemo.cancelListen(); mic.classList.remove('rec'); paint('listo'); return; }
+      clearTimeout(talkTimer);
+      var ok=DADemo.listen({
+        lang:lang(),
+        onPartial:function(t){ q.value=t; paint('escuchando'); },
+        onFinal:function(t){ mic.classList.remove('rec'); q.value=t; ask(); },
+        onError:micError,
+        onEnd:function(){ mic.classList.remove('rec'); }
+      });
+      if(ok){ mic.classList.add('rec'); paint('escuchando'); }
+    };
     document.querySelectorAll('.chip').forEach(function(c){ c.onclick=function(){ q.value=c.textContent; ask(); q.scrollIntoView({behavior:'smooth',block:'center'}); }; });
-    // CTA inferior: enfoca la caja de preguntas en vez de mandar a otro avatar
     var cta=document.getElementById('ctaAsk'); if(cta) cta.onclick=function(e){ e.preventDefault(); q.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(function(){q.focus();},350); };
   })();
   </script>
@@ -236,16 +347,14 @@
   </script>
 
   <script>
-  // Fallback robusto: si el host de render (Pixel Streaming) no responde, la
-  // página cambia sola al avatar WEB (best.html, que habla siempre). Reintenta
-  // y vuelve al MetaHuman en cuanto el host esté online.
+  // Si el host de render no responde, el marco pasa al avatar web mudo
+  // (best.html no habla: la voz la pone esta página). Vuelve a Neo cuando el host responde.
   (function(){
     var BASE='https://macbook-pro-16.tail48b61c.ts.net:8443/';
     var PROBE=BASE+'images/favicon-32x32.png'; // sondeo por <img>: carga cross-origin SIN bloqueo CORS (fiable en incógnito/Safari/3os)
-    var MH_SRC=BASE+'uiless.html?AutoConnect=true&AutoPlayVideo=true&StartVideoMuted=true';
-    var WEB_SRC='best.html?kiosk=1';
-    var fr=document.getElementById('mh'), ask=document.querySelector('.ask'), bar=document.querySelector('.stage-bar'), foot=document.querySelector('.stage-foot');
+    var fr=document.getElementById('mh'), bar=document.querySelector('.stage-bar'), foot=document.querySelector('.stage-foot');
     var mode=null, fails=0; // mode: 'mh' | 'web'
+    if(window.DANeoPlayer) DANeoPlayer.bindFit(fr);
     // El antiguo fetch{mode:'no-cors'} daba FALSO-negativo (los navegadores capan peticiones de 3os) y tiraba a
     // web con el host VIVO. Un <img> cross-origin no sufre ese bloqueo → sondeo fiable.
     function reach(){ return new Promise(function(res){
@@ -256,14 +365,29 @@
       img.src=PROBE+'?_='+Date.now();
     }); }
     function toWeb(){ if(mode==='web')return; mode='web';
-      fr.src=WEB_SRC;
-      if(ask) ask.style.display='none';
-      if(bar) bar.innerHTML='<span style="color:#ffb454;font-weight:700">● MODO WEB</span> · host de render offline';
-      if(foot) foot.innerHTML='El MetaHuman en vivo necesita el host de render encendido. Mientras, ves el avatar web (también habla).';
+      window.__daHostUp=false; window.__daStreamUnmuted=false;
+      fr.dataset.mode='web';
+      if(window.DANeoPlayer) DANeoPlayer.fill(fr);
+      fr.src=DANeoPlayer.webFallback;
+      var en=window.DA_LANG==='en';
+      if(bar) bar.innerHTML='<span style="color:#ffb454;font-weight:700">'+(en?'● WEB MODE':'● MODO WEB')+'</span> · '+(en?'render host offline':'host de render offline');
+      if(foot) foot.innerHTML=en
+        ? 'The live MetaHuman needs the render host. You still see the web avatar, and the reply plays here with the same voice.'
+        : 'El MetaHuman en vivo necesita el host de render. Sigues viendo el avatar web y la respuesta suena aquí, con la misma voz.';
     }
-    function toMH(){ if(mode==='mh')return; mode='mh';
-      fr.src=MH_SRC;
-      if(ask) ask.style.display='';
+    function toMH(){
+      window.__daHostUp=true;
+      if(mode==='mh') return;
+      var wasWeb=mode==='web';
+      mode='mh';
+      fr.dataset.mode='mh';
+      var mutedSrc=DANeoPlayer.src({muted:true});
+      var liveSrc=DANeoPlayer.src({muted:false});
+      if(wasWeb || (fr.src!==mutedSrc && fr.src!==liveSrc)){
+        window.__daStreamUnmuted=false;
+        fr.src=mutedSrc;
+      }
+      DANeoPlayer.fit(fr);
       if(bar) bar.innerHTML='<span class="live"><span class="dot"></span>EN VIVO</span> · MetaHuman · Pixel Streaming';
     }
     // Arranca OPTIMISTA en MetaHuman (el iframe ya trae MH_SRC) y solo cae a web tras 2 fallos seguidos → sin
@@ -289,7 +413,7 @@
       foot:'Black screen? Hit <b>play</b> in the player (the render host must be switched on).',
       footLink:'Fullscreen ↗',
       convoH2:'Chat with <b>Neo</b>', convoP:'Type or tap the mic. He remembers the thread of the conversation.',
-      qPh:'Ask Neo something…', micT:'Speak', sendT:'Ask',
+      qPh:'Ask Neo something…', micT:'Speak', sendT:'Ask', cutT:'Cut',
       chip1:'Who are you?', chip2:'What is a MetaHuman?', chip3:'Tell me something about the Matrix',
       s1h:'2D vector', s1p:'Canvas face with lip-sync. Where it started.',
       s2h:'Video', s2p:'Mother/father videos + 2D lip-sync.',
@@ -317,6 +441,7 @@
       document.querySelectorAll('[data-i18n-title]').forEach(function(el){ var v=D[el.dataset.i18nTitle]; if(v!=null) el.title=v; });
       document.documentElement.lang = lang;
       window.DA_LANG = lang;                      // lo usa la caja de preguntas
+      if(window.__daRefreshVoice) window.__daRefreshVoice();
       if(btn) btn.textContent = lang==='en' ? 'ES' : 'EN';   // muestra el idioma AL QUE cambias
       try{ localStorage.setItem('da_lang', lang); }catch(e){}
     }
