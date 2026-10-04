@@ -1,7 +1,7 @@
 {
-  "version": "v.04.10.2026.r4.22:29",
-  "builtAt": "2026-10-04T20:29:24Z",
-  "note": "Mismo mapa /avatar y /nivel que la suite: good es el calvo, better la chica con voz unificada y best es Neo. Con ?dock=1 se queda la cara y la consola.",
+  "version": "v.04.10.2026.r5.23:01",
+  "builtAt": "2026-10-04T21:01:04Z",
+  "note": "Neo se sirve por el proxy neo-digitalavatar.csilvasantin.workers.dev en vez del Funnel directo del Mac: iframe, sondeo de vida y pantalla completa.",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "retorno/pre-avatar-suite-20261004"
+  "rollback": "retorno/pre-neo-proxy-20261004"
 }

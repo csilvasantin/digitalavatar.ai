@@ -101,7 +101,7 @@
   };
   var VERBS = ['help', 'nivel', 'avatar', 'avataron', 'avataroff', 'neo', 'say', 'estado', 'mcp', 'embed', 'roadmap', 'ayuda', 'limpiar', 'version', 'idioma', 'vectorial', '2d', '3d', 'realista', 'metahuman', 'good', 'better', 'best', 'embedmh'];
   var BRAIN = 'https://brain.digitalavatar.ai';
-  var HOST_PROBE = 'https://macbook-pro-16.tail48b61c.ts.net:8443/images/favicon-32x32.png';
+  var HOST_PROBE = 'https://neo-digitalavatar.csilvasantin.workers.dev/images/favicon-32x32.png';
   var hostState = 'comprobando…';
   var engineState = '';
   var hostGen = 0;

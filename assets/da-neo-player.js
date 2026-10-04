@@ -15,7 +15,7 @@
 (function (root) {
   'use strict';
 
-  var BASE = 'https://macbook-pro-16.tail48b61c.ts.net:8443/';
+  var BASE = 'https://neo-digitalavatar.csilvasantin.workers.dev/';
 
   function src(opts) {
     opts = opts || {};

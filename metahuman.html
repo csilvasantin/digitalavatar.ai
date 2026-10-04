@@ -53,7 +53,7 @@
   .alt{ color:var(--muted); font-size:.8rem; text-align:center } .alt a{ color:var(--accent); text-decoration:none; font-weight:600 }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.04.10.2026.r4.22:29">
+<meta name="admiranext-version" content="v.04.10.2026.r5.23:01">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
 <script defer src="/assets/da-shell.js?v=20261004-avatar-2" data-section="/ metahuman" data-section-en="/ metahuman"></script>
@@ -93,11 +93,11 @@
     <div class="stage">
       <div class="stage-bar"><span class="live"><span class="dot"></span>EN VIVO</span> · MetaHuman · Pixel Streaming</div>
       <div class="da-neo-fit" id="mhFit">
-      <iframe id="mh" src="https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&amp;AutoPlayVideo=true&amp;StartVideoMuted=true&amp;HoveringMouse=true&amp;MatchViewportRes=true&amp;ViewportResolutionScale=1&amp;MinQP=4&amp;MaxQP=18&amp;WebRTCMinBitrate=8000&amp;WebRTCMaxBitrate=20000&amp;WebRTCFPS=60"
+      <iframe id="mh" src="https://neo-digitalavatar.csilvasantin.workers.dev/uiless.html?AutoConnect=true&amp;AutoPlayVideo=true&amp;StartVideoMuted=true&amp;HoveringMouse=true&amp;MatchViewportRes=true&amp;ViewportResolutionScale=1&amp;MinQP=4&amp;MaxQP=18&amp;WebRTCMinBitrate=8000&amp;WebRTCMaxBitrate=20000&amp;WebRTCFPS=60"
               allow="autoplay; fullscreen; microphone; camera" allowfullscreen
               referrerpolicy="no-referrer"></iframe>
       </div>
-      <div class="stage-foot"><span data-i18n="foot">Si ves negro: pulsa <b>play</b> en el reproductor (el host de render debe estar encendido).</span> <a id="mhFull" href="https://macbook-pro-16.tail48b61c.ts.net:8443/uiless.html?AutoConnect=true&amp;AutoPlayVideo=true&amp;StartVideoMuted=false&amp;HoveringMouse=true&amp;MatchViewportRes=true&amp;ViewportResolutionScale=1&amp;MinQP=4&amp;MaxQP=18&amp;WebRTCMinBitrate=8000&amp;WebRTCMaxBitrate=20000&amp;WebRTCFPS=60" target="_blank" rel="noopener" data-i18n="footLink">Pantalla completa ↗</a></div>
+      <div class="stage-foot"><span data-i18n="foot">Si ves negro: pulsa <b>play</b> en el reproductor (el host de render debe estar encendido).</span> <a id="mhFull" href="https://neo-digitalavatar.csilvasantin.workers.dev/uiless.html?AutoConnect=true&amp;AutoPlayVideo=true&amp;StartVideoMuted=false&amp;HoveringMouse=true&amp;MatchViewportRes=true&amp;ViewportResolutionScale=1&amp;MinQP=4&amp;MaxQP=18&amp;WebRTCMinBitrate=8000&amp;WebRTCMaxBitrate=20000&amp;WebRTCFPS=60" target="_blank" rel="noopener" data-i18n="footLink">Pantalla completa ↗</a></div>
     </div>
 
     <div class="convo">
@@ -352,7 +352,7 @@
   // Si el host de render no responde, el marco pasa al avatar web mudo
   // (best.html no habla: la voz la pone esta página). Vuelve a Neo cuando el host responde.
   (function(){
-    var BASE='https://macbook-pro-16.tail48b61c.ts.net:8443/';
+    var BASE='https://neo-digitalavatar.csilvasantin.workers.dev/';
     var PROBE=BASE+'images/favicon-32x32.png'; // sondeo por <img>: carga cross-origin SIN bloqueo CORS (fiable en incógnito/Safari/3os)
     var fr=document.getElementById('mh'), bar=document.querySelector('.stage-bar'), foot=document.querySelector('.stage-foot');
     var mode=null, fails=0; // mode: 'mh' | 'web'
