@@ -1,7 +1,7 @@
 {
-  "version": "v.04.10.2026.r3.21:14",
-  "builtAt": "2026-10-04T19:14:20Z",
-  "note": "Voz de demo igual en 2D (good), 3D (better) y Neo (metahuman): micro, escritura, ElevenLabs y cortar. El reproductor de Neo pide la resolución de la pantalla.",
+  "version": "v.04.10.2026.r4.22:29",
+  "builtAt": "2026-10-04T20:29:24Z",
+  "note": "Mismo mapa /avatar y /nivel que la suite: good es el calvo, better la chica con voz unificada y best es Neo. Con ?dock=1 se queda la cara y la consola.",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "retorno/pre-audio-demos-20261004"
+  "rollback": "retorno/pre-avatar-suite-20261004"
 }
