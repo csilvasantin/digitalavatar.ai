@@ -50,8 +50,8 @@
   /* Caja de preguntas (opcional) */
   .ask{ flex:0 0 auto; display:none; flex-direction:column; gap:7px }
   .ask.on{ display:flex }
-  .askrow{ display:flex; gap:6px }
-  .ask input{ flex:1; background:var(--panel); border:1px solid var(--line); border-radius:11px; padding:10px 12px; color:var(--txt); font-size:.9rem; outline:none }
+  .askrow{ display:flex; gap:6px; flex-wrap:wrap }
+  .ask input{ flex:1 1 140px; min-width:0; background:var(--panel); border:1px solid var(--line); border-radius:11px; padding:10px 12px; color:var(--txt); font-size:.9rem; outline:none }
   .ask input:focus{ border-color:var(--accent) }
   .ask button{ border:1px solid #2a7fa6; background:linear-gradient(180deg,#0e3550,#0a2335); color:var(--accent); font-weight:700; border-radius:11px; padding:0 13px; font-size:.9rem; cursor:pointer }
   .ask button:disabled{ opacity:.5; cursor:progress }

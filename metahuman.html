@@ -144,8 +144,8 @@
   </style>
   <style>
     .ask{ width:100%; display:flex; flex-direction:column; gap:8px }
-    .askrow{ display:flex; gap:7px }
-    .ask input{ flex:1; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 14px; color:var(--txt); font-size:.92rem; outline:none }
+    .askrow{ display:flex; gap:7px; flex-wrap:wrap }
+    .ask input{ flex:1 1 160px; min-width:0; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 14px; color:var(--txt); font-size:.92rem; outline:none }
     .ask input:focus{ border-color:var(--accent) }
     .ask button{ border:1px solid #2a7fa6; background:linear-gradient(180deg,#0e3550,#0a2335); color:var(--accent); font-weight:700; border-radius:12px; padding:0 15px; font-size:.92rem; cursor:pointer }
     .ask button:disabled{ opacity:.5; cursor:progress }
