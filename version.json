@@ -1,7 +1,7 @@
 {
-  "version": "v.04.10.2026.r1.20:37",
-  "builtAt": "2026-10-04T18:37:10Z",
-  "note": "Metaestilo AdmiraNeXT: interfaz cuadrática (☰ Opciones, ▤ Avanzado, ⌘ Experto) y baldosas de desarrollo en el modo experto.",
+  "version": "v.04.10.2026.r2.20:49",
+  "builtAt": "2026-10-04T18:49:04Z",
+  "note": "Modo experto en tres bloques (⌘ EXPERTO · CLI): ficha del motor, registro y orden, como el generador de presentaciones de admiranext.com.",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "retorno/pre-metaestilo-20261004"
+  "rollback": "retorno/pre-experto-3bloques-20261004"
 }

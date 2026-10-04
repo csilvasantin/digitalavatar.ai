@@ -3,7 +3,9 @@
    barra 46 px · ☰ Opciones (izquierda) · ▤ Avanzado (derecha) · ⌘ Experto (abajo).
    Los paneles se superponen y entran cerrados. El cuerpo no se desplaza.
    Paleta: tokens compartidos de admira-design (carlossilva.info/admira-design/tokens.css).
-   Geometría de la barra: xpace-shell / galaxy-shell. Baldosas: esquinas rectas (Pixeria). */
+   Geometría de la barra: xpace-shell / galaxy-shell. Esquinas de la barra, rectas (Pixeria).
+   El muelle ⌘ EXPERTO · CLI copia el generador de presentaciones
+   (admira-next-web: presentation-generator-quadratic.css + admira-frame.css .yk-cli). */
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap");
 
 :root{--da-bar-h:0px;--da-bottom:0px}
@@ -77,49 +79,51 @@ html[data-da-shell="on"] .toggles{top:calc(var(--da-bar-h) + 8px)!important;z-in
 .da-panel .da-version{margin-top:auto;padding:14px 6px 0;color:var(--admira-text-muted);font:10px/1.4 var(--admira-font-mono);letter-spacing:.04em;overflow-wrap:anywhere}
 .da-panel .da-version:empty{display:none}
 
-.da-expert{position:absolute;left:0;right:0;bottom:0;top:auto;z-index:9000;display:flex;flex-direction:column;gap:8px;
-  height:min(46vh,420px);margin:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));
-  background:rgba(10,12,18,.97);border:1px solid rgba(80,200,255,.4);border-bottom:0;border-radius:0;
-  box-shadow:0 -10px 30px rgba(0,0,0,.45);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  color:var(--admira-text);font:12px/1.4 var(--admira-font-mono);
+/* ⌘ EXPERTO · CLI — mismo muelle que admiranext.com/presentaciones
+   (admira-frame.css .yk-rail-bottom / .yk-cli + presentation-generator-quadratic.css). */
+#daExpert.da-expert{position:absolute;left:0;right:0;bottom:0;top:auto;z-index:9000;display:flex;flex-direction:column;gap:0;
+  height:min(50vh,400px);margin:0;padding:14px 16px calc(16px + env(safe-area-inset-bottom));overflow:hidden;
+  background:linear-gradient(180deg,#0a0c12,#10141e);
+  border:1px solid rgba(80,200,255,.35);border-bottom:0;border-radius:0;
+  box-shadow:0 0 40px rgba(0,0,0,.6),inset 0 0 40px rgba(80,200,255,.03);
+  color:var(--admira-text);font:12px/1.45 var(--admira-font-mono);
   transform:translateY(0);transition:transform .2s ease,visibility 0s linear 0s}
-.da-expert.is-collapsed{transform:translateY(105%)}
-.da-expert .da-expert-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:0 0 auto}
-.da-expert .da-head{margin:0;font:700 10px/1.2 var(--admira-font-mono);letter-spacing:.18em;text-transform:uppercase;color:#7dff9a}
-.da-expert .da-close{width:28px;height:28px;margin:0;padding:0;border:1px solid transparent;border-radius:0;background:transparent;color:var(--admira-text-muted);font:18px/1 var(--admira-font-mono);cursor:pointer}
-.da-expert .da-close:hover{color:var(--admira-cyan);border-color:var(--admira-cyan)}
-.da-tiles{flex:1 1 auto;min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;margin:0;padding:0;align-content:start}
-.da-tile{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;aspect-ratio:1;min-height:88px;margin:0;padding:8px;
-  border:1px solid rgba(80,200,255,.35);border-radius:0;background:var(--admira-bg-elev);color:var(--admira-text);text-decoration:none;
-  font:inherit;cursor:pointer}
-.da-tile:hover{border-color:var(--admira-cyan);background:rgba(80,200,255,.08)}
-.da-tile:focus-visible{outline:2px solid var(--admira-amber);outline-offset:1px}
-.da-tile[aria-current="page"]{border-color:var(--admira-amber);box-shadow:inset 3px 0 var(--admira-amber)}
-.da-tile .da-mark{font:700 14px/1 var(--admira-font-mono);letter-spacing:.06em;color:var(--admira-cyan)}
-.da-tile .da-name{font:600 10px/1.2 var(--admira-font-mono);letter-spacing:.04em;text-transform:uppercase}
-.da-tile .da-hint{font:9px/1.2 var(--admira-font-mono);color:var(--admira-text-muted)}
-.da-cli{display:flex;align-items:center;gap:8px;flex:0 0 auto;margin:0}
-.da-cli .da-prompt{color:var(--admira-cyan);font-weight:700}
-.da-cli input{flex:1 1 auto;min-width:0;height:36px;margin:0;padding:6px 10px;border:1px solid rgba(80,200,255,.35);border-radius:0;
-  background:rgba(2,8,13,.85);color:var(--admira-text);font:13px/1.2 var(--admira-font-mono);outline:0}
-.da-cli input:focus-visible{border-color:var(--admira-cyan);box-shadow:0 0 0 2px rgba(80,200,255,.25)}
-.da-cli button{flex:0 0 auto;height:36px;margin:0;padding:0 12px;border:1px solid var(--admira-cyan);border-radius:0;
-  background:rgba(80,200,255,.12);color:var(--admira-cyan);font:700 11px/1 var(--admira-font-mono);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
-.da-cli button:hover{background:var(--admira-cyan);color:#03151a}
-.da-log{flex:0 0 auto;max-height:72px;margin:0;padding:4px 8px;overflow:auto;list-style:none;border:1px solid rgba(80,200,255,.16);background:rgba(1,6,10,.7);
-  font:10px/1.45 var(--admira-font-mono);white-space:pre-wrap;overflow-wrap:anywhere}
-.da-log:empty{display:none}
-.da-log li{margin:0;padding:0;color:var(--admira-text)}
-.da-log li.da-in{color:var(--admira-cyan)}
+#daExpert.da-expert.is-collapsed{transform:translateY(105%)}
+#daExpert .yk-rail-navhd{flex:0 0 auto;margin:0 0 10px;padding:0 2px 12px;
+  font:700 11px/1.3 var(--admira-font-mono);letter-spacing:.14em;text-transform:none;
+  color:var(--admira-cyan);border-bottom:1px solid rgba(80,200,255,.22)}
+#daExpert .yk-expert{flex:1;min-height:0;display:flex;flex-direction:row;gap:14px;margin:0}
+#daExpert .generator-slot{flex:0 0 min(38%,420px);display:flex;min-width:0;min-height:0;margin:0;padding:0}
+#daExpert .generator-console{flex:1;margin:0;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;
+  border:1px solid rgba(61,240,138,.28);border-radius:10px;padding:12px 14px;
+  background:#03080c;color:#3df08a;font:700 11px/1.6 var(--admira-font-mono)}
+#daExpert .yk-cli{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px}
+#daExpert .yk-cli-out{flex:1;min-height:60px;overflow:auto;margin:0;padding:8px 10px;
+  font:11.5px/1.5 var(--admira-font-mono);color:rgba(216,200,255,.72);
+  white-space:pre-wrap;word-break:break-word;
+  background:rgba(2,8,13,.55);border:1px solid rgba(80,200,255,.16);border-radius:10px}
+#daExpert .yk-cli-line{margin:0}
+#daExpert .yk-cli-cmd{color:var(--admira-cyan)}
+#daExpert .yk-cli-err{color:#ffbc8c}
+#daExpert .yk-cli-form{display:flex;align-items:center;gap:8px;flex:0 0 auto;margin:0;padding:0 10px;
+  border:1px solid rgba(80,200,255,.35);border-radius:10px;background:#050a12}
+#daExpert .yk-cli-form:focus-within{border-color:var(--admira-cyan)}
+#daExpert .yk-cli-prompt{display:inline;margin:0;font:700 14px/1 var(--admira-font-mono);color:var(--admira-cyan);cursor:text}
+#daExpert .yk-cli-input{flex:1;min-width:0;width:auto;display:block;height:auto;margin:0;padding:10px 0;
+  font:13px/1.2 var(--admira-font-mono);color:var(--admira-text);letter-spacing:normal;text-transform:none;
+  background:transparent;border:0;border-radius:0;outline:none;box-shadow:none;appearance:none}
+#daExpert .yk-cli-input:focus{outline:none;box-shadow:none;border:0}
 
 @media (max-width:600px){
   #daTop.da-bar{gap:7px;padding:0 8px}
   #daTop .da-section{display:none}
   #daTop .da-brand{font-size:11px;letter-spacing:.04em}
-  .da-expert{height:min(62vh,480px)}
-  .da-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .da-tile{min-height:0;aspect-ratio:1}
-  .da-log{display:none}
+}
+@media (max-width:720px){
+  #daExpert.da-expert{height:min(78vh,640px)}
+  #daExpert .yk-expert{flex-direction:column}
+  #daExpert .generator-slot{flex:0 0 auto;max-height:none}
+  #daExpert .generator-console{flex:0 0 auto;max-height:168px}
 }
 @media (prefers-reduced-motion:reduce){.da-panel,.da-expert{transition:none!important}}
 @media print{#daTop.da-bar,.da-panel,.da-expert{display:none!important}html[data-da-shell="on"] body.da-pad{padding-top:0!important}}

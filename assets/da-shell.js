@@ -14,6 +14,9 @@
  *   pixeria/assets/cuadratura.js           (pixeria.com / admira.studio)
  *   tool/yokup-site yk-frame               (yokup.com)
  *   32.-ConsejoAdmiraNextGame/admira-bar.js (admira.live)
+ *   admira-next-web/assets/admira-frame.js (⌘ EXPERTO · CLI: yk-cli)
+ *   admira-next-web/assets/presentation-generator-quadratic.css
+ *     (ficha verde generator-console a la izquierda del CLI)
  *
  *   <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
  *   <link rel="stylesheet" href="/assets/da-shell.css?v=…">
@@ -60,40 +63,41 @@
     {href: '/mcp/manifest.json', es: 'manifest.json', en: 'manifest.json'}
   ];
 
-  /* Baldosas del modo experto: el foco de desarrollo. */
-  var TILES = [
-    {href: '/vectorial.html', es: 'Vectorial', en: 'Vector', mark: 'VEC', hint: {es: 'nivel', en: 'level'}},
-    {href: '/good.html', es: '2D', en: '2D', mark: '2D', hint: {es: 'nivel', en: 'level'}},
-    {href: '/better.html', es: '3D', en: '3D', mark: '3D', hint: {es: 'nivel', en: 'level'}},
-    {href: '/best.html', es: 'Realista', en: 'Realistic', mark: 'REL', hint: {es: 'nivel', en: 'level'}},
-    {href: '/metahuman.html', es: 'Metahuman', en: 'Metahuman', mark: 'MH', hint: {es: 'nivel', en: 'level'}},
-    {href: '/metahuman.html', es: 'Neo', en: 'Neo', mark: 'NEO', hint: {es: 'en vivo', en: 'live'}, key: 'neo'},
-    {href: '/mcp/', es: 'MCP', en: 'MCP', mark: 'MCP', hint: {es: 'agentes', en: 'agents'}},
-    {href: '/embed-demo.html', es: 'Embed', en: 'Embed', mark: 'EMB', hint: {es: 'demo', en: 'demo'}},
-    {href: '/embed-mh.html', es: 'Embed MH', en: 'Embed MH', mark: 'MH+', hint: {es: 'iframe', en: 'iframe'}},
-    {href: '/roadmap/', es: 'Roadmap', en: 'Roadmap', mark: 'MAP', hint: {es: 'plan', en: 'plan'}},
-    {href: '/help/', es: 'Ayuda', en: 'Help', mark: '?', hint: {es: 'guía', en: 'guide'}}
-  ];
-
+  /* Las 11 herramientas viven en /help del CLI, no como baldosas. */
+  var NIVELES = {
+    vectorial: '/vectorial.html',
+    '2d': '/good.html',
+    '3d': '/better.html',
+    realista: '/best.html',
+    metahuman: '/metahuman.html'
+  };
+  var NIVEL_POR_RUTA = {
+    '/vectorial.html': 'vectorial', '/vectorial': 'vectorial',
+    '/good.html': '2d', '/good': '2d',
+    '/better.html': '3d', '/better': '3d',
+    '/': '3d', '/index.html': '3d',
+    '/best.html': 'realista', '/best': 'realista',
+    '/metahuman.html': 'metahuman', '/metahuman': 'metahuman'
+  };
   var GO = {
-    vectorial: '/vectorial.html', vec: '/vectorial.html',
-    '2d': '/good.html', good: '/good.html',
-    '3d': '/better.html', better: '/better.html',
-    realista: '/best.html', realistic: '/best.html', best: '/best.html', foto: '/best.html',
-    metahuman: '/metahuman.html', mh: '/metahuman.html',
+    vectorial: '/vectorial.html',
+    '2d': '/good.html',
+    '3d': '/better.html',
+    realista: '/best.html',
+    metahuman: '/metahuman.html',
     neo: '/metahuman.html',
     mcp: '/mcp/',
     embed: '/embed-demo.html',
     embedmh: '/embed-mh.html',
-    roadmap: '/roadmap/', mapa: '/roadmap/',
-    ayuda: '/help/', manual: '/help/',
-    say: '/say.html', decir: '/say.html',
-    asistencia: '/asistencia.html', assist: '/asistencia.html',
-    lab: '/3d/', laboratorio: '/3d/',
-    legacy: '/legacy.html',
-    inicio: '/', home: '/',
-    unreal: '/docs/integration-UE.md', ue: '/docs/integration-UE.md'
+    roadmap: '/roadmap/',
+    ayuda: '/help/'
   };
+  var VERBS = ['help', 'nivel', 'neo', 'say', 'estado', 'mcp', 'embed', 'roadmap', 'ayuda', 'limpiar', 'version', 'idioma', 'vectorial', '2d', '3d', 'realista', 'metahuman', 'embedmh'];
+  var BRAIN = 'https://brain.digitalavatar.ai';
+  var HOST_PROBE = 'https://macbook-pro-16.tail48b61c.ts.net:8443/images/favicon-32x32.png';
+  var hostState = 'comprobando…';
+  var engineState = '';
+  var hostGen = 0;
 
   function esc(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) {
@@ -136,15 +140,6 @@
     return '<a href="' + esc(item.href) + '"' + ext + cur + ' data-es="' + esc(item.es) + '" data-en="' + esc(item.en) + '">' + esc(pick(item)) + '</a>';
   }
 
-  function tileHtml(item) {
-    var cur = isCurrent(item.href, item.key) ? ' aria-current="page"' : '';
-    return '<a class="da-tile" href="' + esc(item.href) + '"' + cur +
-      ' data-es="' + esc(item.es) + '" data-en="' + esc(item.en) + '">' +
-      '<span class="da-mark">' + esc(item.mark) + '</span>' +
-      '<span class="da-name">' + esc(pick(item)) + '</span>' +
-      '<span class="da-hint" data-es="' + esc(item.hint.es) + '" data-en="' + esc(item.hint.en) + '">' + esc(pick(item.hint)) + '</span></a>';
-  }
-
   function versionText() {
     var meta = document.querySelector('meta[name="admiranext-version"]');
     return (meta && meta.content) || '';
@@ -169,26 +164,135 @@
     var advanced = '<nav class="da-panel da-right is-collapsed" id="daAdvanced" aria-label="' + T('Avanzado', 'Advanced') + '" aria-hidden="true">' +
       '<div class="da-title" data-es="Avanzado" data-en="Advanced">' + T('Avanzado', 'Advanced') + '</div>' +
       '<div class="da-links" id="daAdvancedLinks">' + ADVANCED.map(linkHtml).join('') + '</div></nav>';
-    var expert = '<section class="da-expert is-collapsed" id="daExpert" aria-label="' + T('Modo experto', 'Expert mode') + '" aria-hidden="true">' +
-      '<div class="da-expert-head"><strong class="da-head" data-es="Modo experto" data-en="Expert mode">' + T('Modo experto', 'Expert mode') + '</strong>' +
-      '<button type="button" class="da-close" data-da-close="expert" aria-label="' + T('Cerrar modo experto', 'Close expert mode') + '">×</button></div>' +
-      '<div class="da-tiles" id="daTiles">' + TILES.map(tileHtml).join('') + '</div>' +
-      '<form class="da-cli" id="daCli" autocomplete="off"><span class="da-prompt">›</span>' +
-      '<input id="daCliInput" spellcheck="false" autocapitalize="off" placeholder="/help" aria-label="' + T('Orden del modo experto', 'Expert mode command') + '">' +
-      '<button type="submit" data-es="Ir" data-en="Go">' + T('Ir', 'Go') + '</button></form>' +
-      '<ol class="da-log" id="daLog" role="log" aria-live="polite"></ol></section>';
+    var expert = '<section class="da-expert is-collapsed" id="daExpert" aria-label="EXPERTO · CLI" aria-hidden="true">' +
+      '<div class="yk-rail-navhd">⌘ EXPERTO · CLI</div>' +
+      '<div class="yk-expert">' +
+      '<section class="generator-slot" aria-label="' + T('Motor del avatar', 'Avatar engine') + '">' +
+      '<pre class="generator-console" id="daEngine"></pre></section>' +
+      '<div class="yk-cli">' +
+      '<div class="yk-cli-out" id="daLog" role="log" aria-live="polite" tabindex="0"></div>' +
+      '<form class="yk-cli-form" id="daCli" autocomplete="off">' +
+      '<label class="yk-cli-prompt" for="daCliInput">›</label>' +
+      '<input class="yk-cli-input" id="daCliInput" type="text" spellcheck="false" autocapitalize="off" placeholder="/help" aria-label="' + T('Orden para el CLI', 'CLI command') + '">' +
+      '</form></div></div></section>';
     return bar + '<div class="da-layer">' + options + advanced + expert + '</div>';
   }
 
   function helpText() {
     if (lang() === 'en') {
-      return 'DigitalAvatar · expert mode.\n' +
-        '  /help — this list\n  /limpiar — clear the console\n  /version — release stamp\n  /idioma en|es — language\n' +
-        'Open a tool: /vectorial /2d /3d /realista /metahuman /neo /mcp /embed /embedmh /roadmap /manual /say /asistencia /lab /inicio';
+      return '/help — this list\n' +
+        '/nivel <vectorial|2d|3d|realista|metahuman> — avatar level\n' +
+        '/neo — open Neo (MetaHuman)\n' +
+        '/say <text> — ask Neo and print the answer\n' +
+        '/estado — engine card and MetaHuman host probe\n' +
+        '/mcp — MCP hub\n' +
+        '/embed — embed demo\n' +
+        '/roadmap — plan\n' +
+        '/ayuda — open the guide (/help/)\n' +
+        '/limpiar — clear the log (alias: /clear /cls)\n' +
+        '/version — release stamp\n' +
+        '/idioma en|es — language\n' +
+        'Tools: /vectorial /2d /3d /realista /metahuman /neo /mcp /embed /embedmh /roadmap /ayuda';
     }
-    return 'DigitalAvatar · modo experto.\n' +
-      '  /help — esta lista\n  /limpiar — vacía la consola\n  /version — sello del release\n  /idioma en|es — idioma\n' +
-      'Abrir una herramienta: /vectorial /2d /3d /realista /metahuman /neo /mcp /embed /embedmh /roadmap /manual /say /asistencia /lab /inicio';
+    return '/help — esta lista\n' +
+      '/nivel <vectorial|2d|3d|realista|metahuman> — nivel del avatar\n' +
+      '/neo — abre Neo (MetaHuman)\n' +
+      '/say <texto> — pregunta a Neo y muestra la respuesta\n' +
+      '/estado — ficha del motor y sondeo del host MetaHuman\n' +
+      '/mcp — hub MCP\n' +
+      '/embed — demo del embed\n' +
+      '/roadmap — plan\n' +
+      '/ayuda — abre la guía (/help/)\n' +
+      '/limpiar — vacía el registro (alias: /clear /cls)\n' +
+      '/version — sello del release\n' +
+      '/idioma en|es — idioma\n' +
+      'Herramientas: /vectorial /2d /3d /realista /metahuman /neo /mcp /embed /embedmh /roadmap /ayuda';
+  }
+
+  function nivelActual() {
+    var fromPath = NIVEL_POR_RUTA[herePath()];
+    if (fromPath) return fromPath;
+    try {
+      var saved = sessionStorage.getItem('da_nivel');
+      if (saved && NIVELES[saved]) return saved;
+    } catch (e) {}
+    return '3d';
+  }
+
+  function vozActual() {
+    return 'ElevenLabs ' + lang();
+  }
+
+  function engineLines() {
+    return [
+      'DIGITALAVATAR ENGINE',
+      'version: ' + (versionText() || 'sin sello'),
+      'avatar: neo',
+      'nivel: ' + nivelActual(),
+      'voz: ' + vozActual(),
+      'cerebro: brain.digitalavatar.ai',
+      'metahuman host: ' + hostState,
+      'estado: ' + (engineState || (lang() === 'en' ? 'ready' : 'listo'))
+    ];
+  }
+
+  function paintEngine() {
+    var pre = document.getElementById('daEngine');
+    if (pre) pre.textContent = engineLines().join('\n');
+  }
+
+  function probeHost() {
+    var gen = ++hostGen;
+    hostState = lang() === 'en' ? 'checking…' : 'comprobando…';
+    paintEngine();
+    return new Promise(function (resolve) {
+      var done = false;
+      var img = new Image();
+      var timer = setTimeout(function () {
+        if (!done) { done = true; resolve(false); }
+      }, 9000);
+      img.onload = function () {
+        if (!done) { done = true; clearTimeout(timer); resolve(true); }
+      };
+      img.onerror = function () {
+        if (!done) { done = true; clearTimeout(timer); resolve(false); }
+      };
+      img.src = HOST_PROBE + '?_=' + Date.now();
+    }).then(function (ok) {
+      if (gen !== hostGen) return ok;
+      hostState = ok ? 'online' : 'offline';
+      paintEngine();
+      return ok;
+    });
+  }
+
+  function roomName() {
+    var el = document.getElementById('room');
+    var value = el && String(el.value || '').trim();
+    return value || 'xtanco';
+  }
+
+  function askNeo(text) {
+    var en = lang() === 'en';
+    var question = text + (en
+      ? '\n\n(You are Neo, the digital human of digitalavatar.ai. Always answer as Neo. Please answer in English.)'
+      : '\n\n(Eres Neo, el humano digital de digitalavatar.ai. Responde siempre como Neo.)');
+    return fetch(BRAIN + '/metahuman/ask', {
+      method: 'POST',
+      headers: {'content-type': 'application/json'},
+      body: JSON.stringify({
+        question: question,
+        room: roomName(),
+        loc: '',
+        persona: 'neo',
+        lang: en ? 'en' : 'es',
+        history: []
+      })
+    }).then(function (response) {
+      return response.json().catch(function () { return {}; }).then(function (data) {
+        return {ok: response.ok, status: response.status, data: data || {}};
+      });
+    });
   }
 
   function parseCommand(text) {
@@ -240,14 +344,6 @@
       var el = nodes[i];
       var text = en ? el.getAttribute('data-en') : el.getAttribute('data-es');
       if (text != null && el.childElementCount === 0) el.textContent = text;
-      else if (text != null && el.classList.contains('da-tile')) {
-        var name = el.querySelector('.da-name');
-        if (name) name.textContent = text;
-      }
-    }
-    var hints = document.querySelectorAll('#daTiles .da-hint');
-    for (var j = 0; j < hints.length; j++) {
-      hints[j].textContent = en ? hints[j].getAttribute('data-en') : hints[j].getAttribute('data-es');
     }
     var labels = {
       daOptionsBtn: en ? 'Options' : 'Opciones',
@@ -262,19 +358,21 @@
     });
     var langBtn = document.getElementById('daLangBtn');
     if (langBtn) langBtn.textContent = en ? 'Language · Español' : 'Idioma · English';
+    paintEngine();
   }
 
   function log(text, cls) {
-    var ol = document.getElementById('daLog');
-    if (!ol) return;
+    var out = document.getElementById('daLog');
+    if (!out) return;
+    var extra = cls === 'da-in' || cls === 'cmd' ? ' yk-cli-cmd' : cls === 'err' ? ' yk-cli-err' : '';
     String(text == null ? '' : text).split('\n').forEach(function (line) {
-      var li = document.createElement('li');
-      if (cls) li.className = cls;
-      li.textContent = line;
-      ol.appendChild(li);
+      var row = document.createElement('div');
+      row.className = 'yk-cli-line' + extra;
+      row.textContent = line;
+      out.appendChild(row);
     });
-    while (ol.children.length > 40) ol.removeChild(ol.firstElementChild);
-    ol.scrollTop = ol.scrollHeight;
+    while (out.children.length > 80) out.removeChild(out.firstElementChild);
+    out.scrollTop = out.scrollHeight;
   }
 
   function setLanguage(next) {
@@ -302,13 +400,59 @@
     if (!p) return;
     log('› ' + p.raw, 'da-in');
     var verb = p.verb;
-    if (verb === 'help' || verb === '?' || (verb === 'ayuda' && !p.args)) {
+    if (verb === 'help' || verb === '?') {
       log(helpText());
       return;
     }
     if (verb === 'limpiar' || verb === 'clear' || verb === 'cls') {
-      var ol = document.getElementById('daLog');
-      if (ol) ol.replaceChildren();
+      var out = document.getElementById('daLog');
+      if (out) out.replaceChildren();
+      return;
+    }
+    if (verb === 'estado' || verb === 'status') {
+      log(lang() === 'en' ? 'Checking the MetaHuman host…' : 'Comprobando el host MetaHuman…');
+      probeHost().then(function () {
+        engineLines().forEach(function (line) { log(line); });
+      });
+      return;
+    }
+    if (verb === 'nivel' || verb === 'level') {
+      var nivel = (p.args || '').toLowerCase();
+      if (!NIVELES[nivel]) {
+        log('Uso: /nivel <vectorial|2d|3d|realista|metahuman>', 'err');
+        return;
+      }
+      try { sessionStorage.setItem('da_nivel', nivel); } catch (e) {}
+      paintEngine();
+      log((lang() === 'en' ? 'Level ' : 'Nivel ') + nivel + ' · ' + NIVELES[nivel]);
+      if (herePath() !== norm(NIVELES[nivel])) {
+        setTimeout(function () { location.assign(NIVELES[nivel]); }, 180);
+      }
+      return;
+    }
+    if (verb === 'say' || verb === 'decir') {
+      if (!p.args) { log('Uso: /say <texto>', 'err'); return; }
+      engineState = lang() === 'en' ? 'thinking…' : 'pensando…';
+      paintEngine();
+      log(lang() === 'en' ? '· thinking…' : '· respondiendo…');
+      askNeo(p.args).then(function (result) {
+        var answer = String(result.data.answer || '').trim();
+        if (!result.ok && !answer) {
+          engineState = lang() === 'en' ? 'connection error' : 'error de conexión';
+          log((lang() === 'en' ? 'Brain error (' : 'Error del cerebro (') + result.status + ')', 'err');
+        } else if (!answer) {
+          engineState = lang() === 'en' ? 'no answer' : 'sin respuesta';
+          log(lang() === 'en' ? '(no answer)' : '(sin respuesta)', 'err');
+        } else {
+          engineState = '';
+          log(answer);
+        }
+        paintEngine();
+      }).catch(function () {
+        engineState = lang() === 'en' ? 'connection error' : 'error de conexión';
+        paintEngine();
+        log(lang() === 'en' ? '⚠️ connection error' : '⚠️ error de conexión', 'err');
+      });
       return;
     }
     if (verb === 'version' || verb === 'sello') { log(versionText() || 'sin sello'); return; }
@@ -319,16 +463,19 @@
       log(lang());
       return;
     }
-    if (verb === 'opciones' || verb === 'options') { setPanel('options', true, {focus: false}); return; }
-    if (verb === 'avanzado' || verb === 'advanced') { setPanel('advanced', true, {focus: false}); return; }
     if (GO[verb]) {
+      var nivelGo = verb === 'neo' ? 'metahuman' : (NIVELES[verb] ? verb : '');
+      if (nivelGo) {
+        try { sessionStorage.setItem('da_nivel', nivelGo); } catch (e2) {}
+        paintEngine();
+      }
       log(lang() === 'en' ? 'Opening ' + GO[verb] : 'Abro ' + GO[verb]);
       setTimeout(function () { location.assign(GO[verb]); }, 180);
       return;
     }
     log(lang() === 'en'
-      ? 'Unknown verb. /help lists them.'
-      : 'Verbo desconocido. /help los lista.');
+      ? 'Unknown verb: /' + verb + ' · type /help'
+      : 'Verbo desconocido: /' + verb + ' · escribe /help', 'err');
   }
 
   function boot() {
@@ -413,12 +560,37 @@
       run(value);
     });
     input.addEventListener('keydown', function (ev) {
-      if (ev.key !== 'ArrowUp' && ev.key !== 'ArrowDown') return;
-      ev.preventDefault();
-      if (cursor === history.length) draft = input.value;
-      cursor = Math.max(0, Math.min(history.length, cursor + (ev.key === 'ArrowUp' ? -1 : 1)));
-      input.value = cursor === history.length ? draft : history[cursor];
+      if (ev.key === 'ArrowUp' || ev.key === 'ArrowDown') {
+        ev.preventDefault();
+        if (cursor === history.length) draft = input.value;
+        cursor = Math.max(0, Math.min(history.length, cursor + (ev.key === 'ArrowUp' ? -1 : 1)));
+        input.value = cursor === history.length ? draft : history[cursor];
+        return;
+      }
+      if (ev.key === 'Tab' && input.value.trim() && input.value.indexOf(' ') < 0) {
+        var prefix = input.value.trim().toLowerCase().replace(/^\//, '');
+        var hits = VERBS.filter(function (verb) { return verb.indexOf(prefix) === 0; });
+        if (!hits.length) return;
+        ev.preventDefault();
+        if (hits.length === 1) input.value = '/' + hits[0] + ' ';
+        else log(hits.map(function (verb) { return '/' + verb; }).join('  '));
+      }
     });
+
+    paintEngine();
+    log('CLI de DigitalAvatar · ADmiraNeXT · escribe /help');
+    probeHost();
+    fetch('/version.json', {cache: 'no-store'}).then(function (response) {
+      return response.ok ? response.json() : null;
+    }).then(function (data) {
+      var stamp = data && data.version;
+      if (!stamp || !/^v\.\d{2}\.\d{2}\.\d{4}\.r\d+\.\d{2}:\d{2}/.test(stamp)) return;
+      var meta = document.querySelector('meta[name="admiranext-version"]');
+      if (meta) meta.content = stamp;
+      var slot = document.getElementById('daVersion');
+      if (slot) slot.textContent = stamp;
+      paintEngine();
+    }).catch(function () {});
 
     var params = new URLSearchParams(location.search);
     var open = (params.get('da-panel') || '').toLowerCase();
