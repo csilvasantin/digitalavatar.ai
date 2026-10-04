@@ -1,6 +1,6 @@
 {
-  "version": "v.04.10.2026.r5.23:01",
-  "builtAt": "2026-10-04T21:01:04Z",
+  "version": "v.04.10.2026.r6.23:05",
+  "builtAt": "2026-10-04T21:05:03Z",
   "note": "Neo se sirve por el proxy neo-digitalavatar.csilvasantin.workers.dev en vez del Funnel directo del Mac: iframe, sondeo de vida y pantalla completa.",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
   "rollback": "retorno/pre-neo-proxy-20261004"
