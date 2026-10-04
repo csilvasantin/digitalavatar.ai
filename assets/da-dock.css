@@ -1,0 +1,60 @@
+/* Modo dock: el cargador de la suite abre la demo en un iframe (?dock=1).
+   Se queda la cara y la consola de voz; se oculta el cromo del sitio. */
+html.dock #evo,
+html.dock #daTop,
+html.dock .da-layer,
+html.dock #langBtn,
+html.dock .top,
+html.dock .exp,
+html.dock h1,
+html.dock .sub,
+html.dock .steps,
+html.dock .cta,
+html.dock .note,
+html.dock .alt,
+html.dock .embed-doc,
+html.dock .khint { display: none !important; }
+
+html.dock,
+html.dock body { height: 100%; overflow: hidden; }
+html.dock body { margin: 0; padding: 0 !important; }
+
+html.dock #stage { inset: 0 0 148px 0; }
+html.dock .console {
+  bottom: 8px;
+  width: calc(100% - 16px);
+  gap: 6px;
+}
+html.dock .caption { max-height: 18vh; font-size: 1rem; }
+html.dock .meta { display: none; }
+
+html.dock .studio {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  gap: 0;
+  margin: 0;
+}
+html.dock .stage {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+}
+html.dock .da-neo-fit { flex: 1 1 auto; aspect-ratio: auto; min-height: 0; }
+html.dock .stage-foot { display: none; }
+html.dock .convo {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  padding: 8px 10px 10px;
+  gap: 8px;
+}
+html.dock .chips,
+html.dock .convo-head { display: none; }
