@@ -80,15 +80,16 @@
   .livedot.on{background:var(--ok); box-shadow:0 0 9px var(--ok); animation:micpulse 1.1s infinite}
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.06.10.2026.r4.21:32">
+<meta name="admiranext-version" content="v.06.10.2026.r5.22:01">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
-<script defer src="/assets/da-shell.js?v=20261004-proxy-1" data-section="/ 3d" data-section-en="/ 3d"></script>
+<script defer src="/assets/da-shell.js?v=20261006-nube-1" data-section="/ 3d" data-section-en="/ 3d"></script>
 <script defer src="https://www.admiranext.com/assets/sello-novedades.js?v=20261006-sello-1" data-target="#daVersion" data-floating="off"></script>
 </head>
 <body data-da-stage>
   <!-- Conmutador de EVOLUCIÓN (good→better→best) · histórico siempre accesible -->
   <nav id="evo" aria-label="Evolución del avatar">
+    <a data-evo="nube" href="nube.html">Nube</a>
     <a data-evo="vectorial" href="vectorial.html">Vectorial</a>
     <a data-evo="2d" href="good.html">2D</a>
     <a data-evo="3d" href="better.html">3D</a>
@@ -105,7 +106,7 @@
   @media(max-width:520px){#evo .evo-l{display:none}#evo a{padding:5px 10px;font-size:.68rem}}
   </style>
   <script>(function(){var f=(location.pathname.split('/').pop()||'').toLowerCase();
-  var cur=(f==='good.html')?'2d':(f==='better.html')?'3d':(f==='metahuman.html')?'metahuman':(f==='best.html')?'foto':(f==='vectorial.html')?'vectorial':'3d';
+  var cur=(f==='nube.html')?'nube':(f==='good.html')?'2d':(f==='better.html')?'3d':(f==='metahuman.html')?'metahuman':(f==='best.html')?'foto':(f==='vectorial.html')?'vectorial':'3d';
   document.querySelectorAll('#evo a').forEach(function(a){if(a.getAttribute('data-evo')===cur)a.classList.add('on');});})();</script>
   <div id="stage"></div>
 

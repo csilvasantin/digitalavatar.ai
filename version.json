@@ -1,11 +1,12 @@
 {
-  "version": "v.06.10.2026.r4.21:32",
-  "builtAt": "2026-10-06T19:32:56Z",
-  "note": "En MODO WEB (Neo apagado) la caja de preguntas ya no dice «Pregúntale algo a Neo…»: usa un texto neutro en español o inglés.",
+  "version": "v.06.10.2026.r5.22:01",
+  "builtAt": "2026-10-06T20:01:27Z",
+  "note": "El nivel good ahora es Admirito: la nube de la casa, animada. Mueve los labios cuando habla, parpadea, mira y hace cosas si nadie la toca, y se duerme si la dejas un rato.",
   "novedades": [
-    "Con Neo apagado (MODO WEB) la caja dice «Pregúntale algo al avatar…» / «Ask the avatar something…»",
-    "Cuando Neo vuelve a emitir, la caja vuelve a nombrarle",
-    "El texto sigue al idioma si se cambia ES/EN"
+    "Nueva página nube.html: Admirito animado como avatar good (2D ligera, carga al instante)",
+    "La boca sigue la voz; sin voz, se mueve lo que dura leer la respuesta",
+    "En reposo flota, parpadea, guiña, llueve un poco, se duerme (zzz) y despierta al tocarla",
+    "El calvo 3D (better.html) sigue en el museo como etapa «3D», ya no es good"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",

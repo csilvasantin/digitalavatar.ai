@@ -53,14 +53,15 @@
   .alt{ color:var(--muted); font-size:.8rem; text-align:center } .alt a{ color:var(--accent); text-decoration:none; font-weight:600 }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.06.10.2026.r4.21:32">
+<meta name="admiranext-version" content="v.06.10.2026.r5.22:01">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
-<script defer src="/assets/da-shell.js?v=20261004-proxy-1" data-section="/ metahuman" data-section-en="/ metahuman"></script>
+<script defer src="/assets/da-shell.js?v=20261006-nube-1" data-section="/ metahuman" data-section-en="/ metahuman"></script>
 <script defer src="https://www.admiranext.com/assets/sello-novedades.js?v=20261006-sello-1" data-target="#daVersion" data-floating="off"></script>
 </head>
 <body>
   <nav id="evo" aria-label="Evolución del avatar">
+    <a data-evo="nube" href="nube.html">Nube</a>
     <a data-evo="vectorial" href="vectorial.html">Vectorial</a>
     <a data-evo="2d" href="good.html">2D</a>
     <a data-evo="3d" href="better.html">3D</a>
@@ -76,7 +77,7 @@
   @media(max-width:560px){#evo a{padding:5px 9px;font-size:.66rem}}
   </style>
   <script>(function(){var f=(location.pathname.split('/').pop()||'').toLowerCase();
-  var cur=(f==='good.html')?'2d':(f==='better.html')?'3d':(f==='best.html')?'foto':(f==='vectorial.html')?'vectorial':'metahuman';
+  var cur=(f==='nube.html')?'nube':(f==='good.html')?'2d':(f==='better.html')?'3d':(f==='best.html')?'foto':(f==='vectorial.html')?'vectorial':'metahuman';
   document.querySelectorAll('#evo a').forEach(function(a){if(a.getAttribute('data-evo')===cur)a.classList.add('on');});})();</script>
 
   <button id="langBtn" type="button" title="Cambiar idioma / Switch language" aria-label="Cambiar idioma / Switch language">EN</button>

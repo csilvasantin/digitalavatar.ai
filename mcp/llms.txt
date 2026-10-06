@@ -65,7 +65,8 @@ ese idioma; se puede forzar con data-lang o ?lang=.
 Cada etapa se conserva con URL propia — la evolución nunca se pierde:
 - 2D vectorial ....... https://digitalavatar.ai/vectorial.html
 - Vídeo 2D ........... https://digitalavatar.ai/good.html
-- Malla 3D ........... https://digitalavatar.ai/better.html
+- Malla 3D ........... https://digitalavatar.ai/better.html (fue good hasta el 06/10/2026)
+- Nube Admirito ...... https://digitalavatar.ai/nube.html (nivel good desde el 06/10/2026)
 - Fotorealístico web . https://digitalavatar.ai/best.html
 - MetaHuman en vivo .. https://digitalavatar.ai/metahuman.html
 
