@@ -1,7 +1,14 @@
 {
-  "version": "v.04.10.2026.r6.23:05",
-  "builtAt": "2026-10-04T21:05:03Z",
-  "note": "Neo se sirve por el proxy neo-digitalavatar.csilvasantin.workers.dev en vez del Funnel directo del Mac: iframe, sondeo de vida y pantalla completa.",
+  "version": "v.06.10.2026.r1.20:27",
+  "builtAt": "2026-10-06T18:23:27Z",
+  "note": "Las tres caras (good, better, best) hablan del negocio del cliente: assets/da-context.js lee ?loc, lang, sector, brand, site, city y tier y el postMessage da-context; chips, frases y saludo llegan de brain.digitalavatar.ai/metahuman/profile.",
+  "novedades": [
+    "El avatar habla del negocio del cliente: estanco, cafetería, panadería, súper, moda, banca, quiosco o tecnología",
+    "Chips, frases de espera y saludo del sector (adiós al «xtanco» y a los chips fijos)",
+    "Estanco solo informativo (Ley 28/2005): nunca recomienda tabaco ni vapeo",
+    "Neo (best) recuerda la conversación y recibe datos en vivo de la pantalla"
+  ],
+  "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "retorno/pre-neo-proxy-20261004"
+  "rollback": "retorno/pre-da-context-20261006"
 }
