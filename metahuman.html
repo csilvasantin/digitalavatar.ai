@@ -53,7 +53,7 @@
   .alt{ color:var(--muted); font-size:.8rem; text-align:center } .alt a{ color:var(--accent); text-decoration:none; font-weight:600 }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.06.10.2026.r3.21:08">
+<meta name="admiranext-version" content="v.06.10.2026.r4.21:32">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
 <script defer src="/assets/da-shell.js?v=20261004-proxy-1" data-section="/ metahuman" data-section-en="/ metahuman"></script>
@@ -389,7 +389,11 @@
       ws.onmessage=function(e){ var m=null; try{ m=JSON.parse(e.data); }catch(_){} if(m&&m.type==='streamerList') end(Array.isArray(m.ids)&&m.ids.length>0); };
       ws.onerror=function(){ end(true); };
     }); }
-    function toWeb(){ if(mode==='web')return; mode='web';
+    // Caja de preguntas: con Neo apagado no se le nombra (se ve el avatar web).
+    function setAsk(web){ var q=document.getElementById('q'); if(!q) return; var en=window.DA_LANG==='en';
+      q.dataset.i18nPh = web ? 'qPhWeb' : 'qPh';
+      q.placeholder = web ? (en ? 'Ask the avatar something…' : 'Pregúntale algo al avatar…') : (en ? 'Ask Neo something…' : 'Pregúntale algo a Neo…'); }
+    function toWeb(){ if(mode==='web')return; mode='web'; setAsk(true);
       window.__daHostUp=false; window.__daStreamUnmuted=false;
       fr.dataset.mode='web';
       if(window.DANeoPlayer) DANeoPlayer.fill(fr);
@@ -403,6 +407,7 @@
     function toMH(){
       window.__daHostUp=true;
       if(mode==='mh') return;
+      setAsk(false);
       var wasWeb=mode==='web';
       mode='mh';
       fr.dataset.mode='mh';
@@ -438,7 +443,7 @@
       foot:'Black screen? Hit <b>play</b> in the player (the render host must be switched on).',
       footLink:'Fullscreen ↗',
       convoH2:'Chat with <b>Neo</b>', convoP:'Type or tap the mic. He remembers the thread of the conversation.',
-      qPh:'Ask Neo something…', micT:'Speak', sendT:'Ask', cutT:'Cut',
+      qPh:'Ask Neo something…', qPhWeb:'Ask the avatar something…', micT:'Speak', sendT:'Ask', cutT:'Cut',
       s1h:'2D vector', s1p:'Canvas face with lip-sync. Where it started.',
       s2h:'Video', s2p:'Mother/father videos + 2D lip-sync.',
       s3h:'3D mesh', s3p:'3D face with 52 blendshapes (facecap).',
@@ -472,6 +477,7 @@
       try{ localStorage.setItem('da_lang', lang); }catch(e){}
     }
     harvest();
+    ES.qPhWeb='Pregúntale algo al avatar…';   // placeholder en MODO WEB (Neo apagado)
     var saved=null; try{ saved=localStorage.getItem('da_lang'); }catch(e){}
     window.__daApplyLang=apply;
     apply((window.DAContext && DAContext.get().lang) || saved || ((navigator.language||'es').slice(0,2)==='es' ? 'es' : 'en'));
