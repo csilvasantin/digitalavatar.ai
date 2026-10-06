@@ -53,10 +53,11 @@
   .alt{ color:var(--muted); font-size:.8rem; text-align:center } .alt a{ color:var(--accent); text-decoration:none; font-weight:600 }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.04.10.2026.r6.23:05">
+<meta name="admiranext-version" content="v.06.10.2026.r1.20:27">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
 <script defer src="/assets/da-shell.js?v=20261004-proxy-1" data-section="/ metahuman" data-section-en="/ metahuman"></script>
+<script defer src="https://www.admiranext.com/assets/sello-novedades.js?v=20261006-sello-1" data-target="#daVersion" data-floating="off"></script>
 </head>
 <body>
   <nav id="evo" aria-label="Evolución del avatar">
@@ -115,11 +116,7 @@
         </div>
         <div id="ans" class="ans"></div>
       </div>
-      <div class="chips" aria-label="Sugerencias">
-        <button class="chip" data-i18n="chip1">¿Quién eres?</button>
-        <button class="chip" data-i18n="chip2">¿Qué es un MetaHuman?</button>
-        <button class="chip" data-i18n="chip3">Cuéntame algo de Matrix</button>
-      </div>
+      <div class="chips" id="daChips" aria-label="Sugerencias"></div>
     </div>
   </div>
   <style>
@@ -155,12 +152,14 @@
     .ans{ min-height:0; color:var(--muted); font-size:.86rem; line-height:1.5; padding:0 4px; white-space:pre-wrap }
     .ans.show{ color:var(--txt); background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:11px 14px }
   </style>
+  <script src="/assets/da-context.js?v=20261006-ctx-1"></script>
   <script src="/assets/da-neo-player.js?v=20261004-proxy-1"></script>
   <script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
   <script>
   (function(){
-    var API='https://brain.digitalavatar.ai', ROOM='xtanco';
-    var history=[];
+    // Contexto del cliente (assets/da-context.js): nivel best = + datos en vivo + historial.
+    var API='https://brain.digitalavatar.ai', DACTX=window.DAContext;
+    DACTX.init({tier:'best'});
     var q=document.getElementById('q'), send=document.getElementById('send'), mic=document.getElementById('mic'), ans=document.getElementById('ans');
     var cut=document.getElementById('cut'), vstate=document.getElementById('vstate');
     var talkTimer=null, seq=0;
@@ -230,16 +229,14 @@
           paint('pensando');
         }
         var en=lang()==='en';
-        var qOut=text+(en
-          ? '\n\n(You are Neo, the digital human of digitalavatar.ai. Always answer as Neo. Please answer in English.)'
-          : '\n\n(Eres Neo, el humano digital de digitalavatar.ai. Responde siempre como Neo.)');
+        // La identidad de Neo la pone el cerebro (persona:'neo'); la pregunta va limpia.
         var r=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'content-type':'application/json'},
-          body:JSON.stringify({question:qOut, room:ROOM, loc:'', persona:'neo', lang:(en?'en':'es'), history:history, voice:true, timestamps:true, voiceId:DADemo.voiceId(en?'en':'es')})});
+          body:JSON.stringify(Object.assign({question:text, persona:'neo', lang:(en?'en':'es'), voice:true, timestamps:true, voiceId:DADemo.voiceId(en?'en':'es')}, DACTX.body()))});
         var d=await r.json();
         if(mine!==seq) return;
         var a=(d.answer||'').trim();
         setAns(a||lab.noAnswer,true);
-        if(a){ history.push({role:'user',content:text},{role:'assistant',content:a}); if(history.length>8) history=history.slice(-8); }
+        if(a) DACTX.remember(text, a);
         if(offline && d.audioBase64){
           var audio=DADemo.load(d.audioBase64, d.mime);
           audio.onended=function(){ if(mine===seq) paint('listo'); };
@@ -298,7 +295,20 @@
       });
       if(ok){ mic.classList.add('rec'); paint('escuchando'); }
     };
-    document.querySelectorAll('.chip').forEach(function(c){ c.onclick=function(){ q.value=c.textContent; ask(); q.scrollIntoView({behavior:'smooth',block:'center'}); }; });
+    // Chips: los del sector (/metahuman/profile) cuando hay cliente (?loc, ?sector, ?brand);
+    // en la demo suelta de Neo, sus preguntas de siempre.
+    var DEMO_CHIPS={es:['¿Quién eres?','¿Qué es un MetaHuman?','Cuéntame algo de Matrix'],en:['Who are you?','What is a MetaHuman?','Tell me something about the Matrix']};
+    function renderChips(){
+      var box=document.getElementById('daChips'); if(!box) return;
+      var c=DACTX.get(), client=!!(c.loc||c.sector||c.brand);
+      var list=client ? DACTX.chips(DEMO_CHIPS[lang()]) : DEMO_CHIPS[lang()];
+      box.innerHTML='';
+      list.forEach(function(t){ var b=document.createElement('button'); b.className='chip'; b.type='button'; b.textContent=t;
+        b.onclick=function(){ q.value=t; ask(); q.scrollIntoView({behavior:'smooth',block:'center'}); }; box.appendChild(b); });
+    }
+    window.__daRenderChips=renderChips;
+    DACTX.on(function(kind){ if(kind==='lang' && window.__daApplyLang) window.__daApplyLang(DACTX.get().lang); else renderChips(); });
+    renderChips();
     var cta=document.getElementById('ctaAsk'); if(cta) cta.onclick=function(e){ e.preventDefault(); q.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(function(){q.focus();},350); };
   })();
   </script>
@@ -416,7 +426,6 @@
       footLink:'Fullscreen ↗',
       convoH2:'Chat with <b>Neo</b>', convoP:'Type or tap the mic. He remembers the thread of the conversation.',
       qPh:'Ask Neo something…', micT:'Speak', sendT:'Ask', cutT:'Cut',
-      chip1:'Who are you?', chip2:'What is a MetaHuman?', chip3:'Tell me something about the Matrix',
       s1h:'2D vector', s1p:'Canvas face with lip-sync. Where it started.',
       s2h:'Video', s2p:'Mother/father videos + 2D lip-sync.',
       s3h:'3D mesh', s3p:'3D face with 52 blendshapes (facecap).',
@@ -444,12 +453,15 @@
       document.documentElement.lang = lang;
       window.DA_LANG = lang;                      // lo usa la caja de preguntas
       if(window.__daRefreshVoice) window.__daRefreshVoice();
+      if(window.DAContext && DAContext.get().lang!==lang) DAContext.set({lang:lang});
+      if(window.__daRenderChips) window.__daRenderChips();
       if(btn) btn.textContent = lang==='en' ? 'ES' : 'EN';   // muestra el idioma AL QUE cambias
       try{ localStorage.setItem('da_lang', lang); }catch(e){}
     }
     harvest();
     var saved=null; try{ saved=localStorage.getItem('da_lang'); }catch(e){}
-    apply(saved || ((navigator.language||'es').slice(0,2)==='es' ? 'es' : 'en'));
+    window.__daApplyLang=apply;
+    apply((window.DAContext && DAContext.get().lang) || saved || ((navigator.language||'es').slice(0,2)==='es' ? 'es' : 'en'));
     if(btn) btn.onclick=function(){ apply(window.DA_LANG==='en' ? 'es' : 'en'); };
   })();
   </script>

@@ -58,6 +58,10 @@
   .exp{position:fixed; top:54px; left:50%; transform:translateX(-50%); z-index:5; font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); opacity:.8; pointer-events:none}
   /* ── KIOSKO (tótem) ── */
   html.kiosk #evo, html.kiosk .exp{ display:none !important; }
+  .hintchips{display:flex; gap:7px; flex-wrap:wrap; justify-content:center}
+  .hintchips .chip{font-size:.7rem; color:var(--muted); border:1px solid var(--line); background:rgba(6,12,20,.45); padding:5px 11px; border-radius:20px; cursor:pointer}
+  .hintchips .chip:hover{color:var(--accent); border-color:var(--accent)}
+  html.kiosk .hintchips{ display:none; }
   html.kiosk .meta{ display:none; }                       /* selector oculto: tienda fijada */
   html.kiosk .console{ width:min(900px,95vw); gap:16px; bottom:max(34px,env(safe-area-inset-bottom)); }
   html.kiosk .caption{ font-size:1.7rem; max-height:26vh; }
@@ -84,10 +88,11 @@
   @keyframes khb{ 50%{ transform:translateX(-50%) translateY(-5px); opacity:.7 } }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.04.10.2026.r6.23:05">
+<meta name="admiranext-version" content="v.06.10.2026.r1.20:27">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
 <script defer src="/assets/da-shell.js?v=20261004-proxy-1" data-section="/ realista" data-section-en="/ realistic"></script>
+<script defer src="https://www.admiranext.com/assets/sello-novedades.js?v=20261006-sello-1" data-target="#daVersion" data-floating="off"></script>
 </head>
 <body data-da-stage>
   <!-- Conmutador de EVOLUCIÓN (good→better→best) · histórico siempre accesible -->
@@ -128,6 +133,7 @@
       <button class="iconbtn stop" id="btnStop" title="Cortar la voz">■</button>
       <button class="iconbtn send" id="btnSend" title="Enviar">➤</button>
     </div>
+    <div class="hintchips" id="chips"></div>
     <div class="meta"><select id="loc"></select></div>
     <div class="status" id="status"></div>
   </div>
@@ -146,6 +152,7 @@
     </div>
   </div>
 
+<script src="/assets/da-context.js?v=20261006-ctx-1"></script>
 <script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
 <script type="importmap">
 { "imports": {
@@ -182,7 +189,9 @@ let MODEL_URL = params.get('avatar') ? rpmUrlFrom(params.get('avatar')) : DEFAUL
 // para que NUNCA salga el menú de navegación sobre el avatar en los tótems.
 let inIframe=false; try{ inIframe=(window.self!==window.top); }catch(e){ inIframe=true; }
 const KIOSK = params.get('kiosk')==='1' || params.get('kiosk')==='true' || params.get('kiosk')!=='0' && inIframe;
-const LOCK_LOC = params.get('loc') || '';
+// Contexto del cliente (assets/da-context.js): nivel better = + tono de marca + datos del punto.
+const DACTX = window.DAContext;
+const LOCK_LOC = params.get('loc') || DACTX.get().loc || '';
 const FORCE_LANG = (params.get('lang')==='en')?'en':(params.get('lang')==='es')?'es':'';
 const EMBED = params.get('embed')==='1';   // incrustado en una pantalla del gemelo 2D (tótem/pared)
 if(KIOSK) document.documentElement.classList.add('kiosk');
@@ -196,7 +205,7 @@ const T = {
     thinking:'Thinking…', listening:'Listening…', speaking:'Speaking', cut:'Voice cut', net:'Network error: ', noVoice:'(no voice: missing TTS key)',
     micNo:'Your browser does not support speech input (try Chrome).', loc:'Xpacio (Admira.app location)', loading:'Loading photoreal avatar…', speechLang:'en-US' },
 };
-let LANG = FORCE_LANG || ((localStorage.getItem('da_lang')==='en') ? 'en' : 'es');
+let LANG = FORCE_LANG || DACTX.get().lang || ((localStorage.getItem('da_lang')==='en') ? 'en' : 'es');
 // Silencio del avatar (tótem mudo): sin voz de atracción ni voz en las respuestas
 // (sigue habiendo lip-sync + subtítulo). Persiste y se controla con /avatar3d audio on|off.
 let MUTED = (params.get('audio')==='off') || (localStorage.getItem('da_muted')==='1');
@@ -331,10 +340,11 @@ async function ask(question){
   $('q').value=''; setStatus(T[LANG].thinking); $('btnSend').disabled=true; setCaption('…'); thinking=true;
   if(!KIOSK && window.DADemo){ DADemo.unlock(); DADemo.stop(); DADemo.setState('pensando'); }
   try{ const res=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({loc:$('loc').value, question, lang:LANG, voice:true, timestamps:true, voiceId:VOICES[LANG]||''})});
+      body:JSON.stringify(Object.assign({question, lang:LANG, voice:true, timestamps:true, voiceId:VOICES[LANG]||''}, DACTX.body(), $('loc').value?{loc:$('loc').value}:{}))});
     const j=await res.json().catch(()=>({}));
     if(!j.ok){ thinking=false; setStatus('❌ '+(j.error||('HTTP '+res.status)),'err'); setCaption(''); notifyParent({error:(j.error||('HTTP '+res.status))}); return; }
     const answer=j.answer||'';
+    DACTX.remember(question, answer);
     if(MUTED){ thinking=false; setCaption(answer); setStatus(''); resetAttract(); listenAfterReply(); notifyParent({answer:answer,muted:true,spoke:false}); return; }   // mudo: respuesta solo en subtítulo
     if(j.audioBase64){
       if(audioEl){try{audioEl.pause();}catch(e){}}
@@ -362,7 +372,9 @@ async function ask(question){
   }catch(e){ thinking=false; setStatus(T[LANG].net+(e.message||e),'err'); setCaption(''); notifyParent({error:String(e.message||e)}); }
   finally{ $('btnSend').disabled=false; }
 }
-function greet(){ ask(LANG==='es'?'Salúdame en una frase corta y di que eres un avatar digital foto-real.':'Greet me in one short sentence and say you are a photoreal digital avatar.'); }
+// Saludo del sector (/metahuman/profile) sin pasar por el cerebro: en el tótem con voz
+// fija; en el panel solo subtítulo (no gasta voz al abrir).
+function greet(){ DACTX.ready().then(()=>{ const g=DACTX.greeting(''); if(!g) return; if(KIOSK && !MUTED && !EMBED) speakFixed(g); else setCaption(g); }); }
 
 /* ===== KIOSKO: voz fija (atracción) + modo atracción en bucle ===== */
 async function speakFixed(text){
@@ -385,7 +397,7 @@ const ATTRACT={
       'I can tell you offers, opening hours or answer any question.'] };
 let attractTimer=null, attractIdx=0;
 function resetAttract(){ if(!KIOSK) return; clearTimeout(attractTimer); attractTimer=setTimeout(attract, 28000); }
-function attract(){ if(!KIOSK||MUTED){ return; } if(speaking||listening){ resetAttract(); return; } const list=ATTRACT[LANG]||ATTRACT.es; speakFixed(list[attractIdx%list.length]); attractIdx++; }
+function attract(){ if(!KIOSK||MUTED){ return; } if(speaking||listening){ resetAttract(); return; } const list=DACTX.idle(ATTRACT[LANG]||ATTRACT.es); speakFixed(list[attractIdx%list.length]); attractIdx++; }
 
 let recog=null, listening=false;
 function initSpeech(){ const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){ $('btnMic').disabled=true; return; }
@@ -398,7 +410,10 @@ function toggleListen(){ listening?stopListen():startListen(); }
 // Manos libres (kiosko): tras responder, vuelve a escuchar solo → diálogo continuo.
 function listenAfterReply(){ if(!KIOSK || !recog || listening || speaking) return; setTimeout(()=>{ if(!speaking && !listening && !thinking) startListen(); }, 550); }
 
-function applyLang(l){ LANG=(l==='en')?'en':'es'; const t=T[LANG]; localStorage.setItem('da_lang',LANG); document.documentElement.lang=t.lang;
+function renderChips(){ const el=$('chips'); if(!el) return; const list=DACTX.chips([]); el.innerHTML=list.map(c=>'<span class="chip">'+esc(c)+'</span>').join(''); [...el.children].forEach((c,i)=>c.onclick=()=>{ $('q').value=list[i]; ask(); }); }
+function applyProfile(){ const p=DACTX.profile(); if(p&&p.site&&p.site.name&&KIOSK){ window.__locName=p.site.name; $('tag').textContent=p.site.name; } renderChips(); }
+DACTX.on(kind=>{ if(kind==='lang') applyLang(DACTX.get().lang); else applyProfile(); });
+function applyLang(l){ LANG=(l==='en')?'en':'es'; const t=T[LANG]; localStorage.setItem('da_lang',LANG); document.documentElement.lang=t.lang; if(DACTX.get().lang!==LANG) DACTX.set({lang:LANG});
   $('tag').textContent=(KIOSK&&window.__locName)?window.__locName:t.tag; $('q').placeholder=t.placeholder; const lt=$('langToggle'); if(lt) lt.textContent=(LANG==='es')?'EN':'ES'; }
 function loadLocations(){ fetch(API+'/locations',{cache:'no-store'}).then(r=>r.json()).then(d=>{ const list=(d&&d.locations)||[], sel=$('loc'); sel.innerHTML='<option value="">'+T[LANG].loc+'</option>'; list.forEach(l=>{ const o=document.createElement('option'); o.value=l.id; o.textContent=(l.name||l.id)+(l.addr?' · '+l.addr:''); sel.appendChild(o); });
     if(LOCK_LOC){ sel.value=LOCK_LOC; const m=list.find(l=>String(l.id)===LOCK_LOC); if(m){ window.__locName=m.name||LOCK_LOC; $('tag').textContent=window.__locName; } }   // tienda fijada del tótem
@@ -428,7 +443,9 @@ $('btnStop').onclick=function(){
 $('q').addEventListener('keydown',e=>{ if(e.key==='Enter') ask(); });
 $('langToggle').onclick=()=>{ const nl=(LANG==='es')?'en':'es'; applyLang(nl); if(audioEl){try{audioEl.pause();}catch(e){}} stopSpeaking();
   speakFixed(nl==='es'?'Vale, seguimos en español. ¿En qué te ayudo?':'Okay, switching to English. How can I help you?'); };
-initThree(); animate(); loadAvatar(MODEL_URL); initSpeech(); applyLang(LANG); loadLocations();
+initThree(); animate(); loadAvatar(MODEL_URL); initSpeech(); applyLang(LANG); DACTX.init({tier:'better', lang:LANG}).then(applyProfile);
+// El selector de puntos (9.000+, varios MB) solo en la página suelta: en tótem y panel manda ?loc.
+if(!KIOSK && !document.documentElement.classList.contains('dock')) loadLocations();
 // Escucha por DEFECTO en el MUPI (Carlos, 16-jul-2026): en modo kiosko el avatar
 // arranca escuchando y se re-arma solo (manos libres desde el segundo cero).
 // Desactivable con ?listen=0. Si el permiso de micro llega tarde, reintenta.
