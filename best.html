@@ -31,6 +31,8 @@
   .seg button.on{background:linear-gradient(180deg,#123a52,#0c2638); color:var(--accent)}
   #load{position:fixed; inset:0; display:flex; flex-direction:column; gap:14px; align-items:center; justify-content:center; z-index:20; background:var(--bg); transition:opacity .6s}
   #load.gone{opacity:0; pointer-events:none}
+  /* El aviso de carga no tapa la consola; solo el bloque de fallback recibe clics (06-10-2026). */
+  #load{pointer-events:none} #load #fallback.show{pointer-events:auto}
   .ring{width:46px; height:46px; border-radius:50%; border:3px solid #14304a; border-top-color:var(--accent); animation:spin 1s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
   #load .lt{font-size:.78rem; color:var(--muted); max-width:300px; text-align:center}
@@ -236,7 +238,7 @@ function onResize(){ camera.aspect=innerWidth/innerHeight; camera.updateProjecti
 let loader=new GLTFLoader();
 function clearAvatar(){ const g=window.__rig; if(g){ scene.remove(g); window.__rig=null; } headMeshes=[]; }
 function loadAvatar(url){
-  $('fallback').classList.remove('show'); $('ring').style.display=''; $('loadt').textContent=T[LANG].loading; $('load').classList.remove('gone');
+  $('fallback').classList.remove('show'); $('ring').style.display=''; $('loadt').textContent=T[LANG].loading; $('load').style.display=''; $('load').removeAttribute('aria-hidden'); $('load').classList.remove('gone');
   clearAvatar();
   loader.load(url, (gltf)=>{
     const root=gltf.scene; const grp=new THREE.Group(); grp.add(root); grp.name='rig'; scene.add(grp); window.__rig=grp;
@@ -256,11 +258,14 @@ function loadAvatar(url){
     camera.position.set(cx, cy+0.02, cz+dist); camera.lookAt(cx, cy-0.05, cz); camera.updateProjectionMatrix();
     if(headBone) headBone.userData.rest={x:headBone.rotation.x,y:headBone.rotation.y,z:headBone.rotation.z};
     window.__headBone=headBone;
-    window.__avatarGroup=grp; $('load').classList.add('gone'); setStatus(''); greet();
-  }, (xhr)=>{ if(xhr.total) $('loadt').textContent=T[LANG].loading+' '+Math.round(xhr.loaded/xhr.total*100)+'%'; },
+    window.__avatarGroup=grp; loaderDone(); setStatus(''); greet();
+  }, (xhr)=>{ if(xhr.total && !$('load').classList.contains('gone')) $('loadt').textContent=T[LANG].loading+' '+loadPct(xhr)+'%'; },
   (err)=>{ console.error('RPM load error', err); showFallback('No se pudo descargar el avatar (red o URL).'); });
 }
-function showFallback(msg){ $('ring').style.display='none'; $('loadt').textContent=msg||'No se pudo cargar el avatar'; $('fallback').classList.add('show'); $('load').classList.remove('gone'); }
+// Progreso: con gzip loaded supera a total (salía «133%»); se limita a 99 hasta que el modelo está listo.
+function loadPct(xhr){ return Math.max(0, Math.min(99, Math.round(xhr.loaded/xhr.total*100))); }
+function loaderDone(){ const l=$('load'); l.classList.add('gone'); l.setAttribute('aria-hidden','true'); $('loadt').textContent=''; setTimeout(()=>{ if(l.classList.contains('gone')) l.style.display='none'; }, 700); }
+function showFallback(msg){ $('load').style.display=''; $('load').removeAttribute('aria-hidden'); $('ring').style.display='none'; $('loadt').textContent=msg||'No se pudo cargar el avatar'; $('fallback').classList.add('show'); $('load').classList.remove('gone'); }
 $('rpmLoad').onclick=()=>{ const v=$('rpmUrl').value.trim(); if(v) loadAvatar(rpmUrlFrom(v)); };
 
 /* ===== visemas (morphs Oculus de RPM) ===== */
