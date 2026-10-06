@@ -1,12 +1,12 @@
 {
-  "version": "v.06.10.2026.r2.21:01",
-  "builtAt": "2026-10-06T19:01:03Z",
-  "note": "El aviso «Cargando avatar» ya no pasa de 99 %, se oculta del todo al cargar y nunca tapa la caja de texto (antes podía bloquear los clics en el panel).",
+  "version": "v.06.10.2026.r3.21:08",
+  "builtAt": "2026-10-06T19:08:01Z",
+  "note": "Neo (nivel best) ya no se queda en negro con «EN VIVO» cuando el MetaHuman está apagado: si no hay ningún streamer conectado pasa al avatar web y lo indica («MODO WEB»).",
   "novedades": [
-    "El aviso de carga del avatar ya no marca más de 100 % («133 %»)",
-    "Al terminar de cargar, el aviso desaparece del todo",
-    "La caja de texto del panel recibe siempre el clic: el aviso de carga ya no la tapa",
-    "Chips e idioma siguen al idioma de la página que abre el avatar"
+    "Nivel best: si el MetaHuman de Neo no está emitiendo, se ve el avatar web en lugar de una pantalla negra",
+    "El aviso «EN VIVO» solo aparece cuando Neo emite de verdad; si no, «MODO WEB · host de render offline»",
+    "Vuelve solo a Neo en cuanto el MetaHuman se conecta",
+    "Afecta también al avatar de la pared en Matrix (XpaceOS), que ahora usa el nivel best"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",

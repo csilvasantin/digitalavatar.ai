@@ -53,7 +53,7 @@
   .alt{ color:var(--muted); font-size:.8rem; text-align:center } .alt a{ color:var(--accent); text-decoration:none; font-weight:600 }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.06.10.2026.r2.21:01">
+<meta name="admiranext-version" content="v.06.10.2026.r3.21:08">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
 <script defer src="/assets/da-shell.js?v=20261004-proxy-1" data-section="/ metahuman" data-section-en="/ metahuman"></script>
@@ -375,6 +375,19 @@
       img.onload =function(){ if(!done){done=true; clearTimeout(t); res(true);} };
       img.onerror=function(){ if(!done){done=true; clearTimeout(t); res(false);} };
       img.src=PROBE+'?_='+Date.now();
+    }).then(function(up){ return up ? streaming() : false; }); }
+    // El worker de señalización puede responder con Neo apagado (lista de streamers vacía):
+    // entonces el escenario se quedaba negro con «EN VIVO». Se pregunta la lista (protocolo
+    // Pixel Streaming: listStreamers → streamerList) y sin streamers se pasa al avatar web.
+    // Si el WebSocket no está disponible o no contesta, se mantiene el criterio anterior.
+    function streaming(){ return new Promise(function(res){
+      var done=false, ws=null;
+      function end(v){ if(done) return; done=true; clearTimeout(t); try{ ws&&ws.close(); }catch(_){} res(v); }
+      var t=setTimeout(function(){ end(true); }, 6000);
+      try{ ws=new WebSocket(BASE.replace(/^http/,'ws')); }catch(_){ end(true); return; }
+      ws.onopen=function(){ try{ ws.send(JSON.stringify({type:'listStreamers'})); }catch(_){ end(true); } };
+      ws.onmessage=function(e){ var m=null; try{ m=JSON.parse(e.data); }catch(_){} if(m&&m.type==='streamerList') end(Array.isArray(m.ids)&&m.ids.length>0); };
+      ws.onerror=function(){ end(true); };
     }); }
     function toWeb(){ if(mode==='web')return; mode='web';
       window.__daHostUp=false; window.__daStreamUnmuted=false;
