@@ -53,11 +53,12 @@
   .alt{ color:var(--muted); font-size:.8rem; text-align:center } .alt a{ color:var(--accent); text-decoration:none; font-weight:600 }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.06.10.2026.r5.22:01">
+<meta name="admiranext-version" content="v.06.10.2026.r6.22:15">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
 <script defer src="/assets/da-shell.js?v=20261006-nube-1" data-section="/ metahuman" data-section-en="/ metahuman"></script>
 <script defer src="https://www.admiranext.com/assets/sello-novedades.js?v=20261006-sello-1" data-target="#daVersion" data-floating="off"></script>
+<link rel="stylesheet" href="/assets/da-conversation-controls.css?v=20261006-controls-1">
 </head>
 <body>
   <nav id="evo" aria-label="Evolución del avatar">
@@ -112,7 +113,7 @@
         <div class="askrow">
           <input id="q" type="text" data-i18n-ph="qPh" placeholder="Pregúntale algo a Neo…" autocomplete="off">
           <button id="mic" data-i18n-title="micT" title="Hablar" aria-label="Hablar por micrófono">🎤</button>
-          <button id="cut" type="button" data-i18n="cutT">Cortar</button>
+          <button id="cut" type="button" data-i18n="cutT">Detener</button>
           <button id="send" data-i18n="sendT">Preguntar</button>
         </div>
         <div id="ans" class="ans"></div>
@@ -270,6 +271,7 @@
       seq++;
       clearTimeout(talkTimer);
       DADemo.stop();
+      mic.classList.remove('rec');
       if(window.__daStreamUnmuted) armStream(true);
       paint('cortada');
       send.disabled=false;
@@ -421,6 +423,7 @@
       DANeoPlayer.fit(fr);
       if(bar) bar.innerHTML='<span class="live"><span class="dot"></span>EN VIVO</span> · MetaHuman · Pixel Streaming';
     }
+    window.__daRefreshMode=function(){setAsk(mode==='web');var en=window.DA_LANG==='en';if(bar){if(mode==='web')bar.innerHTML='<span style="color:#ffb454;font-weight:700">'+(en?'● WEB MODE':'● MODO WEB')+'</span> · '+(en?'render host offline':'render fuera de línea');else bar.innerHTML='<span class="live"><span class="dot"></span>'+(en?'LIVE':'EN VIVO')+'</span> · MetaHuman · Pixel Streaming';}};
     // Arranca OPTIMISTA en MetaHuman (el iframe ya trae MH_SRC) y solo cae a web tras 2 fallos seguidos → sin
     // parpadeo a web cuando el host está vivo. Recupera a MetaHuman en cuanto un sondeo vuelve a responder.
     async function tick(){
@@ -444,7 +447,7 @@
       foot:'Black screen? Hit <b>play</b> in the player (the render host must be switched on).',
       footLink:'Fullscreen ↗',
       convoH2:'Chat with <b>Neo</b>', convoP:'Type or tap the mic. He remembers the thread of the conversation.',
-      qPh:'Ask Neo something…', qPhWeb:'Ask the avatar something…', micT:'Speak', sendT:'Ask', cutT:'Cut',
+      qPh:'Ask Neo something…', qPhWeb:'Ask the avatar something…', micT:'Speak', sendT:'Ask', cutT:'Stop',
       s1h:'2D vector', s1p:'Canvas face with lip-sync. Where it started.',
       s2h:'Video', s2p:'Mother/father videos + 2D lip-sync.',
       s3h:'3D mesh', s3p:'3D face with 52 blendshapes (facecap).',
@@ -472,6 +475,7 @@
       document.documentElement.lang = lang;
       window.DA_LANG = lang;                      // lo usa la caja de preguntas
       if(window.__daRefreshVoice) window.__daRefreshVoice();
+      if(window.__daRefreshMode) window.__daRefreshMode();
       if(window.DAContext && DAContext.get().lang!==lang) DAContext.set({lang:lang});
       if(window.__daRenderChips) window.__daRenderChips();
       if(btn) btn.textContent = lang==='en' ? 'ES' : 'EN';   // muestra el idioma AL QUE cambias
@@ -485,5 +489,6 @@
     if(btn) btn.onclick=function(){ apply(window.DA_LANG==='en' ? 'es' : 'en'); };
   })();
   </script>
+<script defer src="/assets/da-conversation-controls.js?v=20261006-controls-1"></script>
 </body>
 </html>
