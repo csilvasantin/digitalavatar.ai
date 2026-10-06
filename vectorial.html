@@ -34,14 +34,15 @@
   .status.warn{color:var(--warn)} .status.err{color:var(--err)}
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.06.10.2026.r4.21:32">
+<meta name="admiranext-version" content="v.06.10.2026.r5.22:01">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
-<script defer src="/assets/da-shell.js?v=20261004-proxy-1" data-section="/ vectorial" data-section-en="/ vector"></script>
+<script defer src="/assets/da-shell.js?v=20261006-nube-1" data-section="/ vectorial" data-section-en="/ vector"></script>
 </head>
 <body data-da-stage>
   <!-- Conmutador de EVOLUCIÓN -->
   <nav id="evo" aria-label="Evolución del avatar">
+    <a data-evo="nube" href="nube.html">Nube</a>
     <a data-evo="vectorial" href="vectorial.html">Vectorial</a>
     <a data-evo="2d" href="good.html">2D</a>
     <a data-evo="3d" href="better.html">3D</a>
@@ -57,7 +58,7 @@
   @media(max-width:560px){#evo a{padding:5px 9px;font-size:.66rem}}
   </style>
   <script>(function(){var f=(location.pathname.split('/').pop()||'').toLowerCase();
-  var cur=(f==='good.html')?'2d':(f==='better.html')?'3d':(f==='metahuman.html')?'metahuman':(f==='best.html')?'foto':'vectorial';
+  var cur=(f==='nube.html')?'nube':(f==='good.html')?'2d':(f==='better.html')?'3d':(f==='metahuman.html')?'metahuman':(f==='best.html')?'foto':'vectorial';
   document.querySelectorAll('#evo a').forEach(function(a){if(a.getAttribute('data-evo')===cur)a.classList.add('on');});})();</script>
 
   <div id="stage"><canvas id="face" width="512" height="512"></canvas></div>

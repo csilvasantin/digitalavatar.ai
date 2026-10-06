@@ -76,7 +76,7 @@
     return pending;
   }
 
-  // Valores por defecto de cada página (p. ej. better.html = good); la URL manda.
+  // Valores por defecto de cada página (p. ej. nube.html = good); la URL manda.
   function init(defaults) {
     if (defaults) for (var k in defaults) if (KEYS.indexOf(k) >= 0 && !fromUrl[k]) { var v = clean(k, defaults[k]); if (v) ctx[k] = v; }
     return refresh();

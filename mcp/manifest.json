@@ -60,12 +60,19 @@
     "fallback": "Si el host está apagado, el embed cambia solo al avatar web (best.html), que también habla."
   },
 
+  "levels": {
+    "good": { "url": "https://digitalavatar.ai/nube.html", "desc": "Admirito, la nube animada: 2D ligera (SVG), mueve los labios con la voz o con el texto, parpadea, mira y hace gestos si nadie la toca, y se duerme (zzz) tras un rato quieta." },
+    "better": { "url": "https://digitalavatar.ai/best.html", "desc": "Avatar web Ready Player Me (la chica)." },
+    "best": { "url": "https://digitalavatar.ai/metahuman.html", "desc": "Neo, MetaHuman por Pixel Streaming; si el host está apagado entra la chica." }
+  },
+
   "evolution": {
     "note": "Cada etapa del avatar se conserva con URL propia: la evolución nunca se pierde.",
     "stages": [
       { "name": "2D vectorial", "url": "https://digitalavatar.ai/vectorial.html", "desc": "Cara de canvas con lip-sync. El origen." },
       { "name": "Vídeo 2D", "url": "https://digitalavatar.ai/good.html", "desc": "Vídeos madre/padre + lip-sync 2D." },
-      { "name": "Malla 3D", "url": "https://digitalavatar.ai/better.html", "desc": "Cara 3D con 52 blendshapes (facecap)." },
+      { "name": "Malla 3D", "url": "https://digitalavatar.ai/better.html", "desc": "Cara 3D con 52 blendshapes (facecap). Fue el nivel good hasta el 06/10/2026; hoy es etapa del museo." },
+      { "name": "Nube Admirito (good)", "url": "https://digitalavatar.ai/nube.html", "desc": "La mascota Admirito animada: lip-sync, vida propia en reposo, sencilla y ligera. Nivel good desde el 06/10/2026." },
       { "name": "Fotorealístico web", "url": "https://digitalavatar.ai/best.html", "desc": "Avatar Ready Player Me: habla siempre, sin host de render." },
       { "name": "MetaHuman (en vivo)", "url": "https://digitalavatar.ai/metahuman.html", "desc": "Piel y ojos foto-reales por Pixel Streaming. Persona «Neo»." }
     ]
