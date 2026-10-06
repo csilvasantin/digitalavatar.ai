@@ -16,3 +16,5 @@ for(const ids of [['mic','cut','send'],['btnMic','btnStop','btnSend']])test('lan
  h.win.DAConversationControls.choose('fr');assert.equal(h.ctx.lang,'es');
 });
 test('language is not posted to an unrelated embedding origin',()=>{const h=mount(undefined,'https://example.net/');h.win.DAConversationControls.choose('en');assert.equal(h.posts.length,0);});
+
+test("inherited site-language changes cancel native speech without generating or recording",()=>{const h=mount();h.win.DAContext.set({lang:"en"});assert.deepEqual(h.counts(),{stopped:1,asked:0,recorded:0});assert.equal(h.nodes.cut.attrs["aria-label"],"Stop");});

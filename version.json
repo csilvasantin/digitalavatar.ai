@@ -1,11 +1,10 @@
 {
-  "version": "v.06.10.2026.r6.22:15",
-  "builtAt": "2026-10-06T20:15:37Z",
-  "note": "Selector ESP/ENG visible y controles modernos en todos los niveles del avatar.",
+  "version": "v.06.10.2026.r7.22:36",
+  "builtAt": "2026-10-06T20:36:18Z",
+  "note": "Idioma heredado desde XpaceOS y controles que detienen la conversación al cambiar el idioma del site.",
   "novedades": [
-    "ESP/ENG visible dentro del avatar integrado",
-    "Micrófono, Detener y Preguntar traducidos con iconos SVG",
-    "El idioma elegido se conserva al cerrar y reabrir la pared Alsea"
+    "El avatar integrado hereda el idioma del site",
+    "Good · Admirito por defecto en XpaceOS; Better · Chica y Best · Neo seleccionables"
   ],
   "signature": "OraculoMacMini · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",

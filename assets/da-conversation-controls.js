@@ -20,10 +20,10 @@
  function choose(lang){
   if(lang!=='es'&&lang!=='en'||lang===language())return;
   // Change the context and cancel the previous listening/answer through native Stop.
-  context.set({lang:lang});stop.click();paint();
-  // The embedding wall may retain this explicit choice; no question or audio is sent.
+  context.set({lang:lang});paint();
+  // The embedding wall keeps this choice for the open conversation; no question or audio is sent.
   try{if(root.parent!==root){var origin=new URL(doc.referrer).origin;if(/^https:\/\/([a-z0-9-]+\.)*(admira\.store|xpaceos\.com|admiranext\.com)$|^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin))root.parent.postMessage({type:'da-language-selected',lang:lang},origin);}}catch(_){}
  }
- context.on(function(kind){if(kind==='lang'||kind==='profile')paint();});
+ context.on(function(kind){if(kind==='lang')stop.click();if(kind==='lang'||kind==='profile')paint();});
  root.DAConversationControls={choose:choose,paint:paint};paint();
 })(window);

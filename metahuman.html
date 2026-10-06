@@ -53,7 +53,7 @@
   .alt{ color:var(--muted); font-size:.8rem; text-align:center } .alt a{ color:var(--accent); text-decoration:none; font-weight:600 }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.06.10.2026.r6.22:15">
+<meta name="admiranext-version" content="v.06.10.2026.r7.22:36">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
 <script defer src="/assets/da-shell.js?v=20261006-nube-1" data-section="/ metahuman" data-section-en="/ metahuman"></script>
@@ -421,7 +421,7 @@
         fr.src=mutedSrc;
       }
       DANeoPlayer.fit(fr);
-      if(bar) bar.innerHTML='<span class="live"><span class="dot"></span>EN VIVO</span> · MetaHuman · Pixel Streaming';
+      if(bar) bar.innerHTML='<span class="live"><span class="dot"></span>'+(window.DA_LANG==='en'?'LIVE':'EN VIVO')+'</span> · MetaHuman · Pixel Streaming';
     }
     window.__daRefreshMode=function(){setAsk(mode==='web');var en=window.DA_LANG==='en';if(bar){if(mode==='web')bar.innerHTML='<span style="color:#ffb454;font-weight:700">'+(en?'● WEB MODE':'● MODO WEB')+'</span> · '+(en?'render host offline':'render fuera de línea');else bar.innerHTML='<span class="live"><span class="dot"></span>'+(en?'LIVE':'EN VIVO')+'</span> · MetaHuman · Pixel Streaming';}};
     // Arranca OPTIMISTA en MetaHuman (el iframe ya trae MH_SRC) y solo cae a web tras 2 fallos seguidos → sin
@@ -489,6 +489,6 @@
     if(btn) btn.onclick=function(){ apply(window.DA_LANG==='en' ? 'es' : 'en'); };
   })();
   </script>
-<script defer src="/assets/da-conversation-controls.js?v=20261006-controls-1"></script>
+<script defer src="/assets/da-conversation-controls.js?v=20261006-defaults-1"></script>
 </body>
 </html>
