@@ -44,6 +44,8 @@
   /* Loading */
   #load{position:fixed; inset:0; display:flex; flex-direction:column; gap:14px; align-items:center; justify-content:center; z-index:20; background:var(--bg); transition:opacity .6s; }
   #load.gone{opacity:0; pointer-events:none}
+  /* El aviso de carga nunca tapa la consola: no recibe clics (06-10-2026). */
+  #load{pointer-events:none}
   .ring{width:46px; height:46px; border-radius:50%; border:3px solid #14304a; border-top-color:var(--accent); animation:spin 1s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
   #load .lt{font-size:.78rem; color:var(--muted); letter-spacing:.04em}
@@ -78,7 +80,7 @@
   .livedot.on{background:var(--ok); box-shadow:0 0 9px var(--ok); animation:micpulse 1.1s infinite}
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.06.10.2026.r1.20:27">
+<meta name="admiranext-version" content="v.06.10.2026.r2.21:01">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
 <script defer src="/assets/da-shell.js?v=20261004-proxy-1" data-section="/ 3d" data-section-en="/ 3d"></script>
@@ -215,6 +217,10 @@ function initThree(){
 }
 function onResize(){ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight); }
 
+// Progreso de descarga: con gzip loaded supera a total (salía «133%»). Se limita a 99
+// hasta que el modelo está listo; entonces el aviso se oculta del todo (también para lectores).
+function loadPct(xhr){ return Math.max(0, Math.min(99, Math.round(xhr.loaded/xhr.total*100))); }
+function loaderDone(){ const l=$('load'); l.classList.add('gone'); l.setAttribute('aria-hidden','true'); $('loadt').textContent=''; setTimeout(()=>{ if(l.classList.contains('gone')) l.style.display='none'; }, 700); }
 function loadAvatar(){
   const ktx2 = new KTX2Loader()
     .setTranscoderPath('https://unpkg.com/three@0.160.0/examples/jsm/libs/basis/')
@@ -265,9 +271,9 @@ function loadAvatar(){
     camera.lookAt(0, eyeY-h*0.16, 0);
     camera.updateProjectionMatrix();
     window.__eyeY = eyeY;
-    $('load').classList.add('gone');
+    loaderDone();
     setStatus('');
-  }, (xhr)=>{ if(xhr.total) $('loadt').textContent = T[LANG].loading+' '+Math.round(xhr.loaded/xhr.total*100)+'%'; },
+  }, (xhr)=>{ if(xhr.total && !$('load').classList.contains('gone')) $('loadt').textContent = T[LANG].loading+' '+loadPct(xhr)+'%'; },
   (err)=>{ console.error('GLB load error', err); $('loadt').textContent='Error cargando avatar'; setStatus('No se pudo cargar el modelo 3D.','err'); });
 }
 

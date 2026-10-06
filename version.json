@@ -1,14 +1,14 @@
 {
-  "version": "v.06.10.2026.r1.20:27",
-  "builtAt": "2026-10-06T18:23:27Z",
-  "note": "Las tres caras (good, better, best) hablan del negocio del cliente: assets/da-context.js lee ?loc, lang, sector, brand, site, city y tier y el postMessage da-context; chips, frases y saludo llegan de brain.digitalavatar.ai/metahuman/profile.",
+  "version": "v.06.10.2026.r2.21:01",
+  "builtAt": "2026-10-06T19:01:03Z",
+  "note": "El aviso «Cargando avatar» ya no pasa de 99 %, se oculta del todo al cargar y nunca tapa la caja de texto (antes podía bloquear los clics en el panel).",
   "novedades": [
-    "El avatar habla del negocio del cliente: estanco, cafetería, panadería, súper, moda, banca, quiosco o tecnología",
-    "Chips, frases de espera y saludo del sector (adiós al «xtanco» y a los chips fijos)",
-    "Estanco solo informativo (Ley 28/2005): nunca recomienda tabaco ni vapeo",
-    "Neo (best) recuerda la conversación y recibe datos en vivo de la pantalla"
+    "El aviso de carga del avatar ya no marca más de 100 % («133 %»)",
+    "Al terminar de cargar, el aviso desaparece del todo",
+    "La caja de texto del panel recibe siempre el clic: el aviso de carga ya no la tapa",
+    "Chips e idioma siguen al idioma de la página que abre el avatar"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "retorno/pre-da-context-20261006"
+  "rollback": "retorno/pre-da-matrix-20261006"
 }
