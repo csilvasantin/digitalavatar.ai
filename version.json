@@ -1,12 +1,11 @@
 {
-  "version": "v.06.10.2026.r3.21:08",
-  "builtAt": "2026-10-06T19:08:01Z",
-  "note": "Neo (nivel best) ya no se queda en negro con «EN VIVO» cuando el MetaHuman está apagado: si no hay ningún streamer conectado pasa al avatar web y lo indica («MODO WEB»).",
+  "version": "v.06.10.2026.r4.21:32",
+  "builtAt": "2026-10-06T19:32:56Z",
+  "note": "En MODO WEB (Neo apagado) la caja de preguntas ya no dice «Pregúntale algo a Neo…»: usa un texto neutro en español o inglés.",
   "novedades": [
-    "Nivel best: si el MetaHuman de Neo no está emitiendo, se ve el avatar web en lugar de una pantalla negra",
-    "El aviso «EN VIVO» solo aparece cuando Neo emite de verdad; si no, «MODO WEB · host de render offline»",
-    "Vuelve solo a Neo en cuanto el MetaHuman se conecta",
-    "Afecta también al avatar de la pared en Matrix (XpaceOS), que ahora usa el nivel best"
+    "Con Neo apagado (MODO WEB) la caja dice «Pregúntale algo al avatar…» / «Ask the avatar something…»",
+    "Cuando Neo vuelve a emitir, la caja vuelve a nombrarle",
+    "El texto sigue al idioma si se cambia ES/EN"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
