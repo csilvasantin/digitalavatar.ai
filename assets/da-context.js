@@ -125,10 +125,10 @@
   // que la incrusta abrir su demo: postMessage {type:'da-demo', id} → admiranext.com/assets/avatar.js
   // (mismo catálogo que /demo del ⌘ Experto, suite/experto.js). Sin página madre, abre la URL aquí.
   var DEMOS = [
-    { id: 'studio', alias: ['pixeria', 'contenido', 'contenidos', 'creatividad', 'anonimizador'], n: 'admira.studio',
-      es: 'creatividad con IA; el anonimizador convierte a un visitante en un personaje de 8, 16 y 32 bits listo para el gemelo digital',
-      en: 'AI creativity; the anonymizer turns a visitor into an 8, 16 and 32-bit character ready for the digital twin',
-      url: 'https://www.admira.studio/anonimizador' },
+    { id: 'studio', alias: ['pixeria', 'contenido', 'contenidos', 'creatividad'], n: 'admira.studio',
+      es: 'contenidos con IA para la tienda: locución, música, imagen, vídeo y adaptación de formatos',
+      en: 'AI content for the store: voiceover, music, image, video and format adaptation',
+      url: 'https://www.admira.studio/' },
     { id: 'store', alias: ['tienda', 'xpace', 'xpaceos', 'gemelo', 'twin'], n: 'admira.store',
       es: 'el gemelo digital del Starbucks de Alsea en Matrix; un muffin viaja a la caja y dispara música y pantallas',
       en: 'the digital twin of the Alsea Starbucks in Matrix; a muffin travels to the register and triggers music and screens',
@@ -147,10 +147,24 @@
       url: 'https://www.admira.biz/' }
   ];
   var demoPending = null;
+  // Subdemos locales de la plataforma que incrusta la cara (admira.studio / pixeria.com), recibidas de
+  // admiranext.com/assets/avatar.js como {type:'da-subdemos', plataforma, subdemos:[{n, id, nombre, desc, aliases}]}.
+  // Con ellas, /demo 1…5 y sus alias son de esa plataforma y /demo help lista solo esas (contrato de Trinity).
+  var LOCAL = null;
+  function norm(t) { return String(t == null ? '' : t).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
   function demoFind(question) {
     var m = /^\/?demo\s+(.+)$/i.exec(String(question || '').trim());
     if (!m) return null;
-    var a = m[1].trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/^admira\./, '');
+    var a = norm(m[1]).replace(/^admira\./, '');
+    if (LOCAL) {
+      if (/^(help|ayuda|\?|lista)$/.test(a)) return { ayuda: true, texto: '/demo help' };
+      for (var j = 0; j < LOCAL.subdemos.length; j++) {
+        var s = LOCAL.subdemos[j];
+        if (a === String(s.n) || (s.aliases || []).map(norm).indexOf(a) >= 0)
+          return { id: LOCAL.plataforma + '/' + s.id, n: s.nombre, es: s.desc, en: s.desc, texto: '/demo ' + s.n, local: true };
+      }
+      if (/^[0-9]+$/.test(a)) return null;
+    }
     if (/^[1-5]$/.test(a)) return DEMOS[+a - 1];
     for (var i = 0; i < DEMOS.length; i++) if (DEMOS[i].id === a || DEMOS[i].alias.indexOf(a) >= 0) return DEMOS[i];
     return null;
@@ -160,6 +174,15 @@
     var d = demoFind(question);
     demoPending = d;
     if (!d) return question;
+    if (d.ayuda) {
+      var l = LOCAL.subdemos.map(function (x) { return x.n + ' ' + x.nombre; }).join(', ');
+      return lang() === 'en'
+        ? 'In one short sentence, say these are the demos of ' + (LOCAL.nombre || LOCAL.plataforma) + ' and name them: ' + l + '. Tell them to ask "/demo" and the number.'
+        : 'En una frase corta, di que estas son las demos de ' + (LOCAL.nombre || LOCAL.plataforma) + ' y nómbralas: ' + l + '. Diles que pidan «/demo» y el número.';
+    }
+    if (d.local) return lang() === 'en'
+      ? 'In two short sentences, as Admira\'s host for Alsea (Starbucks in Spain and Mexico), introduce the ' + d.n + ' demo: ' + d.en + '. End by saying you are showing the prepared sample now.'
+      : 'En dos frases cortas, como anfitrión de Admira para Alsea (Starbucks en España y México), presenta la demo ' + d.n + ': ' + d.es + '. Termina diciendo que enseñas ahora la muestra preparada.';
     return lang() === 'en'
       ? 'In two short sentences, as Admira\'s host for Alsea (Starbucks in Spain and Mexico), introduce ' + d.n + ': ' + d.en + '. End by saying you are showing it now.'
       : 'En dos frases cortas, como anfitrión de Admira para Alsea (Starbucks en España y México), presenta ' + d.n + ': ' + d.es + '. Termina diciendo que la enseñas ahora.';
@@ -172,14 +195,18 @@
     var ms = Math.min(30000, Math.max(1500, words / 2.6 * 1000 + 800));
     setTimeout(function () {
       try {
-        if (root.self !== root.top) root.parent.postMessage({ type: 'da-demo', id: d.id }, '*');
-        else root.location.assign(d.url);
+        if (root.self !== root.top) root.parent.postMessage(d.texto ? { type: 'da-demo', id: d.id || '', texto: d.texto } : { type: 'da-demo', id: d.id }, '*');
+        else if (d.url) root.location.assign(d.url);
       } catch (_) {}
     }, ms);
   }
 
   root.addEventListener('message', function (ev) {
     var d = ev && ev.data;
+    if (d && typeof d === 'object' && d.type === 'da-subdemos' && ALLOWED.test(String(ev.origin || '')) && Array.isArray(d.subdemos)) {
+      LOCAL = d.subdemos.length ? { plataforma: String(d.plataforma || ''), nombre: String(d.nombre || ''), subdemos: d.subdemos.slice(0, 20) } : null;
+      return;
+    }
     if (!d || typeof d !== 'object' || d.type !== 'da-context') return;
     if (!ALLOWED.test(String(ev.origin || ''))) return;
     set(d);
@@ -188,7 +215,7 @@
   var api = {
     get: function () { var c = {}; for (var k in ctx) c[k] = ctx[k]; return c; },
     set: set, init: init, refresh: refresh, body: body, remember: remember,
-    demoAsk: demoAsk, demoDone: demoDone, demos: function () { return DEMOS.map(function (d) { return { id: d.id, nombre: d.n, url: d.url }; }); },
+    demoAsk: demoAsk, demoDone: demoDone, subdemos: function () { return LOCAL; }, demos: function () { return DEMOS.map(function (d) { return { id: d.id, nombre: d.n, url: d.url }; }); },
     tier: tier, lang: lang, avatar: avatar,
     profile: function () { return profile; },
     ready: function () { return pending || Promise.resolve(profile); },
