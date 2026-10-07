@@ -36,3 +36,6 @@ body[data-da-composer=compact] .console{gap:7px}
 body[data-da-composer=compact] .caption{max-height:22vh;font-size:1.05rem}
 body[data-da-composer=compact] .caption.help{text-align:left;font-size:.88rem;line-height:1.45;white-space:pre-wrap;background:rgba(8,16,24,.55);border:1px solid #1b3346;border-radius:12px;padding:10px 12px;max-height:34vh}
 @media(max-width:420px){body[data-da-composer=compact] .composer .lang-pills button{min-width:30px;padding:3px 5px;font-size:10px}}
+
+/* ?langui=host: el anfitrión (gemelo XpaceOS / admira.store) pinta ESP/ENG en su barra superior. */
+html.da-lang-host #langPills,html.da-lang-host .lang-pills,html.da-lang-host .da-conversation-language,html.da-lang-host #langSeg{display:none!important}

@@ -10,6 +10,10 @@
   var ask = doc.getElementById('send') || doc.getElementById('btnSend');
   if (!mic || !stop || !ask || !context) return;
   var compact = doc.body && doc.body.getAttribute('data-da-composer') === 'compact';
+  // ?langui=host (Carlos, 7-oct-2026): incrustado en el gemelo, el selector ESP/ENG vive en la barra
+  // superior del anfitrión (junto al desplegable del avatar) y cambia el idioma con {type:'da-context', lang}.
+  // Aquí se oculta el propio para no duplicarlo. Sin el parámetro, o fuera de un iframe, no cambia nada.
+  try { if (root.parent !== root && /(?:^|[?&])langui=host(?:&|$)/.test(root.location.search.slice(1))) doc.documentElement.classList.add('da-lang-host'); } catch (_) {}
   var row = mic.parentElement;
   if (!compact) row.classList.add('da-control-row');
   var labels = {
