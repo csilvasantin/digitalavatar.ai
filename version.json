@@ -1,11 +1,11 @@
 {
-  "version": "v.07.10.2026.r4.07:03",
-  "builtAt": "2026-10-07T05:03:23Z",
-  "note": "Categorías nuevas: avatar (Admirito), human (Luna) y metahuman (Neo). Alex pasa a llamarse Luna.",
+  "version": "v.07.10.2026.r5.07:37",
+  "builtAt": "2026-10-07T05:37:31Z",
+  "note": "Luna (human) y Neo (metahuman) estrenan el composer compacto de Admirito.",
   "novedades": [
-    "Las tres categorías del avatar se llaman ahora avatar, human y metahuman: Admirito, Luna y Neo",
-    "Alex pasa a llamarse Luna: se presenta como Luna, cálida, amable y profesional",
-    "/avatar avatar|human|metahuman; good, better y best siguen funcionando como alias"
+    "Luna y Neo usan el composer compacto: sugerencias, ESP|ENG y micro/detener/preguntar dentro de la caja",
+    "Desaparecen la barra grande de idioma y los tres botones grandes",
+    "El aviso MODO WEB de Neo es ahora discreto"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
