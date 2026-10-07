@@ -23,20 +23,31 @@ test('every local alias sends immediately to exact parent origin and waits for i
  }
  assert.equal(new Set(h.posts.map(([p])=>p.requestId)).size,16);assert.equal(h.fetches.length,0);
 });
-test('embedded help aliases use the host listing only with a local catalog, without provider or voice',async()=>{
+test('first embedded help before catalog and later help aliases wait for the real host listing without provider or voice',async()=>{
  const catalog={type:'da-subdemos',plataforma:'store',nombre:'Admira Store',subdemos:['voz','musica','imagenes','video','tpv'].map((id,i)=>({n:i+1,id,nombre:id,desc:'muestra preparada',aliases:[id]}))};
- const h=load();for(const alias of ['help','ayuda','lista','?'])assert.equal(h.api.demoCommand('/demo '+alias),null);
- h.msg(catalog);
+ const h=load();
+ for(const withCatalog of [false,true]){
+ if(withCatalog)h.msg(catalog);
  for(const alias of ['help','ayuda','lista','?']){
   let settled=false;const pending=h.api.demoCommand('/demo '+alias);pending.then(()=>settled=true);
   const [p,target]=h.posts.at(-1);assert.equal(p.texto,'/demo help');assert.equal(target,'https://www.admira.store');
   await Promise.resolve();assert.equal(settled,false);
   const listing='1 voz · 2 musica · 3 imagenes · 4 video · 5 tpv';h.ack(p,{message:listing});assert.equal((await pending).message,listing);
  }
+ }
  assert.equal(h.fetches.length,0);assert.match(h.api.demoAsk('/demo help'),/1 voz.*5 tpv/);
  assert.equal(h.api.demoCommand('/demo 1'),null);assert.equal(h.api.demoCommand('/demo voz'),null);
  const standalone=load({embedded:false});standalone.msg(catalog);assert.equal(standalone.api.demoCommand('/demo help'),null);
- h.msg({...catalog,subdemos:[]});assert.equal(h.api.demoCommand('/demo help'),null);
+ h.msg({...catalog,subdemos:[]});const pending=h.api.demoCommand('/demo help');h.ack(h.posts.at(-1)[0]);assert.equal((await pending).confirmed,true);
+});
+test('embedded help without a trusted host fails locally instead of becoming a provider question; standalone stays legacy',async()=>{
+ const h=load({referrer:'https://evil.example/'});
+ const standalone=load({embedded:false});
+ for(const alias of ['help','ayuda','lista','?']){
+  const result=await h.api.demoCommand('/demo '+alias);assert.equal(result.ok,false);assert.equal(result.confirmed,false);assert.match(result.message,/no está confirmada/);
+  assert.equal(standalone.api.demoCommand('/demo '+alias),null);
+ }
+ assert.equal(h.posts.length,0);assert.equal(h.fetches.length,0);
 });
 test('ACK requires matching request, parent source and exact trusted origin; duplicate and unsolicited ACKs are harmless',async()=>{
  const h=load();let settled=false;const pending=h.api.demoCommand('/demo auto');pending.then(()=>settled=true);const p=h.posts[0][0];
@@ -56,8 +67,8 @@ test('trusted parent context establishes origin without referrer, but other fram
  assert.equal((await h.api.demoCommand('/demo estado')).confirmed,false);
  h.msg({type:'da-subdemos',subdemos:[]});const pending=h.api.demoCommand('/demo estado');h.ack(h.posts[0][0]);assert.equal((await pending).confirmed,true);
 });
-test('numbers, names, help, bare demo and standalone input keep the existing route; controls cancel a delayed legacy opening',async()=>{
- const h=load();for(const q of ['/demo','/demo help','/demo 1','/demo store','/demo unknown','hello'])assert.equal(h.api.demoCommand(q),null);
+test('numbers, names, bare demo and standalone input keep the existing route; controls cancel a delayed legacy opening',async()=>{
+ const h=load();for(const q of ['/demo','/demo 1','/demo store','/demo unknown','hello'])assert.equal(h.api.demoCommand(q),null);
  assert.equal(load({embedded:false}).api.demoCommand('/demo auto'),null);
  h.api.demoAsk('/demo store');h.api.demoDone('presentación');assert.equal(h.timers.size,1);
  const pending=h.api.demoCommand('/demo stop');assert.equal(h.timers.size,1);assert.equal([...h.timers.values()][0].ms,20000);
@@ -66,13 +77,13 @@ test('numbers, names, help, bare demo and standalone input keep the existing rou
 
 // Execute each real renderer's ask function with host ACK pending. No brain/voice stub may run.
 const renderers=[['assets/nube.js','  window.__nubeAsk = ask;'],['best.html','// Saludo del sector'],['better.html','/* ===== push-to-talk'],['metahuman.html','    function doCut()']];
-for(const [file,end] of renderers)test(file+' handles a typed control before provider/voice and renders only the current ACK',async()=>{
+for(const [file,end] of renderers)for(const command of ['/demo pausa','/demo help'])test(file+' handles '+command+' before catalog/provider/voice and renders only the current ACK',async()=>{
  const source=fs.readFileSync(new URL('../'+file,import.meta.url),'utf8');const start=source.indexOf('async function ask(');const fn=source.slice(start,source.indexOf(end,start));assert.ok(start>=0&&fn.length>100);
- const nodes={q:{value:'/demo pausa'},btnSend:{disabled:true}},statuses=[],captions=[],requests=[];
+ const h=load();const nodes={q:{value:command},btnSend:{disabled:true}},statuses=[],captions=[];
  const forbidden=()=>{throw Error('provider/voice path must not run');};const DADemo={stop(){},setState(){},unlock:forbidden};
- const sandbox={DACTX:{demoCommand:q=>new Promise(resolve=>requests.push({q,resolve}))},DADemo,window:{DADemo},LANG:'es',lang:()=> 'es',audioEl:{pause(){}},thinking:true,demoAskSequence:0,asking:0,seq:0,talkTimer:0,q:nodes.q,send:nodes.btnSend,$:id=>nodes[id],touch(){},stopDance(){},stopAll(){},stopSpeaking(){},clearHelpClass(){},clearTimeout(){},setStatus:(...v)=>statuses.push(v),setCaption:v=>captions.push(v),setAns:v=>captions.push(v),paint:(...v)=>statuses.push(v),fetch:forbidden,warmGraph:forbidden,DANeoPlayer:{whenHost:forbidden},armStream:forbidden};
+ const sandbox={DACTX:h.api,DADemo,window:{DADemo},LANG:'es',lang:()=> 'es',audioEl:{pause(){}},thinking:true,demoAskSequence:0,asking:0,seq:0,talkTimer:0,q:nodes.q,send:nodes.btnSend,$:id=>nodes[id],touch(){},stopDance(){},stopAll(){},stopSpeaking(){},clearHelpClass(){},clearTimeout(){},setStatus:(...v)=>statuses.push(v),setCaption:v=>captions.push(v),setAns:v=>captions.push(v),paint:(...v)=>statuses.push(v),fetch:forbidden,warmGraph:forbidden,DANeoPlayer:{whenHost:forbidden},armStream:forbidden};
  vm.createContext(sandbox);vm.runInContext(fn,sandbox);
- const first=sandbox.ask('/demo pausa');assert.equal(requests[0].q,'/demo pausa');assert.ok(statuses.flat().some(s=>String(s).includes('Esperando'))||captions.some(s=>String(s).includes('Esperando')));assert.equal(captions.includes('Demo pausada.'),false);assert.equal(nodes.btnSend.disabled,false);
- nodes.q.value='/demo estado';const second=sandbox.ask('/demo estado');requests[0].resolve({ok:true,message:'stale'});await first;assert.equal(captions.includes('stale'),false);
- requests[1].resolve({ok:false,message:'No hay una demo activa.'});await second;assert.equal(captions.at(-1),'No hay una demo activa.');
+ const first=sandbox.ask(command);assert.equal(h.posts[0][0].texto,command);assert.ok(statuses.flat().some(s=>String(s).includes('Esperando'))||captions.some(s=>String(s).includes('Esperando')));assert.equal(captions.includes('Demo pausada.'),false);assert.equal(nodes.btnSend.disabled,false);
+ nodes.q.value='/demo estado';const second=sandbox.ask('/demo estado');h.ack(h.posts[0][0],{message:'stale'});await first;assert.equal(captions.includes('stale'),false);
+ h.ack(h.posts[1][0],{ok:false,message:'No hay una demo activa.'});await second;assert.equal(captions.at(-1),'No hay una demo activa.');
 });

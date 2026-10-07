@@ -1,12 +1,11 @@
 {
-  "version": "v.07.10.2026.r19.12:48",
-  "builtAt": "2026-10-07T10:48:20Z",
-  "note": "El avatar incrustado transmite /demo auto y sus controles a la página anfitriona sin llamar al proveedor ni esperar locución; muestra el resultado después de la confirmación real.",
+  "version": "v.07.10.2026.r20.12:58",
+  "builtAt": "2026-10-07T10:58:37Z",
+  "note": "La primera orden /demo help del avatar incrustado pide el listado al anfitrión incluso antes de recibir el catálogo local, sin proveedor ni voz.",
   "novedades": [
-    "/demo auto, todas, todos o all recorren las cinco muestras de la plataforma anfitriona",
-    "Pausa, reanudar, siguiente, stop y estado se transmiten inmediatamente al anfitrión",
-    "La conversación espera confirmación por requestId desde el iframe padre y su origen de confianza",
-    "La ayuda con catálogo local muestra las cinco demos del anfitrión sin proveedor ni voz; números y nombres conservan su presentación"
+    "/demo help, ayuda, lista y ? esperan el listado real del anfitrión desde la primera apertura",
+    "La ayuda falla localmente si no hay anfitrión de confianza, sin caer al cerebro",
+    "Números, nombres y ayuda del avatar independiente conservan su comportamiento"
   ],
   "signature": "Trinity · MacBook Pro 16",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
