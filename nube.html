@@ -66,10 +66,19 @@
   #piensa.on circle{animation:punto 1.1s ease-in-out infinite}
   #piensa.on circle:nth-child(2){animation-delay:.18s} #piensa.on circle:nth-child(3){animation-delay:.36s}
   @keyframes punto{0%,100%{opacity:.25; transform:translateY(0)} 40%{opacity:1; transform:translateY(-7px)}}
-  @media (prefers-reduced-motion:reduce){ .zzz,.gota,.chispa,.corazon{display:none} #piensa.on circle{animation:none; opacity:.9} }
+  /* Bailes (7-oct-2026): notas, nubarrón con lluvia, salpicaduras y arcoíris */
+  .nota{font:700 26px ui-rounded,system-ui,sans-serif; opacity:0; transform-box:fill-box; transform-origin:center; animation:nota 1.8s ease-out forwards}
+  @keyframes nota{0%{opacity:0; transform:translate(0,0) rotate(0) scale(.6)} 20%{opacity:1} 100%{opacity:0; transform:translate(var(--nx,20px),-74px) rotate(var(--nr,15deg)) scale(1.15)}}
+  .lluvia{fill:none; stroke:#7cc7ff; stroke-width:3; stroke-linecap:round; opacity:0; animation:lluvia .6s linear forwards}
+  @keyframes lluvia{0%{opacity:0; transform:translate(0,0)} 20%{opacity:.95} 100%{opacity:0; transform:translate(-4px,34px)}}
+  .salpica{fill:#7cc7ff; opacity:0; animation:salpica .75s ease-out forwards}
+  @keyframes salpica{0%{opacity:.95; transform:translate(0,0)} 100%{opacity:0; transform:translate(var(--sx,30px),var(--sy,-10px))}}
+  .arco path{fill:none; stroke-width:7; stroke-linecap:round; stroke-dasharray:1; stroke-dashoffset:1; opacity:0; animation:arco 2.2s ease-out forwards}
+  @keyframes arco{0%{stroke-dashoffset:1; opacity:0} 8%{opacity:.95} 40%{stroke-dashoffset:0; opacity:.95} 78%{stroke-dashoffset:0; opacity:.9} 100%{stroke-dashoffset:0; opacity:0}}
+  @media (prefers-reduced-motion:reduce){ .zzz,.gota,.chispa,.corazon,.nota,.lluvia,.salpica,.arco{display:none} #piensa.on circle{animation:none; opacity:.9} }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.06.10.2026.r7.22:36">
+<meta name="admiranext-version" content="v.07.10.2026.r1.06:20">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
 <script defer src="/assets/da-shell.js?v=20261006-nube-1" data-section="/ nube" data-section-en="/ cloud"></script>
@@ -145,7 +154,7 @@
 
 <script src="/assets/da-context.js?v=20261006-ctx-1"></script>
 <script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
-<script src="/assets/nube.js?v=20261006-nube-1"></script>
+<script src="/assets/nube.js?v=20261007-bailes-1"></script>
 <script defer src="/assets/da-conversation-controls.js?v=20261006-defaults-1"></script>
 </body>
 </html>

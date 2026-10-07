@@ -81,6 +81,7 @@ EN: Opening the avatar inherits the current site language: ESP for Spanish and E
 
 ## Contrato / Contract
 
+- Admirito idle moves (07-10-2026): five attention-grabbers every ~9–15 s of idle (giro, baile, voltereta, gelatina, lluvia+arcoíris), never while talking/thinking/asleep, cut on touch or question, skipped with prefers-reduced-motion. Demo: `/nube.html?dance=1` (all five) or `?dance=giro|baile|voltereta|gelatina|lluvia` (aliases spin|dance|flip|jelly|rain).
 - Renderers: `/nube.html` (Good), `/best.html` (Better), `/metahuman.html` (Best); `/better.html` retains historical 3D controls. Assets: `/assets/da-conversation-controls.js`, `/assets/da-conversation-controls.css`.
 - Language source: `DAContext.lang`, initially `?lang=es|en`; native language listeners also update placeholders, chips and recognition/request language. No new API or voices.
 - Parent notification: `{type:"da-language-selected",lang:"es"|"en"}` sent only to the trusted embedding origin. XpaceOS validates `event.source`, `https://digitalavatar.ai`, the expanded conversation and the language.

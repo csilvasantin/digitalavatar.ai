@@ -95,7 +95,8 @@
   "levels": {
     "good": {
       "url": "https://digitalavatar.ai/nube.html",
-      "desc": "Admirito, la nube animada: 2D ligera (SVG), mueve los labios con la voz o con el texto, parpadea, mira y hace gestos si nadie la toca, y se duerme (zzz) tras un rato quieta."
+      "desc": "Admirito, la nube animada: 2D ligera (SVG), mueve los labios con la voz o con el texto, parpadea, mira y hace gestos si nadie la toca, y se duerme (zzz) tras un rato quieta. Cada ~9–15 s de reposo hace un número grande para llamar la atención: pirueta (giro), bailecito con notas (baile), voltereta, gelatina disco con bracitos (gelatina) y nubarrón con arcoíris (lluvia); nunca mientras habla, piensa o duerme, se corta al tocarla y no se hace con prefers-reduced-motion. Demo: ?dance=1 (los cinco) o ?dance=giro|baile|voltereta|gelatina|lluvia (alias spin|dance|flip|jelly|rain).",
+      "demo": "https://digitalavatar.ai/nube.html?dance=1"
     },
     "better": {
       "url": "https://digitalavatar.ai/best.html",
