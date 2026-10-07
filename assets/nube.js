@@ -642,9 +642,12 @@
       if (!j.ok) { S.mode = 'idle'; setStatus('❌ ' + (j.error || ('HTTP ' + res.status)), 'err'); setCaption(''); if (DADemo) DADemo.setState('listo'); notifyParent({ error: j.error || ('HTTP ' + res.status) }); return; }
       var answer = j.answer || '';
       DACTX.remember(question, answer);
+      // /demo de Admirito: termina con un bailecito al acabar de hablar.
+      var danceAfter = !!j.dance && !REDUCED;
       if (j.audioBase64 && !MUTED && DADemo) {
         var audio = DADemo.load(j.audioBase64, j.mime);
         connect(audio);
+        if (danceAfter) audio.addEventListener('ended', function () { setTimeout(function () { startDance('baile', { forced: true }); }, 250); });
         try {
           await DADemo.start(audio);
           speakAudio(audio, answer, j.alignment); setStatus(T[LANG].speaking);
@@ -657,6 +660,7 @@
       } else {
         // Solo texto (audio=off o sin voz): la boca se mueve el tiempo que dura leerla.
         speakText(answer); setStatus('');
+        if (danceAfter) setTimeout(function () { startDance('baile', { forced: true }); }, textDuration(answer) * 1000 + 300);
         notifyParent({ answer: answer, muted: MUTED, spoke: false });
       }
     } catch (e) {
@@ -664,6 +668,7 @@
     } finally { if (mine === asking) $('btnSend').disabled = false; }
   }
   window.__nubeAsk = ask;
+  DACTX.demoOnLoad(ask);
   window.__nubeSpeakText = speakText;
   window.__nubeParseAnim = parseAnimCommand;
   window.__nubeDanceHelp = danceHelpText;
