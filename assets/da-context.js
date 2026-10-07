@@ -11,6 +11,12 @@
  * desde un origen de la red (lista ALLOWED). `live` = datos en vivo (p. ej. «Suena
  * ahora: …»); solo viaja en el nivel best.
  *
+ * Modo pedido (SubMorfeoMacMini, 7-oct-2026): el quiosco de ainimation.studio abre la cara con
+ * ?mode=order&store=<id>&brand=starbucks (o lo manda en da-context, con `order` = su carrito
+ * actual). La cara pasa mode/store/order al cerebro y, cuando este devuelve
+ * action {type:'order-draft'}, NO pinta botón: la reenvía al anfitrión dentro de da-answer,
+ * solo a un origen de ORDER_HOSTS y nunca con '*'.
+ *
  * La página pide a brain.digitalavatar.ai/metahuman/profile los chips, las frases de
  * espera y el saludo del sector, y añade DAContext.body() a cada pregunta. Las reglas
  * (Ley 28/2005 para tabaco y vapeo, no inventar productos ni precios) las pone el cerebro.
@@ -18,14 +24,17 @@
 (function (root) {
   'use strict';
   var BRAIN = 'https://brain.digitalavatar.ai';
-  var KEYS = ['loc', 'lang', 'sector', 'brand', 'site', 'city', 'tier', 'avatar', 'live'];
+  var KEYS = ['loc', 'lang', 'sector', 'brand', 'site', 'city', 'tier', 'avatar', 'live', 'mode', 'store'];
   var TIER_AVATAR = { good: 'admirito', better: 'luna', best: 'neo' };
   // Categorías públicas (7-oct-2026): avatar/human/metahuman = good/better/best.
   var CATEGORY_TIER = { avatar: 'good', human: 'better', metahuman: 'best' };
   var AVATAR_ALIAS = { alex: 'luna' };
   var AVATARS = ['admirito', 'luna', 'neo'];
   var TIERS = ['good', 'better', 'best'];
-  var ALLOWED = /^https:\/\/([a-z0-9-]+\.)*(admiranext\.com|admira\.store|xpaceos\.com|admira\.studio|pixeria\.com|admira\.tv|clearchannel\.tv|admira\.biz|admira\.app|yokup\.com|digitalavatar\.ai|carlossilva\.info|csilvasantin\.github\.io)$|^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+  var ALLOWED = /^https:\/\/([a-z0-9-]+\.)*(admiranext\.com|admira\.store|xpaceos\.com|admira\.studio|pixeria\.com|admira\.tv|clearchannel\.tv|admira\.biz|admira\.app|yokup\.com|digitalavatar\.ai|carlossilva\.info|csilvasantin\.github\.io|ainimation\.studio)$|^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+
+  // Anfitriones que pueden recibir la acción de pedido (origen exacto en postMessage).
+  var ORDER_HOSTS = /^https:\/\/([a-z0-9-]+\.)*(ainimation\.studio|admira\.store|xpaceos\.com|admiranext\.com)$|^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 
   function clean(k, v) {
     if (v == null) return '';
@@ -41,6 +50,8 @@
       return '';
     }
     if (k === 'brand' && /^(admira|off|none)$/i.test(v)) return '';
+    if (k === 'mode') return /^order$/i.test(v) ? 'order' : '';
+    if (k === 'store') { v = v.toLowerCase(); return /^[a-z0-9][a-z0-9-]{0,79}$/.test(v) ? v : ''; }
     return v;
   }
 
@@ -73,10 +84,27 @@
     SALA = String(qp.get('sala') || '').toLowerCase().replace(/[^a-z0-9_.-]/g, '').slice(0, 60);
   } catch (_) {}
 
+  // Pedido en curso: el último borrador (del anfitrión en da-context o del cerebro). Viaja
+  // de vuelta al cerebro como `order` para que el pedido se acumule turno a turno.
+  var order = null;
+  function cleanOrder(o) {
+    if (!o || typeof o !== 'object' || !Array.isArray(o.lines)) return null;
+    var c = {type: 'order-draft', version: 1, lines: o.lines.slice(0, 10).map(function (l) {
+      return l && typeof l === 'object' ? {id: String(l.id || '').slice(0, 60), qty: l.qty, options: l.options && typeof l.options === 'object' ? l.options : {}} : null;
+    }).filter(Boolean)};
+    if (o.store) c.store = String(o.store).slice(0, 80);
+    if (o.customerName) c.customerName = String(o.customerName).slice(0, 24);
+    try { if (JSON.stringify(c).length > 4000) return null; } catch (_) { return null; }
+    return c;
+  }
+
   // Botón de acción que manda el cerebro (p. ej. «Pedir en el quiosco» de Starbucks).
+  // Con order-draft no hay botón: la acción se reenvía al anfitrión (notify).
   function action(a) {
-    var old = document.getElementById('daAction');
+    var old = null;
+    try { old = document.getElementById('daAction'); } catch (_) {}
     if (old) old.remove();
+    if (a && a.type === 'order-draft') { order = cleanOrder(a) || order; return; }
     if (!a || a.type !== 'kiosk' || !/^https:\/\/(www\.)?ainimation\.studio\//.test(String(a.url || ''))) return;
     var el = document.createElement('a');
     el.id = 'daAction'; el.href = a.url; el.target = '_blank'; el.rel = 'noopener';
@@ -97,7 +125,8 @@
     if (ctx.brand) b.brand = ctx.brand;
     if (ctx.site || ctx.city) b.site = {name: ctx.site || '', city: ctx.city || ''};
     // Historial: en best siempre; con marca (p. ej. Starbucks) también, para el pedido paso a paso.
-    if (tier() === 'best' || ctx.brand) { var h = historyFor(avatar()); if (h.length) b.history = h.slice(-6); }
+    if (tier() === 'best' || ctx.brand || ctx.mode === 'order') { var h = historyFor(avatar()); if (h.length) b.history = h.slice(-6); }
+    if (ctx.mode === 'order') { b.mode = 'order'; if (ctx.store) b.store = ctx.store; if (order) b.order = order; }
     if (tier() === 'best' && ctx.live) b.context = ctx.live;
     if (extra) for (var k in extra) if (Object.prototype.hasOwnProperty.call(extra, k) && extra[k] !== undefined && extra[k] !== '') b[k] = extra[k];
     return b;
@@ -133,6 +162,8 @@
 
   function set(partial) {
     if (!partial || typeof partial !== 'object') return api;
+    // El carrito del anfitrión manda: {order:null} lo vacía (p. ej. el quiosco vuelve al inicio).
+    if (Object.prototype.hasOwnProperty.call(partial, 'order')) order = cleanOrder(partial.order);
     var changed = false, langChanged = false;
     KEYS.forEach(function (k) {
       if (!Object.prototype.hasOwnProperty.call(partial, k)) return;
@@ -143,7 +174,7 @@
     });
     if (!changed) return api;
     emit(langChanged ? 'lang' : 'context');
-    if (Object.keys(partial).some(function (k) { return k !== 'live'; })) refresh();
+    if (Object.keys(partial).some(function (k) { return k !== 'live' && k !== 'order' && k !== 'mode' && k !== 'store' && k !== 'type'; })) refresh();
     return api;
   }
 
@@ -263,6 +294,24 @@
     }, ms);
   }
 
+  // da-answer al anfitrión. Sin acción, como siempre. Con acción (p. ej. order-draft), solo si
+  // el anfitrión es de ORDER_HOSTS y con su origen exacto; si no, se manda sin la acción.
+  function notify(payload) {
+    try {
+      if (root.self === root.top) return false;
+      var msg = {type: 'da-answer'}, k;
+      for (k in payload || {}) if (Object.prototype.hasOwnProperty.call(payload, k) && k !== 'action' && payload[k] !== undefined) msg[k] = payload[k];
+      var a = payload && payload.action;
+      if (a && typeof a === 'object' && demoParentOrigin && ORDER_HOSTS.test(demoParentOrigin)) {
+        msg.action = a;
+        root.parent.postMessage(msg, demoParentOrigin);
+        return true;
+      }
+      root.parent.postMessage(msg, '*');
+      return true;
+    } catch (_) { return false; }
+  }
+
   root.addEventListener('message', function (ev) {
     var d = ev && ev.data;
     if (d && typeof d === 'object' && d.type === 'da-demo-result') {
@@ -286,7 +335,8 @@
 
   var api = {
     get: function () { var c = {}; for (var k in ctx) c[k] = ctx[k]; return c; },
-    set: set, init: init, refresh: refresh, body: body, remember: remember, action: action,
+    set: set, init: init, refresh: refresh, body: body, remember: remember, action: action, notify: notify,
+    order: function () { return order; }, hostOrigin: function () { return demoParentOrigin; },
     demoCommand: demoCommand, demoAsk: demoAsk, demoDone: demoDone, subdemos: function () { return LOCAL; }, demos: function () { return DEMOS.map(function (d) { return { id: d.id, nombre: d.n, url: d.url }; }); },
     tier: tier, lang: lang, avatar: avatar,
     profile: function () { return profile; },

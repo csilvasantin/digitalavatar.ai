@@ -270,6 +270,8 @@
         setAns(a||lab.noAnswer,true);
         if(a) DACTX.remember(text, a);
         if(DACTX.demoDone) DACTX.demoDone(a);
+        // da-answer al anfitrión (como nube/best); la acción order-draft solo a su origen exacto.
+        if(DACTX.notify) DACTX.notify(d.ok ? {answer:a, muted:false, spoke:!!(a && (!offline || d.audioBase64)), action:d.action} : {error:d.error||('HTTP '+r.status)});
         if(offline && d.audioBase64){
           var audio=DADemo.load(d.audioBase64, d.mime);
           audio.onended=function(){ if(mine===seq) paint('listo'); };
@@ -295,6 +297,7 @@
         }
       }catch(e){
         if(mine!==seq) return;
+        if(DACTX.notify) DACTX.notify({error:String(e&&e.message||e)});
         setAns('⚠️ '+L().conn,true);
         paint('error', L().conn);
       }finally{

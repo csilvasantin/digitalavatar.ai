@@ -456,7 +456,8 @@
   function setStatus(m, c) { var s = $('status'); s.textContent = m || ''; s.className = 'status' + (c ? ' ' + c : ''); }
   function setLive(on) { $('livedot').classList.toggle('on', on); }
   function setCaption(t) { lastCap = -1; $('caption').innerHTML = '<span class="sp1">' + esc(t) + '</span>'; $('caption').scrollTop = 0; bubble(); }
-  function notifyParent(payload) { try { if (window.self !== window.top) window.parent.postMessage(Object.assign({ type: 'da-answer' }, payload || {}), '*'); } catch (_) {} }
+  // da-answer al anfitrión; con action (order-draft del modo pedido) va solo a su origen exacto (da-context.js).
+  function notifyParent(payload) { if (DACTX.notify) { DACTX.notify(payload); return; } try { if (window.self !== window.top) window.parent.postMessage(Object.assign({ type: 'da-answer' }, payload || {}), '*'); } catch (_) {} }
   function stopAll() {
     if (DADemo) DADemo.stop();
     if (S.speak && S.speak.audio) { try { S.speak.audio.pause(); } catch (_) {} }
@@ -670,17 +671,17 @@
         try {
           await DADemo.start(audio);
           speakAudio(audio, answer, j.alignment); setStatus(T[LANG].speaking);
-          notifyParent({ answer: answer, muted: false, spoke: true });
+          notifyParent({ answer: answer, action: j.action, muted: false, spoke: true });
         } catch (err) {
           speakText(answer); setStatus(T[LANG].audioBlocked, 'err');
-          notifyParent({ answer: answer, muted: false, spoke: false });
+          notifyParent({ answer: answer, action: j.action, muted: false, spoke: false });
           DADemo.armRetry(function () { DADemo.start(audio).then(function () { speakAudio(audio, answer, j.alignment); setStatus(T[LANG].speaking); }).catch(function () {}); });
         }
       } else {
         // Solo texto (audio=off o sin voz): la boca se mueve el tiempo que dura leerla.
         speakText(answer); setStatus('');
         if (danceAfter) setTimeout(function () { startDance('baile', { forced: true }); }, textDuration(answer) * 1000 + 300);
-        notifyParent({ answer: answer, muted: MUTED, spoke: false });
+        notifyParent({ answer: answer, action: j.action, muted: MUTED, spoke: false });
       }
     } catch (e) {
       if (mine !== asking) return;
