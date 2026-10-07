@@ -443,16 +443,19 @@
     if (!REDUCED && Math.random() < 0.5) { kick(0.5); }
   }
   var lastCap = -1;
+  // Bocadillo (7-oct-2026): oculto si no hay texto; sigue la palabra que se dice si el texto es largo.
+  function bubble() { var c = $('caption'); if (!c) return; c.classList.toggle('vacio', !String(c.textContent || '').trim()); var a = c.querySelector('.sp0'); if (a && c.scrollHeight > c.clientHeight) c.scrollTop = Math.max(0, a.offsetTop - c.clientHeight * 0.5); }
   function caption(sp, n) {
     if (n === lastCap) return; lastCap = n;
     $('caption').innerHTML = '<span class="sp1">' + esc(sp.text.slice(0, n)) + '</span><span class="sp0">' + esc(sp.text.slice(n)) + '</span>';
+    bubble();
   }
 
   // ───────────────────────── Cerebro ─────────────────────────
   function esc(s) { return String(s || '').replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
   function setStatus(m, c) { var s = $('status'); s.textContent = m || ''; s.className = 'status' + (c ? ' ' + c : ''); }
   function setLive(on) { $('livedot').classList.toggle('on', on); }
-  function setCaption(t) { lastCap = -1; $('caption').innerHTML = '<span class="sp1">' + esc(t) + '</span>'; }
+  function setCaption(t) { lastCap = -1; $('caption').innerHTML = '<span class="sp1">' + esc(t) + '</span>'; $('caption').scrollTop = 0; bubble(); }
   function notifyParent(payload) { try { if (window.self !== window.top) window.parent.postMessage(Object.assign({ type: 'da-answer' }, payload || {}), '*'); } catch (_) {} }
   function stopAll() {
     if (DADemo) DADemo.stop();

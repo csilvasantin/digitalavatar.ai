@@ -77,9 +77,29 @@
   .arco path{fill:none; stroke-width:7; stroke-linecap:round; stroke-dasharray:1; stroke-dashoffset:1; opacity:0; animation:arco 2.2s ease-out forwards}
   @keyframes arco{0%{stroke-dashoffset:1; opacity:0} 8%{opacity:.95} 40%{stroke-dashoffset:0; opacity:.95} 78%{stroke-dashoffset:0; opacity:.9} 100%{stroke-dashoffset:0; opacity:0}}
   @media (prefers-reduced-motion:reduce){ .zzz,.gota,.chispa,.corazon,.nota,.lluvia,.salpica,.arco{display:none} #piensa.on circle{animation:none; opacity:.9} }
+  /* Bocadillo de cómic encima de Admirito y chips dentro de la caja de texto (7-oct-2026 · GrokBot · MacMini) */
+  #stage{flex-direction:column; gap:18px; padding:58px 12px 6px}
+  html.dock #stage, html.kiosk #stage{padding-top:10px}
+  #stage #nube{flex:1 1 auto; min-height:0; width:auto; max-width:min(92%,1100px); max-height:none}
+  #stage #caption.bocadillo{position:relative; flex:0 1 auto; z-index:3; max-width:min(560px,92%); max-height:32%; overflow-y:auto; overscroll-behavior:contain;
+    background:#f7fbef; color:#1d2b12; border:3px solid #689840; border-radius:22px; padding:10px 16px; text-align:left;
+    font-size:1rem; line-height:1.4; text-shadow:none; box-shadow:0 10px 28px rgba(0,0,0,.45); margin:0 auto 10px}
+  #stage #caption.bocadillo .sp1{color:#1d2b12} #stage #caption.bocadillo .sp0{color:#7d9468}
+  #stage #caption.bocadillo.help{white-space:pre-wrap; font-size:.86rem; max-height:40%; background:#f7fbef; border:3px solid #689840; border-radius:22px}
+  #stage #caption.bocadillo.vacio{display:none}
+  .bubtail{position:relative; flex:0 0 auto; width:0; height:0; margin:-28px auto 0; z-index:4; border-left:13px solid transparent; border-right:13px solid transparent; border-top:18px solid #689840}
+  .bubtail::after{content:''; position:absolute; left:-8px; top:-21px; border-left:8px solid transparent; border-right:8px solid transparent; border-top:12px solid #f7fbef}
+  #caption.vacio + .bubtail{display:none}
+  html.dock #stage #caption.bocadillo{max-height:34%; font-size:.92rem; padding:8px 13px}
+  body[data-da-composer=compact] .composer .bar .qfield{flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:4px; background:#0b171f; border:1px solid #35525f; border-radius:11px; padding:5px 8px 3px}
+  body[data-da-composer=compact] .composer .bar .qfield:focus-within{border-color:#8fd16a}
+  body[data-da-composer=compact] .composer .bar .qfield .hintchips{display:flex!important; margin:0}
+  body[data-da-composer=compact] .composer .bar .qfield .hintchips:empty{display:none!important}
+  body[data-da-composer=compact] .composer .bar .qfield input{flex:0 0 auto; width:100%; min-height:26px; border:0; background:transparent; padding:2px 2px; border-radius:0}
+  body[data-da-composer=compact] .composer .bar{align-items:stretch} body[data-da-composer=compact] .composer .bar > :not(.qfield){align-self:center}
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.07.10.2026.r8.09:20">
+<meta name="admiranext-version" content="v.07.10.2026.r9.10:01">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
 <script defer src="/assets/da-shell.js?v=20261007-luna-1" data-section="/ nube" data-section-en="/ cloud"></script>
@@ -106,6 +126,9 @@
   <script>document.querySelectorAll('#evo a').forEach(function(a){if(a.getAttribute('data-evo')==='nube')a.classList.add('on');});</script>
 
   <div id="stage">
+    <!-- Bocadillo (7-oct-2026): la respuesta sale encima de la nube, con pico hacia ella. -->
+    <div class="caption bocadillo vacio" id="caption" aria-live="polite"></div>
+    <div class="bubtail" aria-hidden="true"></div>
     <!-- Admirito: la nube del imagotipo de Admira (contorno #689840 de admira-logo_green.svg), la misma
          mascota del cargador común admiranext.com/assets/avatar.js, animada con SVG + JS (sin 3D). -->
     <svg id="nube" viewBox="-30 -40 337 290" role="img" aria-label="Admirito, la nube de AdmiraNeXT" tabindex="0" xmlns="http://www.w3.org/2000/svg">
@@ -141,11 +164,12 @@
   </div>
 
   <div class="console">
-    <div class="caption" id="caption" aria-live="polite"></div>
     <div class="composer" id="composer">
-      <div class="hintchips" id="chips" role="list" aria-label="Sugerencias"></div>
       <div class="bar">
-        <input id="q" autocomplete="off" aria-label="Pregunta a Admirito">
+        <div class="qfield" id="qfield">
+          <div class="hintchips" id="chips" role="list" aria-label="Sugerencias"></div>
+          <input id="q" autocomplete="off" aria-label="Pregunta a Admirito">
+        </div>
         <div class="lang-pills" id="langPills" role="group" aria-label="Idioma del avatar">
           <button type="button" data-lang="es" aria-label="Español" aria-pressed="true">ESP</button>
           <button type="button" data-lang="en" aria-label="English" aria-pressed="false">ENG</button>
@@ -161,7 +185,7 @@
 
 <script src="/assets/da-context.js?v=20261007-demo-1"></script>
 <script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
-<script src="/assets/nube.js?v=20261007-demo-1"></script>
+<script src="/assets/nube.js?v=20261007-bocadillo-1"></script>
 <script defer src="/assets/da-conversation-controls.js?v=20261007-composer-2"></script>
 </body>
 </html>
