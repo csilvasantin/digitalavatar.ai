@@ -59,9 +59,39 @@
   function avatar() { return ctx.avatar || TIER_AVATAR[tier()] || 'admirito'; }
   function historyFor(id) { if (!histories[id]) histories[id] = []; return histories[id]; }
 
+  // Métricas (7-oct-2026): id aleatorio de conversación por pestaña (sin datos personales),
+  // plataforma de origen (?from= o el dominio que nos incrusta) y sala. Ver brain /metrics.
+  var CONV = '', FROM = '', SALA = '';
+  try {
+    CONV = sessionStorage.getItem('da-conv') || '';
+    if (!CONV) { CONV = Math.random().toString(36).slice(2, 12) + Date.now().toString(36).slice(-6); sessionStorage.setItem('da-conv', CONV); }
+  } catch (_) { CONV = Math.random().toString(36).slice(2, 14); }
+  try {
+    var qp = new URLSearchParams(root.location.search);
+    FROM = String(qp.get('from') || '').toLowerCase().replace(/[^a-z0-9.-]/g, '').slice(0, 40);
+    if (!FROM && document.referrer) { var rh = new URL(document.referrer).hostname.replace(/^www\./, ''); if (rh && rh !== root.location.hostname.replace(/^www\./, '')) FROM = rh; }
+    SALA = String(qp.get('sala') || '').toLowerCase().replace(/[^a-z0-9_.-]/g, '').slice(0, 60);
+  } catch (_) {}
+
+  // Botón de acción que manda el cerebro (p. ej. «Pedir en el quiosco» de Starbucks).
+  function action(a) {
+    var old = document.getElementById('daAction');
+    if (old) old.remove();
+    if (!a || a.type !== 'kiosk' || !/^https:\/\/(www\.)?ainimation\.studio\//.test(String(a.url || ''))) return;
+    var el = document.createElement('a');
+    el.id = 'daAction'; el.href = a.url; el.target = '_blank'; el.rel = 'noopener';
+    el.textContent = '☕ ' + (a.label || 'Pedir en el quiosco') + ' →';
+    el.setAttribute('style', 'position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 118px);z-index:60;padding:11px 20px;border-radius:999px;background:#00704A;color:#fff;font:700 15px/1.1 -apple-system,Inter,system-ui,sans-serif;text-decoration:none;box-shadow:0 10px 30px rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.85)');
+    document.body.appendChild(el);
+    setTimeout(function () { if (el.parentNode) el.remove(); }, 60000);
+  }
+
   // Campos que se suman al cuerpo de POST /metahuman/ask.
   function body(extra) {
     var b = {tier: tier(), avatar: avatar()};
+    if (CONV) b.conv = CONV;
+    if (FROM) b.from = FROM;
+    if (SALA) b.sala = SALA;
     if (ctx.loc) b.loc = ctx.loc;
     if (ctx.sector) b.sector = ctx.sector;
     if (ctx.brand) b.brand = ctx.brand;
@@ -214,7 +244,7 @@
 
   var api = {
     get: function () { var c = {}; for (var k in ctx) c[k] = ctx[k]; return c; },
-    set: set, init: init, refresh: refresh, body: body, remember: remember,
+    set: set, init: init, refresh: refresh, body: body, remember: remember, action: action,
     demoAsk: demoAsk, demoDone: demoDone, subdemos: function () { return LOCAL; }, demos: function () { return DEMOS.map(function (d) { return { id: d.id, nombre: d.n, url: d.url }; }); },
     tier: tier, lang: lang, avatar: avatar,
     profile: function () { return profile; },
