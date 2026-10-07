@@ -127,3 +127,6 @@ html[data-da-shell="on"] .toggles{top:calc(var(--da-bar-h) + 8px)!important;z-in
 }
 @media (prefers-reduced-motion:reduce){.da-panel,.da-expert{transition:none!important}}
 @media print{#daTop.da-bar,.da-panel,.da-expert{display:none!important}html[data-da-shell="on"] body.da-pad{padding-top:0!important}}
+/* Elemento activo bien visible (marca/avatar activos en ▤ Avanzado de /metricas) · 7-oct-2026 */
+.da-panel a[aria-current="page"]{background:rgba(80,200,255,.16);border-color:var(--admira-cyan,#50c8ff)!important;font-weight:700}
+.da-panel a[aria-current="page"]::before{content:"● ";color:var(--admira-cyan,#50c8ff)}
