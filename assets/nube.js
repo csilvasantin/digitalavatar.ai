@@ -646,6 +646,7 @@
       if (mine !== asking) return;
       if (!j.ok) { S.mode = 'idle'; setStatus('❌ ' + (j.error || ('HTTP ' + res.status)), 'err'); setCaption(''); if (DADemo) DADemo.setState('listo'); notifyParent({ error: j.error || ('HTTP ' + res.status) }); return; }
       var answer = j.answer || '';
+      if (DACTX.action) DACTX.action(j.action);
       DACTX.remember(question, answer);
       if (DACTX.demoDone) DACTX.demoDone(answer);
       // /demo de Admirito: termina con un bailecito al acabar de hablar.

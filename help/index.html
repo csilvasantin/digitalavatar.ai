@@ -38,7 +38,7 @@
   </style>
   <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.07.10.2026.r11.10:15">
+<meta name="admiranext-version" content="v.07.10.2026.r12.10:59">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
 <script defer src="/assets/da-shell.js?v=20261007-luna-1" data-section="/ ayuda" data-section-en="/ help"></script>
 </head>
@@ -107,7 +107,11 @@
     <div class="card"><span class="tag" lang="es">Panadería · cafetería</span><span class="tag" lang="en">Bakery · café</span><h3>365 Barcelona</h3><p lang="es">Panadería 365 de Barcelona, con el mismo flujo de demo.</p><p lang="en">365 bakery in Barcelona, same demo flow.</p>
       <a class="go" href="/nube.html?brand=365&amp;site=365+Barcelona&amp;sector=panaderia&amp;city=Barcelona&amp;tier=avatar&amp;demo=1">Admirito →</a> · <a class="go" href="/best.html?brand=365&amp;site=365+Barcelona&amp;sector=panaderia&amp;city=Barcelona&amp;tier=human&amp;demo=1">Luna →</a></div>
   </div>
-  <p class="lede"><span lang="es">Receta: abre el enlace (o escribe <code>/marca starbucks</code> y luego <code>/demo</code>). Para lanzarla a distancia en una pantalla, ábrela con <code>?sala=…</code> y usa la herramienta MCP <code>demo_lanzar</code>.</span><span lang="en">Recipe: open the link (or type <code>/marca starbucks</code> then <code>/demo</code>). To launch it remotely on a screen, open it with <code>?sala=…</code> and use the MCP tool <code>demo_lanzar</code>.</span></p>
+  <p class="lede"><span lang="es">Receta: abre el enlace (o escribe <code>/marca starbucks</code> y luego <code>/demo</code>). Para lanzarla a distancia, pide al MCP <code>demo_lanzar</code>: devuelve un enlace con su propia sala segura y su token (ver <a href="#salas">Salas seguras</a>).</span><span lang="en">Recipe: open the link (or type <code>/marca starbucks</code> then <code>/demo</code>). To launch it remotely on a screen, open it with <code>?sala=…</code> and use the MCP tool <code>demo_lanzar</code>.</span></p>
+
+  <h2 id="starbucks"><span lang="es">Starbucks a fondo</span><span lang="en">Starbucks in depth</span></h2>
+  <p class="lede"><span lang="es">Con <code>?brand=starbucks</code> (o <code>/marca starbucks</code>) Admirito, Luna y Neo conocen la carta pública de starbucks.es: bebidas espresso, Frappuccino®, tés, la temporada de otoño 2026 (Pumpkin Spice Latte, Pecan Maple Macchiato, Apple Crumble Iced Matcha Latte…), tamaños, leches y bebidas vegetales, y cómo preguntar por alérgenos. <b>Nunca</b> dan precios, horarios, stock ni promociones: lo mandan a la tienda, la app o starbucks.es. No hablan como personal de Starbucks.</span><span lang="en">With <code>?brand=starbucks</code> (or <code>/marca starbucks</code>) the avatars know the public starbucks.es menu, the Fall 2026 season, sizes, milks and how to ask about allergens. They <b>never</b> give prices, hours, stock or promotions, and never speak as Starbucks staff.</span></p>
+  <p class="lede"><span lang="es">Sugerencias de marca: «Quiero pedir paso a paso», «¿Qué hay de temporada?», «¿Qué leches vegetales hay?», «Tengo una alergia», «¿Qué es un Frappuccino?» y «Demo · 30 s». El <b>pedido guiado</b> va pregunta a pregunta (caliente o frío → bebida → tamaño → leche → resumen) y saca el botón verde <b>☕ Pedir en el quiosco</b>, que abre el quiosco de pedido de <a href="https://www.ainimation.studio/starbucks/">ainimation.studio/starbucks</a> (demo con datos de ejemplo, no cobra).</span><span lang="en">Brand chips include "Help me order step by step". Guided ordering asks one question at a time and shows the green <b>☕ Order at the kiosk</b> button that opens <a href="https://www.ainimation.studio/starbucks/">ainimation.studio/starbucks</a> (demo data, nothing is charged).</span></p>
 
   <h2 id="plataformas"><span lang="es">Lanzar la demo desde cada plataforma</span><span lang="en">Launching the demo from each platform</span></h2>
   <table>
@@ -124,6 +128,18 @@
   <h2 id="mcp">MCP</h2>
   <p class="lede"><span lang="es">Cualquier agente puede manejar los avatares por MCP (Streamable HTTP): hacerles decir algo, bailar, cambiar de categoría, lanzar demos y mandar comandos a las páginas abiertas.</span><span lang="en">Any agent can drive the avatars over MCP (Streamable HTTP): make them say something, dance, switch category, launch demos and send commands to open pages.</span> <a href="/mcp">digitalavatar.ai/mcp →</a></p>
   <pre>{ "mcpServers": { "digitalavatar": { "type": "http", "url": "https://digitalavatar.ai/mcp" } } }</pre>
+
+  <h2 id="salas"><span lang="es">Salas seguras</span><span lang="en">Secure rooms</span></h2>
+  <p class="lede"><span lang="es">Ninguna pantalla se puede manejar de forma anónima. Para mandar órdenes a una sala hace falta una de estas tres credenciales:</span><span lang="en">No screen can be driven anonymously. Sending commands to a room needs one of three credentials:</span></p>
+  <table>
+    <tr><th><span lang="es">Credencial</span><span lang="en">Credential</span></th><th><span lang="es">Qué abre</span><span lang="en">What it opens</span></th></tr>
+    <tr><td><span lang="es">Token de sala</span><span lang="en">Room token</span> (<code>token</code> · <code>X-Room-Token</code>)</td><td><span lang="es">Solo la sala nueva que crea <code>demo_lanzar</code>; va en el enlace (<code>&amp;sala=starbucks-xxxxxx&amp;t=…</code>) y caduca a las 12 h.</span><span lang="en">Only the fresh room created by <code>demo_lanzar</code>; it rides in the link and expires after 12 h.</span></td></tr>
+    <tr><td><span lang="es">Clave de cliente</span><span lang="en">Client key</span> (<code>clave</code> · <code>X-Room-Key</code>)</td><td><span lang="es">Las salas de ese cliente (<code>starbucks</code>, <code>starbucks-…</code>, <code>demo-starbucks…</code>). La da el admin con <code>sala_clave</code>.</span><span lang="en">That client's rooms. The admin gets it with <code>sala_clave</code>.</span></td></tr>
+    <tr><td>Admin (<code>Authorization: Bearer</code>)</td><td><span lang="es">Todas, incluida <code>publica</code> (páginas sin <code>?sala</code>).</span><span lang="en">All of them, including <code>publica</code>.</span></td></tr>
+  </table>
+
+  <h2 id="metricas"><span lang="es">Métricas</span><span lang="en">Metrics</span></h2>
+  <p class="lede"><span lang="es">Cada pregunta deja una métrica anónima (avatar, marca, sala, idioma, tema, plataforma de origen, duración de la conversación; sin IP ni datos personales, 180 días). El panel para el cliente está en <a href="/metricas/">digitalavatar.ai/metricas</a> (entra con tu sesión de AdmiraNeXT).</span><span lang="en">Each question leaves an anonymous metric (no IP or personal data, 180 days). The client dashboard is at <a href="/metricas/">digitalavatar.ai/metricas</a> (sign in with your AdmiraNeXT session).</span></p>
 
   <footer>DigitalAvatar.ai · AdmiraNeXT · <span lang="es">guía de comandos</span><span lang="en">command guide</span> · GrokBot · MacMini</footer>
 </div>

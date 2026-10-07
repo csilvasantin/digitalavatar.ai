@@ -1,11 +1,12 @@
 {
-  "version": "v.07.10.2026.r11.10:15",
-  "builtAt": "2026-10-07T08:15:27Z",
-  "note": "Nueva guía /help con todos los comandos, avatares y demos (ESP|ENG) y un MCP real en digitalavatar.ai/mcp que hace hablar, bailar y lanzar demos a los avatares abiertos.",
+  "version": "v.07.10.2026.r12.10:59",
+  "builtAt": "2026-10-07T08:59:37Z",
+  "note": "Starbucks a fondo (carta, temporada, alérgenos y pedido guiado con botón al quiosco), salas seguras para el MCP y métricas de conversación en digitalavatar.ai/metricas.",
   "novedades": [
-    "digitalavatar.ai/help: comandos (/animacion, /avatar, /demo, /idioma, /marca, /help), parámetros de URL, Admirito/Luna/Neo y cómo lanzar la demo de Starbucks y 365 desde cada plataforma",
-    "digitalavatar.ai/mcp: servidor MCP (Streamable HTTP) con avatar_decir, avatar_animar, avatar_cambiar_tier, demo_lanzar, demo_listar, comando_externo, avatar_perfil y avatar_formar",
-    "Las páginas de avatar escuchan su sala (?sala=…) y ejecutan los comandos del MCP; /help, /avatar, /idioma y /marca valen en las tres caras"
+    "Con /marca starbucks los avatares conocen la carta pública de starbucks.es, la temporada de otoño y cómo preguntar por alérgenos; nunca dan precios, horarios ni stock",
+    "Pedido guiado paso a paso con el botón verde «Pedir en el quiosco» (ainimation.studio/starbucks)",
+    "Salas seguras: nadie manda a una pantalla sin clave de cliente, token de sala o admin; demo_lanzar da enlace con sala y token propios",
+    "Métricas anónimas de cada conversación y panel en digitalavatar.ai/metricas (sesión AdmiraNeXT)"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
