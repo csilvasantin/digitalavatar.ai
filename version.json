@@ -1,13 +1,14 @@
 {
-  "version": "v.07.10.2026.r14.11:05",
-  "builtAt": "2026-10-07T08:59:37Z",
-  "note": "El botón «Pedir en el quiosco» de Starbucks sube por encima de la caja de texto para no tapar las sugerencias.",
+  "version": "v.07.10.2026.r15.11:20",
+  "builtAt": "2026-10-07T09:20:00Z",
+  "note": "Las métricas de los avatares ya están en digitalavatar.ai/metricas con tu sesión de AdmiraNeXT, separadas por avatar, marca y plataforma; Starbucks solo cuenta sus demos.",
   "novedades": [
+    "Panel de métricas en digitalavatar.ai/metricas, sin redirecciones, con la sesión de AdmiraNeXT",
+    "Pestañas por avatar (Admirito, Luna, Neo), marca y plataforma",
+    "Starbucks solo cuenta el uso en sus demos: el avatar en admira.studio o el panel de admiranext ya no suma aunque lleve la marca",
+    "Las preguntas de precio salen como «Precios» y las de horario como «Horarios»",
     "El botón verde «Pedir en el quiosco» ya no tapa las sugerencias de la caja de texto",
-    "Admirito y Luna recuerdan los últimos pasos cuando hay marca: el pedido guiado de Starbucks llega hasta el resumen y el botón «Pedir en el quiosco»",
-    "Con /marca starbucks los avatares conocen la carta pública de starbucks.es, la temporada de otoño y cómo preguntar por alérgenos; nunca dan precios, horarios ni stock",
-    "Pedido guiado paso a paso con el botón verde «Pedir en el quiosco» (ainimation.studio/starbucks)",
-    "Salas seguras: nadie manda a una pantalla sin clave de cliente, token de sala o admin; demo_lanzar da enlace con sala y token propios"
+    "Admirito y Luna recuerdan los últimos pasos cuando hay marca: el pedido guiado de Starbucks llega hasta el resumen y el botón «Pedir en el quiosco»"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
