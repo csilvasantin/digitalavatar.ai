@@ -6,7 +6,7 @@
     "/demo auto, todas, todos o all recorren las cinco muestras de la plataforma anfitriona",
     "Pausa, reanudar, siguiente, stop y estado se transmiten inmediatamente al anfitrión",
     "La conversación espera confirmación por requestId desde el iframe padre y su origen de confianza",
-    "Los números, nombres y la ayuda conservan su flujo de presentación existente"
+    "La ayuda con catálogo local muestra las cinco demos del anfitrión sin proveedor ni voz; números y nombres conservan su presentación"
   ],
   "signature": "Trinity · MacBook Pro 16",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",

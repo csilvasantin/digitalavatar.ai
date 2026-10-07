@@ -185,8 +185,10 @@
   } catch (_) {}
   function demoFeedback(en, es) { return lang() === 'en' ? en : es; }
   function demoCommand(question) {
-    var m = /^\/?demo\s+(auto|todas|todos|all|pausa|pause|reanudar|resume|continuar|siguiente|next|stop|off|parar|estado|status)$/i.exec(norm(question));
+    var m = /^\/?demo\s+(auto|todas|todos|all|pausa|pause|reanudar|resume|continuar|siguiente|next|stop|off|parar|estado|status|help|ayuda|lista|\?)$/i.exec(norm(question));
     if (!m || root.self === root.top) return null;
+    var isHelp = /^(help|ayuda|lista|\?)$/.test(m[1]);
+    if (isHelp && !LOCAL) return null;
     demoPending = null;
     clearTimeout(demoOpeningTimer); demoOpeningTimer = null;
     if (!demoParentOrigin) return Promise.resolve({ok: false, confirmed: false, message: demoFeedback('No trusted host is available; the demo command is not confirmed.', 'No hay un anfitrión de confianza disponible; la orden de demo no está confirmada.')});
@@ -199,7 +201,7 @@
       }, 20000);
       demoRequests[requestId] = {resolve: resolve, timeout: timeout};
       try {
-        root.parent.postMessage({type: 'da-demo', id: '', texto: '/demo ' + m[1].toLowerCase(), requestId: requestId}, demoParentOrigin);
+        root.parent.postMessage({type: 'da-demo', id: '', texto: '/demo ' + (isHelp ? 'help' : m[1].toLowerCase()), requestId: requestId}, demoParentOrigin);
       } catch (_) {
         clearTimeout(timeout); delete demoRequests[requestId];
         resolve({ok: false, confirmed: false, message: demoFeedback('The demo command could not reach the host.', 'La orden de demo no pudo llegar al anfitrión.')});

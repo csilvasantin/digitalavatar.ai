@@ -23,6 +23,21 @@ test('every local alias sends immediately to exact parent origin and waits for i
  }
  assert.equal(new Set(h.posts.map(([p])=>p.requestId)).size,16);assert.equal(h.fetches.length,0);
 });
+test('embedded help aliases use the host listing only with a local catalog, without provider or voice',async()=>{
+ const catalog={type:'da-subdemos',plataforma:'store',nombre:'Admira Store',subdemos:['voz','musica','imagenes','video','tpv'].map((id,i)=>({n:i+1,id,nombre:id,desc:'muestra preparada',aliases:[id]}))};
+ const h=load();for(const alias of ['help','ayuda','lista','?'])assert.equal(h.api.demoCommand('/demo '+alias),null);
+ h.msg(catalog);
+ for(const alias of ['help','ayuda','lista','?']){
+  let settled=false;const pending=h.api.demoCommand('/demo '+alias);pending.then(()=>settled=true);
+  const [p,target]=h.posts.at(-1);assert.equal(p.texto,'/demo help');assert.equal(target,'https://www.admira.store');
+  await Promise.resolve();assert.equal(settled,false);
+  const listing='1 voz · 2 musica · 3 imagenes · 4 video · 5 tpv';h.ack(p,{message:listing});assert.equal((await pending).message,listing);
+ }
+ assert.equal(h.fetches.length,0);assert.match(h.api.demoAsk('/demo help'),/1 voz.*5 tpv/);
+ assert.equal(h.api.demoCommand('/demo 1'),null);assert.equal(h.api.demoCommand('/demo voz'),null);
+ const standalone=load({embedded:false});standalone.msg(catalog);assert.equal(standalone.api.demoCommand('/demo help'),null);
+ h.msg({...catalog,subdemos:[]});assert.equal(h.api.demoCommand('/demo help'),null);
+});
 test('ACK requires matching request, parent source and exact trusted origin; duplicate and unsolicited ACKs are harmless',async()=>{
  const h=load();let settled=false;const pending=h.api.demoCommand('/demo auto');pending.then(()=>settled=true);const p=h.posts[0][0];
  const reply={type:'da-demo-result',requestId:p.requestId,ok:true,message:'real'};
