@@ -1,8 +1,9 @@
 {
-  "version": "v.07.10.2026.r12.10:59",
+  "version": "v.07.10.2026.r13.11:01",
   "builtAt": "2026-10-07T08:59:37Z",
-  "note": "Starbucks a fondo (carta, temporada, alérgenos y pedido guiado con botón al quiosco), salas seguras para el MCP y métricas de conversación en digitalavatar.ai/metricas.",
+  "note": "Pedido guiado de Starbucks con memoria: Admirito y Luna recuerdan los pasos (caliente/fría, bebida, tamaño, leche) y cierran con el botón del quiosco.",
   "novedades": [
+    "Admirito y Luna recuerdan los últimos pasos cuando hay marca: el pedido guiado de Starbucks llega hasta el resumen y el botón «Pedir en el quiosco»",
     "Con /marca starbucks los avatares conocen la carta pública de starbucks.es, la temporada de otoño y cómo preguntar por alérgenos; nunca dan precios, horarios ni stock",
     "Pedido guiado paso a paso con el botón verde «Pedir en el quiosco» (ainimation.studio/starbucks)",
     "Salas seguras: nadie manda a una pantalla sin clave de cliente, token de sala o admin; demo_lanzar da enlace con sala y token propios",
