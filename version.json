@@ -1,13 +1,13 @@
 {
-  "version": "v.07.10.2026.r24.22:25",
-  "builtAt": "2026-10-07T20:25:08Z",
-  "note": "Modo pedido: la cara reenvía al quiosco el pedido estructurado (order-draft) que arma el cerebro.",
+  "version": "v.07.10.2026.r25.22:42",
+  "builtAt": "2026-10-07T20:41:42Z",
+  "note": "Neo responde al instante desde cualquier región: el canal de frases del cerebro pasa a un Durable Object fuertemente consistente.",
   "novedades": [
-    "Modo pedido del quiosco Starbucks: el avatar rellena el carrito mientras hablas",
-    "La cara reenvía el pedido estructurado solo a anfitriones permitidos (ainimation.studio, admira.store…)",
-    "Metahuman también avisa al anfitrión con cada respuesta"
+    "Neo ya no tarda 15-60 s cuando le preguntas desde lejos: la frase llega a Unreal en menos de 1 s",
+    "El canal say del cerebro (omnipublicity-api) usa un Durable Object por sala en lugar de KV; mismo contrato para la página y para Unreal",
+    "Migración sin perder frases en vuelo y copia en KV para volver atrás sin pérdida (retorno/pre-say-do-20261007)"
   ],
-  "signature": "MorfeoMacMini · MacMini",
+  "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "retorno/pre-neo-labios-20261007"
+  "rollback": "retorno/pre-neo-say-do-20261007"
 }
