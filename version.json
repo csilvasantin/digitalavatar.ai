@@ -1,11 +1,11 @@
 {
-  "version": "v.07.10.2026.r10.10:06",
-  "builtAt": "2026-10-07T08:06:18Z",
-  "note": "El bocadillo de Admirito ya no se encoge en pantallas anchas: muestra varias líneas y hace scroll si la respuesta es larga.",
+  "version": "v.07.10.2026.r11.10:15",
+  "builtAt": "2026-10-07T08:15:27Z",
+  "note": "Nueva guía /help con todos los comandos, avatares y demos (ESP|ENG) y un MCP real en digitalavatar.ai/mcp que hace hablar, bailar y lanzar demos a los avatares abiertos.",
   "novedades": [
-    "La respuesta de Admirito sale en un bocadillo con pico hacia la nube (con scroll si es larga)",
-    "Las sugerencias (Demo · 30 s, ¿Quién eres?…) van dentro de la caja «Escribe o pulsa 🎙️», en una fila que se desliza",
-    "También en el panel del avatar de las 5 plataformas (nivel avatar · Admirito)"
+    "digitalavatar.ai/help: comandos (/animacion, /avatar, /demo, /idioma, /marca, /help), parámetros de URL, Admirito/Luna/Neo y cómo lanzar la demo de Starbucks y 365 desde cada plataforma",
+    "digitalavatar.ai/mcp: servidor MCP (Streamable HTTP) con avatar_decir, avatar_animar, avatar_cambiar_tier, demo_lanzar, demo_listar, comando_externo, avatar_perfil y avatar_formar",
+    "Las páginas de avatar escuchan su sala (?sala=…) y ejecutan los comandos del MCP; /help, /avatar, /idioma y /marca valen en las tres caras"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
