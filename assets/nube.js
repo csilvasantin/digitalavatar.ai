@@ -607,10 +607,22 @@
 
   async function ask(question) {
     touch();
-    if (DADemo) DADemo.unlock();
-    warmGraph();
     question = String(question || $('q').value || '').trim();
     if (!question) return;
+    var demoControl = DACTX.demoCommand && DACTX.demoCommand(question);
+    if (demoControl) {
+      var controlMine = ++asking;
+      stopDance(); stopAll(); $('q').value = ''; clearHelpClass();
+      setStatus(LANG === 'en' ? 'Waiting for host confirmation…' : 'Esperando confirmación del anfitrión…');
+      setCaption(''); $('btnSend').disabled = false;
+      var controlResult = await demoControl;
+      if (controlMine !== asking) return;
+      setStatus(controlResult.ok ? '' : (LANG === 'en' ? 'Demo not confirmed' : 'Demo no confirmada'), controlResult.ok ? '' : 'err');
+      setCaption(controlResult.message); if (DADemo) DADemo.setState('listo');
+      return;
+    }
+    if (DADemo) DADemo.unlock();
+    warmGraph();
     var idCmd = parseIdentityCommand(question);
     if (idCmd) {
       $('q').value = '';
@@ -671,6 +683,7 @@
         notifyParent({ answer: answer, muted: MUTED, spoke: false });
       }
     } catch (e) {
+      if (mine !== asking) return;
       S.mode = 'idle'; setStatus(T[LANG].net + (e.message || e), 'err'); setCaption(''); if (DADemo) DADemo.setState('listo'); notifyParent({ error: String(e.message || e) });
     } finally { if (mine === asking) $('btnSend').disabled = false; }
   }

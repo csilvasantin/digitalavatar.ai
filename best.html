@@ -162,7 +162,7 @@
     </div>
   </div>
 
-<script src="/assets/da-context.js?v=20261007-salas-3"></script>
+<script src="/assets/da-context.js?v=20261007-demo-controls-1"></script>
 <script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
 <script type="importmap">
 { "imports": {
@@ -365,14 +365,29 @@ function tickCaption(){ if(!capTrack||!audioEl) return; const t=audioEl.currentT
 // Devuelve la respuesta (y si sonó o está muda) al gemelo que la incrustó, para
 // que la muestre en su panel. {answer,muted,spoke} o {error}.
 function notifyParent(payload){ try{ if(window.self!==window.top) window.parent.postMessage(Object.assign({type:'da-answer'},payload||{}),'*'); }catch(e){} }
+let demoAskSequence=0;
 async function ask(question){
   question=(question||$('q').value).trim(); if(!question) return;
+  const mine=++demoAskSequence;
+  const demoControl=DACTX.demoCommand && DACTX.demoCommand(question);
+  if(demoControl){
+    thinking=false; capTrack=null;
+    if(window.DADemo) DADemo.stop(); if(audioEl){try{audioEl.pause();}catch(e){}} stopSpeaking();
+    $('q').value=''; setCaption(''); $('btnSend').disabled=false;
+    setStatus(LANG==='en'?'Waiting for host confirmation…':'Esperando confirmación del anfitrión…');
+    const result=await demoControl;
+    if(mine!==demoAskSequence) return;
+    setCaption(result.message); setStatus(result.ok?'':(LANG==='en'?'Demo not confirmed':'Demo no confirmada'),result.ok?'':'err');
+    if(window.DADemo) DADemo.setState('listo');
+    return;
+  }
   if(DACTX.demoAsk) question=DACTX.demoAsk(question);   // /demo <solución> (da-context.js)
   $('q').value=''; setStatus(T[LANG].thinking); $('btnSend').disabled=true; setCaption('…'); thinking=true;
   if(!KIOSK && window.DADemo){ DADemo.unlock(); DADemo.stop(); DADemo.setState('pensando'); }
   try{ const res=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify(Object.assign({question, lang:LANG, avatar:'luna', voice:!MUTED, timestamps:!MUTED}, DACTX.body(), $('loc').value?{loc:$('loc').value}:{}))});
     const j=await res.json().catch(()=>({}));
+    if(mine!==demoAskSequence) return;
     if(!j.ok){ thinking=false; setStatus('❌ '+(j.error||('HTTP '+res.status)),'err'); setCaption(''); notifyParent({error:(j.error||('HTTP '+res.status))}); return; }
     const answer=j.answer||'';
     if(DACTX.action) DACTX.action(j.action);
@@ -402,8 +417,8 @@ async function ask(question){
         catch(e){ thinking=false; setStatus(''); setCaption(answer); speakTextOnly(answer); notifyParent({answer:answer,muted:false,spoke:false}); }
       }
     } else { thinking=false; setCaption(answer); speakTextOnly(answer); setStatus(T[LANG].noVoice,'warn'); if(window.DADemo && !KIOSK) DADemo.setState('listo'); listenAfterReply(); notifyParent({answer:answer,muted:false,spoke:false}); }
-  }catch(e){ thinking=false; setStatus(T[LANG].net+(e.message||e),'err'); setCaption(''); notifyParent({error:String(e.message||e)}); }
-  finally{ $('btnSend').disabled=false; }
+  }catch(e){ if(mine!==demoAskSequence) return; thinking=false; setStatus(T[LANG].net+(e.message||e),'err'); setCaption(''); notifyParent({error:String(e.message||e)}); }
+  finally{ if(mine===demoAskSequence) $('btnSend').disabled=false; }
 }
 // Saludo del sector (/metahuman/profile) sin pasar por el cerebro: en el tótem con voz
 // fija; en el panel solo subtítulo (no gasta voz al abrir).

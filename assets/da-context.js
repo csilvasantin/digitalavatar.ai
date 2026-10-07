@@ -174,7 +174,41 @@
       en: 'monetisation: retail media and brand campaigns across the network screens',
       url: 'https://www.admira.biz/' }
   ];
-  var demoPending = null;
+  var demoPending = null, demoOpeningTimer = null;
+  // Local playback controls are host commands, never questions for the brain.
+  // The host acknowledges the request after its dispatcher has run; silence is not success.
+  var demoRequests = Object.create(null), demoRequestSeq = 0, demoRequestPrefix = 'da-demo-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+  var demoParentOrigin = '';
+  try {
+    var embeddingOrigin = new URL(document.referrer).origin;
+    if (ALLOWED.test(embeddingOrigin)) demoParentOrigin = embeddingOrigin;
+  } catch (_) {}
+  function demoFeedback(en, es) { return lang() === 'en' ? en : es; }
+  function demoCommand(question) {
+    var m = /^\/?demo\s+(auto|todas|todos|all|pausa|pause|reanudar|resume|continuar|siguiente|next|stop|off|parar|estado|status|help|ayuda|lista|\?)$/i.exec(norm(question));
+    if (!m || root.self === root.top) return null;
+    var isHelp = /^(help|ayuda|lista|\?)$/.test(m[1]);
+    if (isHelp && !LOCAL) return null;
+    demoPending = null;
+    clearTimeout(demoOpeningTimer); demoOpeningTimer = null;
+    if (!demoParentOrigin) return Promise.resolve({ok: false, confirmed: false, message: demoFeedback('No trusted host is available; the demo command is not confirmed.', 'No hay un anfitrión de confianza disponible; la orden de demo no está confirmada.')});
+    var requestId = demoRequestPrefix + '-' + (++demoRequestSeq);
+    return new Promise(function (resolve) {
+      var timeout = setTimeout(function () {
+        if (!demoRequests[requestId]) return;
+        delete demoRequests[requestId];
+        resolve({ok: false, confirmed: false, message: demoFeedback('The host did not confirm the demo command. Check its state before retrying.', 'El anfitrión no confirmó la orden de demo. Comprueba su estado antes de reintentar.')});
+      }, 20000);
+      demoRequests[requestId] = {resolve: resolve, timeout: timeout};
+      try {
+        root.parent.postMessage({type: 'da-demo', id: '', texto: '/demo ' + (isHelp ? 'help' : m[1].toLowerCase()), requestId: requestId}, demoParentOrigin);
+      } catch (_) {
+        clearTimeout(timeout); delete demoRequests[requestId];
+        resolve({ok: false, confirmed: false, message: demoFeedback('The demo command could not reach the host.', 'La orden de demo no pudo llegar al anfitrión.')});
+      }
+    });
+  }
+
   // Subdemos locales de la plataforma que incrusta la cara (admira.studio / pixeria.com), recibidas de
   // admiranext.com/assets/avatar.js como {type:'da-subdemos', plataforma, subdemos:[{n, id, nombre, desc, aliases}]}.
   // Con ellas, /demo 1…5 y sus alias son de esa plataforma y /demo help lista solo esas (contrato de Trinity).
@@ -221,7 +255,8 @@
     if (!d) return;
     var words = String(answer || '').split(/\s+/).filter(Boolean).length;
     var ms = Math.min(30000, Math.max(1500, words / 2.6 * 1000 + 800));
-    setTimeout(function () {
+    demoOpeningTimer = setTimeout(function () {
+      demoOpeningTimer = null;
       try {
         if (root.self !== root.top) root.parent.postMessage(d.texto ? { type: 'da-demo', id: d.id || '', texto: d.texto } : { type: 'da-demo', id: d.id }, '*');
         else if (d.url) root.location.assign(d.url);
@@ -231,6 +266,16 @@
 
   root.addEventListener('message', function (ev) {
     var d = ev && ev.data;
+    if (d && typeof d === 'object' && d.type === 'da-demo-result') {
+      if (ev.source !== root.parent || !demoParentOrigin || ev.origin !== demoParentOrigin) return;
+      if (typeof d.requestId !== 'string') return;
+      var request = demoRequests[d.requestId];
+      if (!request) return;
+      clearTimeout(request.timeout); delete demoRequests[d.requestId];
+      request.resolve({ok: d.ok === true, confirmed: true, message: String(d.message || demoFeedback('The host returned a response.', 'El anfitrión devolvió una respuesta.')).slice(0, 4000), estado: d.estado});
+      return;
+    }
+    if (!demoParentOrigin && ev && ev.source === root.parent && ALLOWED.test(String(ev.origin || '')) && d && (d.type === 'da-subdemos' || d.type === 'da-context')) demoParentOrigin = ev.origin;
     if (d && typeof d === 'object' && d.type === 'da-subdemos' && ALLOWED.test(String(ev.origin || '')) && Array.isArray(d.subdemos)) {
       LOCAL = d.subdemos.length ? { plataforma: String(d.plataforma || ''), nombre: String(d.nombre || ''), subdemos: d.subdemos.slice(0, 20) } : null;
       return;
@@ -243,7 +288,7 @@
   var api = {
     get: function () { var c = {}; for (var k in ctx) c[k] = ctx[k]; return c; },
     set: set, init: init, refresh: refresh, body: body, remember: remember, action: action,
-    demoAsk: demoAsk, demoDone: demoDone, subdemos: function () { return LOCAL; }, demos: function () { return DEMOS.map(function (d) { return { id: d.id, nombre: d.n, url: d.url }; }); },
+    demoCommand: demoCommand, demoAsk: demoAsk, demoDone: demoDone, subdemos: function () { return LOCAL; }, demos: function () { return DEMOS.map(function (d) { return { id: d.id, nombre: d.n, url: d.url }; }); },
     tier: tier, lang: lang, avatar: avatar,
     profile: function () { return profile; },
     ready: function () { return pending || Promise.resolve(profile); },

@@ -134,7 +134,7 @@
 
   <div id="load"><div class="ring"></div><div class="lt" id="loadt">Cargando avatar…</div></div>
 
-<script src="/assets/da-context.js?v=20261007-salas-3"></script>
+<script src="/assets/da-context.js?v=20261007-demo-controls-1"></script>
 <script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
 <script type="importmap">
 { "imports": {
@@ -439,17 +439,31 @@ function tickCaption(){
 }
 function esc(s){ return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
 
+let demoAskSequence=0;
 async function ask(question){
+  question=(question||$('q').value).trim(); if(!question) return;
+  const mine=++demoAskSequence;
+  const demoControl=DACTX.demoCommand && DACTX.demoCommand(question);
+  if(demoControl){
+    capTrack=null;
+    if(window.DADemo) DADemo.stop(); if(audioEl){try{audioEl.pause();}catch(e){}} stopSpeaking();
+    $('q').value=''; setCaption(''); $('btnSend').disabled=false;
+    setStatus(LANG==='en'?'Waiting for host confirmation…':'Esperando confirmación del anfitrión…');
+    const result=await demoControl;
+    if(mine!==demoAskSequence) return;
+    setCaption(result.message); setStatus(result.ok?'':(LANG==='en'?'Demo not confirmed':'Demo no confirmada'),result.ok?'':'err');
+    if(window.DADemo) DADemo.setState('listo');
+    return;
+  }
   DADemo.unlock();
   warmGraph();
-  question=(question||$('q').value).trim();
-  if(!question) return;
   DADemo.stop(); stopSpeaking();
   $('q').value=''; setStatus(T[LANG].thinking); DADemo.setState('pensando'); $('btnSend').disabled=true; setCaption('…');
   try{
     const res=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify(Object.assign({ question, lang:LANG, avatar:'luna', voice:true, timestamps:true, voiceId:voiceId() }, DACTX.body(), $('loc').value?{loc:$('loc').value}:{}))});
     const j=await res.json().catch(()=>({}));
+    if(mine!==demoAskSequence) return;
     if(!j.ok){ setStatus('❌ '+(j.error||('HTTP '+res.status)),'err'); setCaption(''); DADemo.setState('listo'); return; }
     const answer=j.answer||'';
     DACTX.remember(question, answer);
@@ -470,8 +484,8 @@ async function ask(question){
     } else {
       setCaption(answer); setStatus(T[LANG].noVoice,'warn'); DADemo.setState('listo');
     }
-  }catch(e){ setStatus(T[LANG].net+(e.message||e),'err'); setCaption(''); DADemo.setState('listo'); }
-  finally{ $('btnSend').disabled=false; }
+  }catch(e){ if(mine!==demoAskSequence) return; setStatus(T[LANG].net+(e.message||e),'err'); setCaption(''); DADemo.setState('listo'); }
+  finally{ if(mine===demoAskSequence) $('btnSend').disabled=false; }
 }
 
 /* ===== push-to-talk (Web Speech API) ===== */

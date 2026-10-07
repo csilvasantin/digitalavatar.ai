@@ -1,16 +1,14 @@
 {
-  "version": "v.07.10.2026.r18.12:06",
-  "builtAt": "2026-10-07T10:06:00Z",
-  "note": "Las métricas ya salen enteras en inglés con /idioma en (títulos, filtros, notas, temas y el CLI experto), y el menú Avanzado marca con un punto la marca y el avatar activos.",
+  "version": "v.07.10.2026.r19.12:48",
+  "builtAt": "2026-10-07T10:48:20Z",
+  "note": "El avatar incrustado transmite /demo auto y sus controles a la página anfitriona sin llamar al proveedor ni esperar locución; muestra el resultado después de la confirmación real.",
   "novedades": [
-    "/idioma en traduce todo el panel de métricas, también lo que pinta el servidor, y lo recuerda",
-    "El CLI experto y el motor salen en inglés (EXPERT · CLI, level, status)",
-    "▤ Avanzado marca con ● la marca y el avatar activos (y «Todos los avatares»)",
-    "digitalavatar.ai/metricas con la barra cuadrática común: ☰ Opciones, ▤ Avanzado y ⌘ Experto con su CLI",
-    "Marca blanca: selector Starbucks, 365 o AdmiraNeXT que viste el panel con los colores de la marca y filtra las métricas",
-    "CLI del panel: /marca, /persona, /plataforma, /periodo, /pruebas e /idioma"
+    "/demo auto, todas, todos o all recorren las cinco muestras de la plataforma anfitriona",
+    "Pausa, reanudar, siguiente, stop y estado se transmiten inmediatamente al anfitrión",
+    "La conversación espera confirmación por requestId desde el iframe padre y su origen de confianza",
+    "La ayuda con catálogo local muestra las cinco demos del anfitrión sin proveedor ni voz; números y nombres conservan su presentación"
   ],
-  "signature": "GrokBot · MacMini",
+  "signature": "Trinity · MacBook Pro 16",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
   "rollback": "retorno/pre-da-matrix-20261006"
 }
