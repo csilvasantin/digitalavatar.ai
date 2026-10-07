@@ -3,3 +3,36 @@
 html.dock #stage{bottom:230px}html.dock .console{display:flex!important}html.dock .caption{max-height:8vh;overflow:auto}html.dock .da-conversation-language{display:flex!important}html.dock #langSeg{display:none!important}
 @media(max-width:440px){.da-control-row .da-conversation-action{gap:5px;padding:8px 4px!important;font-size:12px!important}}
 @media(max-width:360px){.da-control-row .da-conversation-action{flex-direction:column;gap:4px;font-size:12px!important}.da-language-label{font-size:11px}}@media(prefers-reduced-motion:reduce){.da-conversation-action,.da-language-choice{transition:none!important}}
+/* Composer compacto de Admirito (nube): chips + idioma + mic/detener/preguntar dentro de la caja.
+   better/best siguen con el layout grande; este modo se activa con body[data-da-composer=compact]. */
+body[data-da-composer=compact] .hintchips{display:none!important} /* el original fuera; se reubica dentro */
+body[data-da-composer=compact] .composer{display:flex;flex-direction:column;gap:7px;background:var(--panel,#0a131e);border:1px solid var(--line,#1b3346);border-radius:16px;padding:8px 9px 8px;backdrop-filter:blur(14px);box-shadow:0 22px 60px rgba(0,0,0,.5)}
+body[data-da-composer=compact] .composer .hintchips{display:flex!important;gap:5px;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 1px 1px;justify-content:flex-start}
+body[data-da-composer=compact] .composer .hintchips::-webkit-scrollbar{display:none}
+body[data-da-composer=compact] .composer .chip{flex:0 0 auto;font-size:.65rem;padding:3px 9px;border-radius:999px;white-space:nowrap;background:rgba(6,12,20,.55);border:1px solid #2a4558;color:#9bb8cc}
+body[data-da-composer=compact] .composer .chip:hover,body[data-da-composer=compact] .composer .chip:focus-visible{color:#c0f3e6;border-color:#c0f3e6}
+body[data-da-composer=compact] .composer .bar{display:flex;gap:6px;align-items:center;background:transparent;border:0;border-radius:0;padding:0;box-shadow:none;backdrop-filter:none}
+body[data-da-composer=compact] .composer .bar input{flex:1 1 0;min-width:0;min-height:36px;background:#0b171f;border:1px solid #35525f;border-radius:11px;padding:8px 10px;color:#f3fbff;font:13.5px/1.3 system-ui}
+body[data-da-composer=compact] .composer .bar input::placeholder{color:#86a6bd}
+body[data-da-composer=compact] .composer .lang-pills{display:flex;gap:3px;flex:0 0 auto;background:#0b171f;border:1px solid #345362;border-radius:10px;padding:2px}
+body[data-da-composer=compact] .composer .lang-pills button{min-width:34px;min-height:28px;padding:3px 7px;border:0;border-radius:8px;background:transparent;color:#9bb8cc;font:700 11px system-ui;cursor:pointer}
+body[data-da-composer=compact] .composer .lang-pills button[aria-pressed=true]{background:#c0f3e6;color:#09281f}
+body[data-da-composer=compact] .composer .iconbtn{width:34px;height:34px;border-radius:10px;font-size:.95rem;padding:0}
+body[data-da-composer=compact] .composer .iconbtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+body[data-da-composer=compact] .composer .iconbtn span{display:none} /* solo icono: el texto vive en aria-label */
+body[data-da-composer=compact] .composer .iconbtn.send,body[data-da-composer=compact] .composer .da-action-ask{background:#a8e8d5!important;border-color:#a8e8d5!important;color:#102c23!important}
+body[data-da-composer=compact] .composer .iconbtn.mic.live,body[data-da-composer=compact] .composer .da-action-mic:is(.rec,.live){background:#613038!important;border-color:#ff9da5!important;color:#fff!important}
+body[data-da-composer=compact] .da-conversation-language{display:none!important} /* la barra grande fuera */
+body[data-da-composer=compact] .da-control-row{display:flex!important;grid-template-columns:none!important;gap:6px!important;width:auto}
+body[data-da-composer=compact] .da-control-row input{grid-column:auto;width:auto}
+body[data-da-composer=compact] .da-control-row .da-conversation-action{width:34px!important;height:34px!important;min-height:34px!important;padding:0!important;gap:0;border-radius:10px!important;box-shadow:none;font-size:0!important}
+body[data-da-composer=compact] #langSeg{display:none!important}
+body[data-da-composer=compact] #stage{inset:40px 0 168px 0}
+body[data-da-composer=compact].dock #stage,html.dock body[data-da-composer=compact] #stage,html.dock[data-da-composer=compact] #stage{inset:0 0 148px 0}
+html.dock body[data-da-composer=compact] #stage{inset:0 0 148px 0}
+html.kiosk body[data-da-composer=compact] #stage{inset:0 0 160px 0}
+html.dock body[data-da-composer=compact] .console{bottom:max(10px,env(safe-area-inset-bottom))}
+body[data-da-composer=compact] .console{gap:7px}
+body[data-da-composer=compact] .caption{max-height:22vh;font-size:1.05rem}
+body[data-da-composer=compact] .caption.help{text-align:left;font-size:.88rem;line-height:1.45;white-space:pre-wrap;background:rgba(8,16,24,.55);border:1px solid #1b3346;border-radius:12px;padding:10px 12px;max-height:34vh}
+@media(max-width:420px){body[data-da-composer=compact] .composer .lang-pills button{min-width:30px;padding:3px 5px;font-size:10px}}

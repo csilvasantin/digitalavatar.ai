@@ -1,11 +1,11 @@
 {
-  "version": "v.07.10.2026.r1.06:20",
-  "builtAt": "2026-10-07T04:20:24Z",
-  "note": "Admirito baila: cuando nadie le pregunta, cada poco hace un número gracioso para que la gente lo mire.",
+  "version": "v.07.10.2026.r2.06:35",
+  "builtAt": "2026-10-07T04:35:22Z",
+  "note": "Admirito: /animacion 1…5 (o giro, baile…) y /animacion help; chips, idioma y botones caben en la caja de texto.",
   "novedades": [
-    "Cinco bailes nuevos de Admirito en reposo: pirueta, bailecito con notas, voltereta, gelatina disco y nubarrón con arcoíris",
-    "Nunca mientras habla, piensa o duerme; se corta al tocarlo o al preguntarle; al despertar hace un bailecito",
-    "Demo rápida: nube.html?dance=1 (los cinco) o ?dance=giro|baile|voltereta|gelatina|lluvia"
+    "Comandos /animacion 1|giro … /animacion 5|lluvia y /animacion help (también /animación, /animation, /ayuda animacion)",
+    "Las animaciones se lanzan desde la caja sin pasar por el cerebro; si ya bailaba, se cambia al nuevo número",
+    "Composer compacto: chips, ESP|ENG, micrófono, detener y preguntar dentro de la caja (ya no ocupan filas aparte)"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",

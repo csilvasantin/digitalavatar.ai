@@ -15,7 +15,7 @@
   html,body{height:100%}
   body{margin:0; background:radial-gradient(120% 90% at 50% -10%, #12261a 0%, var(--bg) 62%); color:var(--txt);
     font-family:ui-sans-serif,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; overflow:hidden}
-  #stage{position:fixed; inset:40px 0 250px 0; z-index:1; display:flex; align-items:center; justify-content:center; touch-action:manipulation}
+  #stage{position:fixed; inset:40px 0 168px 0; z-index:1; display:flex; align-items:center; justify-content:center; touch-action:manipulation}
   #stage::before{content:''; position:absolute; left:50%; top:50%; width:min(90vmin,92%); aspect-ratio:1; transform:translate(-50%,-50%);
     background:radial-gradient(closest-side, rgba(104,152,64,.28), rgba(104,152,64,.08) 55%, transparent 75%); filter:blur(10px); pointer-events:none}
   #nube{position:relative; width:min(92%,1100px); height:auto; max-height:94%; overflow:visible; cursor:pointer; -webkit-tap-highlight-color:transparent}
@@ -47,11 +47,12 @@
   .livedot{display:inline-block; width:8px; height:8px; border-radius:50%; background:#33506a; margin-left:8px; vertical-align:middle}
   .livedot.on{background:var(--ok); box-shadow:0 0 9px var(--ok)}
   /* Tótem (?kiosk=1) y pantalla del gemelo (?embed=1) */
+  #langSeg{display:none !important}
   html.kiosk #evo{display:none !important}
   html.kiosk .meta{display:none}
   html.embed .console, html.embed .top{display:none !important}
   html.embed #stage{inset:0 !important}
-  html.dock #stage{inset:0 0 190px 0} html.kiosk #stage{inset:0 0 210px 0}
+  html.dock #stage{inset:0 0 148px 0} html.kiosk #stage{inset:0 0 160px 0}
   /* Partículas y gestos (SVG) */
   .fx{pointer-events:none}
   .zzz{font:700 22px ui-rounded,system-ui,sans-serif; fill:#bfe9ff; opacity:0; animation:zzz 2.6s ease-out forwards}
@@ -78,14 +79,14 @@
   @media (prefers-reduced-motion:reduce){ .zzz,.gota,.chispa,.corazon,.nota,.lluvia,.salpica,.arco{display:none} #piensa.on circle{animation:none; opacity:.9} }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.07.10.2026.r1.06:20">
+<meta name="admiranext-version" content="v.07.10.2026.r2.06:35">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
 <script defer src="/assets/da-shell.js?v=20261006-nube-1" data-section="/ nube" data-section-en="/ cloud"></script>
 <script defer src="https://www.admiranext.com/assets/sello-novedades.js?v=20261006-sello-1" data-target="#daVersion" data-floating="off"></script>
-<link rel="stylesheet" href="/assets/da-conversation-controls.css?v=20261006-controls-1">
+<link rel="stylesheet" href="/assets/da-conversation-controls.css?v=20261007-composer-1">
 </head>
-<body data-da-stage>
+<body data-da-stage data-da-composer="compact">
   <nav id="evo" aria-label="Evolución del avatar">
     <a data-evo="nube" href="nube.html">Nube</a>
     <a data-evo="vectorial" href="vectorial.html">Vectorial</a>
@@ -141,12 +142,18 @@
 
   <div class="console">
     <div class="caption" id="caption" aria-live="polite"></div>
-    <div class="hintchips" id="chips"></div>
-    <div class="bar">
-      <input id="q" autocomplete="off">
-      <button class="iconbtn mic" id="btnMic" title="Hablar">🎙️</button>
-      <button class="iconbtn stop" id="btnStop" title="Cortar la voz">■</button>
-      <button class="iconbtn send" id="btnSend" title="Enviar">➤</button>
+    <div class="composer" id="composer">
+      <div class="hintchips" id="chips" role="list" aria-label="Sugerencias"></div>
+      <div class="bar">
+        <input id="q" autocomplete="off" aria-label="Pregunta a Admirito">
+        <div class="lang-pills" id="langPills" role="group" aria-label="Idioma del avatar">
+          <button type="button" data-lang="es" aria-label="Español" aria-pressed="true">ESP</button>
+          <button type="button" data-lang="en" aria-label="English" aria-pressed="false">ENG</button>
+        </div>
+        <button class="iconbtn mic" id="btnMic" type="button" title="Hablar" aria-label="Micrófono">🎙️</button>
+        <button class="iconbtn stop" id="btnStop" type="button" title="Cortar la voz" aria-label="Detener">■</button>
+        <button class="iconbtn send" id="btnSend" type="button" title="Enviar" aria-label="Preguntar">➤</button>
+      </div>
     </div>
     <div class="meta"><select id="loc"></select></div>
     <div class="status" id="status"></div>
@@ -154,7 +161,7 @@
 
 <script src="/assets/da-context.js?v=20261006-ctx-1"></script>
 <script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
-<script src="/assets/nube.js?v=20261007-bailes-1"></script>
-<script defer src="/assets/da-conversation-controls.js?v=20261006-defaults-1"></script>
+<script src="/assets/nube.js?v=20261007-composer-1"></script>
+<script defer src="/assets/da-conversation-controls.js?v=20261007-composer-1"></script>
 </body>
 </html>

@@ -14,6 +14,7 @@
  * postMessage (como best.html): da-ask {question,lang} · da-lang · da-audio {on} → da-answer.
  * Bailes (7-oct-2026): giro, baile, voltereta, gelatina y lluvia (con arcoíris) cada ~9–15 s de reposo;
  * ?dance=1 los enseña todos en bucle, ?dance=<nombre> uno solo (alias spin, dance, flip, jelly, rain).
+ * Slash: /animacion 1|giro … /animacion help (también /animación, /animation, /ayuda animacion).
  */
 (function () {
   'use strict';
@@ -264,17 +265,22 @@
         }
       } }
   };
-  function startDance(name, wake, dur) {
+  function startDance(name, wakeOrOpts, dur) {
     if (REDUCED || !DANCE[name]) return null;
+    var opts = wakeOrOpts && typeof wakeOrOpts === 'object' ? wakeOrOpts : { wake: !!wakeOrOpts, dur: dur };
     stopDance();
-    D = { name: name, t: 0, dur: dur || DANCE[name].dur, nodes: [], ev: {}, wake: !!wake, nextNote: 0.2, side: Math.random() < 0.5 ? -1 : 1, nextDrop: 0 };
+    D = { name: name, t: 0, dur: opts.dur || DANCE[name].dur, nodes: [], ev: {}, wake: !!opts.wake, forced: !!opts.forced, nextNote: 0.2, side: Math.random() < 0.5 ? -1 : 1, nextDrop: 0 };
     if (DANCE[name].start) DANCE[name].start(D);
-    lastDance = name; return name;
+    lastDance = name;
+    if (D.forced) S.lastTouch = performance.now();   // no dormir a mitad de un /animacion
+    return name;
   }
   function stopDance() {
     if (!D) return;
+    var wasForced = D.forced;
     D.nodes.forEach(function (n) { n.remove(); }); D = null;
     S.nextDance = DEMO ? 0.35 : 9 + Math.random() * 6; S.nextGesture = Math.max(S.nextGesture, 2.5);
+    if (wasForced) S.lastTouch = performance.now();
   }
   function pickDance() {
     if (DEMO === 'all') return DANCES[demoIdx++ % DANCES.length];
@@ -295,7 +301,7 @@
     }
     return o;
   }
-  window.__nubeDance = function (name) { return startDance(DANCE_ALIAS[String(name || '').toLowerCase()] || pickDance()); };
+  window.__nubeDance = function (name) { return startDance(DANCE_ALIAS[String(name || '').toLowerCase()] || pickDance(), { forced: true }); };
 
   // ───────────────────────── Bucle ─────────────────────────
   var last = performance.now(), clock = 0;
@@ -454,15 +460,92 @@
   }
 
   var asking = 0;
+
+  // ───────────────────────── /animacion (slash) ─────────────────────────
+  // Carlos, 7-oct-2026: /animacion 1|giro … /animacion help. No van al cerebro.
+  var DANCE_NUM = { '1': 'giro', '2': 'baile', '3': 'voltereta', '4': 'gelatina', '5': 'lluvia' };
+  var DANCE_HELP = {
+    es: {
+      title: 'Animaciones de Admirito',
+      lines: [
+        '1 · giro — pirueta de dos vueltas y aterrizaje con squish',
+        '2 · baile — de lado a lado al ritmo, con notas ♪',
+        '3 · voltereta — mortal hacia atrás con cara feliz',
+        '4 · gelatina — tiembla como un flan y saca bracitos disco',
+        '5 · lluvia — le llueve encima, se sacude y sale un arcoíris'
+      ],
+      usage: 'Escribe /animacion <número|nombre>. También /animacion help.',
+      playing: '¡Ahí va!',
+      unknown: 'No conozco esa animación. Prueba /animacion help.',
+      reduced: 'Con «reducir movimiento» las animaciones están apagadas.'
+    },
+    en: {
+      title: "Admirito's animations",
+      lines: [
+        '1 · giro (spin) — a two-turn pirouette with a squash landing',
+        '2 · baile (dance) — side-to-side bounce with ♪ notes',
+        '3 · voltereta (flip) — a happy backflip',
+        '4 · gelatina (jelly) — disco wobble with little cloud arms',
+        '5 · lluvia (rain) — rains on itself, shakes off, then a rainbow'
+      ],
+      usage: 'Type /animacion <number|name>. Also /animacion help.',
+      playing: 'Here goes!',
+      unknown: "I don't know that animation. Try /animacion help.",
+      reduced: 'With reduce-motion on, the animations stay off.'
+    }
+  };
+  function danceHelpText() {
+    var h = DANCE_HELP[LANG] || DANCE_HELP.es;
+    return h.title + '\n' + h.lines.join('\n') + '\n' + h.usage;
+  }
+  function parseAnimCommand(raw) {
+    var t = String(raw || '').trim();
+    // /animación, /animaciones, /animation, /animacion; also "/ayuda animacion"
+    var m = t.match(/^\/\s*(?:animaci[oó]n(?:es)?|animation)\s*(.*)$/i);
+    if (!m) {
+      m = t.match(/^\/\s*ayuda\s+animaci[oó]n(?:es)?\s*$/i);
+      if (m) return { help: true };
+      return null;
+    }
+    var arg = String(m[1] || '').trim().toLowerCase().replace(/^\/+/, '');
+    if (!arg || arg === 'help' || arg === '?' || arg === 'ayuda' || arg === 'list' || arg === 'lista') return { help: true };
+    if (DANCE_NUM[arg]) return { name: DANCE_NUM[arg] };
+    if (DANCE_ALIAS[arg]) return { name: DANCE_ALIAS[arg] };
+    return { unknown: arg };
+  }
+  function showHelpReply(text) {
+    var cap = $('caption');
+    cap.classList.add('help');
+    setCaption(text);
+    setStatus('');
+    if (DADemo) DADemo.setState('listo');
+  }
+  function clearHelpClass() { var cap = $('caption'); if (cap) cap.classList.remove('help'); }
+
   async function ask(question) {
-    touch(); stopDance();
+    touch();
     if (DADemo) DADemo.unlock();
     warmGraph();
     question = String(question || $('q').value || '').trim();
     if (!question) return;
+    var cmd = parseAnimCommand(question);
+    if (cmd) {
+      $('q').value = '';
+      clearHelpClass();
+      var h = DANCE_HELP[LANG] || DANCE_HELP.es;
+      if (cmd.help) { showHelpReply(danceHelpText()); return; }
+      if (cmd.unknown) { showHelpReply(h.unknown + '\n' + h.usage); return; }
+      if (REDUCED) { showHelpReply(h.reduced); return; }
+      stopAll(); // corta voz/pensando, pero el baile forzado se lanza despues
+      startDance(cmd.name, { forced: true });
+      setStatus(h.playing + ' ' + cmd.name);
+      setTimeout(function () { if ($('status').textContent.indexOf(cmd.name) >= 0) setStatus(''); }, 1800);
+      return;
+    }
+    stopDance();
     stopAll();
     var mine = ++asking;
-    $('q').value = ''; setStatus(T[LANG].thinking); if (DADemo) DADemo.setState('pensando'); $('btnSend').disabled = true; setCaption('…');
+    $('q').value = ''; clearHelpClass(); setStatus(T[LANG].thinking); if (DADemo) DADemo.setState('pensando'); $('btnSend').disabled = true; setCaption('…');
     S.mode = 'thinking';
     try {
       var body = Object.assign({ question: question, lang: LANG, voice: !MUTED, timestamps: !MUTED }, MUTED ? {} : { voiceId: DADemo ? DADemo.voiceId(LANG) : '' }, DACTX.body(), $('loc').value ? { loc: $('loc').value } : {});
@@ -495,6 +578,8 @@
   }
   window.__nubeAsk = ask;
   window.__nubeSpeakText = speakText;
+  window.__nubeParseAnim = parseAnimCommand;
+  window.__nubeDanceHelp = danceHelpText;
 
   // ───────────────────────── Micro ─────────────────────────
   function micError(code) {
