@@ -1,14 +1,14 @@
 {
-  "version": "v.07.10.2026.r15.11:20",
-  "builtAt": "2026-10-07T09:20:00Z",
-  "note": "Las métricas de los avatares ya están en digitalavatar.ai/metricas con tu sesión de AdmiraNeXT, separadas por avatar, marca y plataforma; Starbucks solo cuenta sus demos.",
+  "version": "v.07.10.2026.r16.11:43",
+  "builtAt": "2026-10-07T09:43:00Z",
+  "note": "El panel de métricas ya usa la plataforma cuadrática de Admira: ☰ Opciones, ▤ Avanzado y ⌘ Experto (oculto al cargar), y la marca blanca cambia el tema y filtra los datos.",
   "novedades": [
+    "digitalavatar.ai/metricas con la barra cuadrática común: ☰ Opciones, ▤ Avanzado y ⌘ Experto con su CLI",
+    "Marca blanca: selector Starbucks, 365 o AdmiraNeXT que viste el panel con los colores de la marca y filtra las métricas",
+    "CLI del panel: /marca, /persona, /plataforma, /periodo, /pruebas e /idioma",
+    "El panel Avanzado lleva la marca y el avatar a un clic; el idioma cambia también las etiquetas del panel",
     "Panel de métricas en digitalavatar.ai/metricas, sin redirecciones, con la sesión de AdmiraNeXT",
-    "Pestañas por avatar (Admirito, Luna, Neo), marca y plataforma",
-    "Starbucks solo cuenta el uso en sus demos: el avatar en admira.studio o el panel de admiranext ya no suma aunque lleve la marca",
-    "Las preguntas de precio salen como «Precios» y las de horario como «Horarios»",
-    "El botón verde «Pedir en el quiosco» ya no tapa las sugerencias de la caja de texto",
-    "Admirito y Luna recuerdan los últimos pasos cuando hay marca: el pedido guiado de Starbucks llega hasta el resumen y el botón «Pedir en el quiosco»"
+    "Pestañas por avatar (Admirito, Luna, Neo), marca y plataforma"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
