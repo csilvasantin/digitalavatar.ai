@@ -109,6 +109,12 @@
     ayuda: '/help/'
   };
   var VERBS = ['help', 'nivel', 'avatar', 'avataron', 'avataroff', 'neo', 'say', 'estado', 'mcp', 'embed', 'roadmap', 'ayuda', 'limpiar', 'version', 'idioma', 'vectorial', '2d', '3d', 'realista', 'metahuman', 'good', 'better', 'best', 'embedmh', 'nube'];
+  /* Extensión por página (7-oct-2026, métricas): window.DA_SHELL = {section, advanced:[{href,es,en}],
+     verbs:{nombre:{es,en,run:function(args, api){}}}}. Se declara ANTES de este script. */
+  var EXT = (root.DA_SHELL && typeof root.DA_SHELL === 'object') ? root.DA_SHELL : {};
+  var EXT_VERBS = (EXT.verbs && typeof EXT.verbs === 'object') ? EXT.verbs : {};
+  if (Array.isArray(EXT.advanced) && EXT.advanced.length) ADVANCED = EXT.advanced.concat([{group: true, es: 'DigitalAvatar', en: 'DigitalAvatar'}], ADVANCED);
+  Object.keys(EXT_VERBS).forEach(function (k) { if (/^[a-z0-9-]+$/.test(k) && typeof EXT_VERBS[k].run === 'function' && VERBS.indexOf(k) < 0) VERBS.push(k); });
   var BRAIN = 'https://brain.digitalavatar.ai';
   var HOST_PROBE = 'https://neo-digitalavatar.csilvasantin.workers.dev/images/favicon-32x32.png';
   var hostState = 'comprobando…';
@@ -151,7 +157,7 @@
 
   function linkHtml(item) {
     if (item.group) return '<div class="da-group" data-es="' + esc(item.es) + '" data-en="' + esc(item.en) + '">' + esc(pick(item)) + '</div>';
-    var cur = isCurrent(item.href, item.key) ? ' aria-current="page"' : '';
+    var cur = (item.current != null ? item.current : isCurrent(item.href, item.key)) ? ' aria-current="page"' : '';
     var ext = item.ext ? ' target="_blank" rel="noopener"' : '';
     return '<a href="' + esc(item.href) + '"' + ext + cur + ' data-es="' + esc(item.es) + '" data-en="' + esc(item.en) + '">' + esc(pick(item)) + '</a>';
   }
@@ -195,6 +201,11 @@
   }
 
   function helpText() {
+    var extra = Object.keys(EXT_VERBS).filter(function (k) { return typeof EXT_VERBS[k].run === 'function'; })
+      .map(function (k) { return '/' + k + ' — ' + pick(EXT_VERBS[k]); }).join('\n');
+    return (extra ? extra + '\n' : '') + baseHelpText();
+  }
+  function baseHelpText() {
     if (lang() === 'en') {
       return '/help — this list\n' +
         '/avatar — status and the three categories\n' +
@@ -502,6 +513,10 @@
         paintEngine();
         log(lang() === 'en' ? '⚠️ connection error' : '⚠️ error de conexión', 'err');
       });
+      return;
+    }
+    if (EXT_VERBS[verb] && typeof EXT_VERBS[verb].run === 'function') {
+      try { EXT_VERBS[verb].run(p.args, {log: log, lang: lang, setPanel: setPanel}); } catch (e) { log(String(e && e.message || e), 'err'); }
       return;
     }
     if (verb === 'version' || verb === 'sello') { log(versionText() || 'sin sello'); return; }
