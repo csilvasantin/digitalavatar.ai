@@ -96,15 +96,21 @@
     "good": {
       "url": "https://digitalavatar.ai/nube.html",
       "desc": "Admirito, la nube animada: 2D ligera (SVG), mueve los labios con la voz o con el texto, parpadea, mira y hace gestos si nadie la toca, y se duerme (zzz) tras un rato quieta. Cada ~9–15 s de reposo hace un número grande para llamar la atención: pirueta (giro), bailecito con notas (baile), voltereta, gelatina disco con bracitos (gelatina) y nubarrón con arcoíris (lluvia); nunca mientras habla, piensa o duerme, se corta al tocarla y no se hace con prefers-reduced-motion. Demo: ?dance=1 (los cinco) o ?dance=giro|baile|voltereta|gelatina|lluvia (alias spin|dance|flip|jelly|rain). Comandos: /animacion 1|giro … /animacion 5|lluvia y /animacion help. La caja de texto concentra chips, idioma ESP|ENG, micrófono, detener y preguntar.",
-      "demo": "https://digitalavatar.ai/nube.html?dance=1"
+      "demo": "https://digitalavatar.ai/nube.html?dance=1",
+      "avatar": "admirito",
+      "name": "Admirito"
     },
     "better": {
       "url": "https://digitalavatar.ai/best.html",
-      "desc": "Avatar web Ready Player Me (la chica)."
+      "desc": "Avatar web Ready Player Me (la chica).",
+      "avatar": "alex",
+      "name": "Alex"
     },
     "best": {
       "url": "https://digitalavatar.ai/metahuman.html",
-      "desc": "Neo, MetaHuman por Pixel Streaming; si el host está apagado entra la chica."
+      "desc": "Neo, MetaHuman por Pixel Streaming; si el host está apagado entra la chica.",
+      "avatar": "neo",
+      "name": "Neo"
     }
   },
   "evolution": {

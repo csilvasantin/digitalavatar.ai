@@ -1,11 +1,11 @@
 {
-  "version": "v.07.10.2026.r2.06:35",
-  "builtAt": "2026-10-07T04:35:22Z",
-  "note": "Admirito: /animacion 1…5 (o giro, baile…) y /animacion help; chips, idioma y botones caben en la caja de texto.",
+  "version": "v.07.10.2026.r3.06:50",
+  "builtAt": "2026-10-07T04:50:18Z",
+  "note": "Tres identidades: Admirito (good), Alex (better) y Neo (best); perfiles y hechos aislados; /quien soy, /perfil, /aprender (admin).",
   "novedades": [
-    "Comandos /animacion 1|giro … /animacion 5|lluvia y /animacion help (también /animación, /animation, /ayuda animacion)",
-    "Las animaciones se lanzan desde la caja sin pasar por el cerebro; si ya bailaba, se cambia al nuevo número",
-    "Composer compacto: chips, ESP|ENG, micrófono, detener y preguntar dentro de la caja (ya no ocupan filas aparte)"
+    "Cada nivel tiene nombre propio: Admirito (nube), Alex (anfitriona web) y Neo (MetaHuman); «¿Quién eres?» responde distinto",
+    "Perfil y hechos entrenados por avatar en el cerebro (no se mezclan proyectos ni memorias)",
+    "Comandos /quien soy, /perfil, /aprender|/train, /olvidar|/forget y /help en la nube; train vía ADMIN_TOKEN"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",

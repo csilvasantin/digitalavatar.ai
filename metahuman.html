@@ -53,7 +53,7 @@
   .alt{ color:var(--muted); font-size:.8rem; text-align:center } .alt a{ color:var(--accent); text-decoration:none; font-weight:600 }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.07.10.2026.r2.06:35">
+<meta name="admiranext-version" content="v.07.10.2026.r3.06:50">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
 <script defer src="/assets/da-shell.js?v=20261006-nube-1" data-section="/ metahuman" data-section-en="/ metahuman"></script>
@@ -154,14 +154,14 @@
     .ans{ min-height:0; color:var(--muted); font-size:.86rem; line-height:1.5; padding:0 4px; white-space:pre-wrap }
     .ans.show{ color:var(--txt); background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:11px 14px }
   </style>
-  <script src="/assets/da-context.js?v=20261006-ctx-1"></script>
+  <script src="/assets/da-context.js?v=20261007-id-1"></script>
   <script src="/assets/da-neo-player.js?v=20261004-proxy-1"></script>
   <script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
   <script>
   (function(){
     // Contexto del cliente (assets/da-context.js): nivel best = + datos en vivo + historial.
     var API='https://brain.digitalavatar.ai', DACTX=window.DAContext;
-    DACTX.init({tier:'best'});
+    DACTX.init({tier:'best', avatar:'neo'});
     var q=document.getElementById('q'), send=document.getElementById('send'), mic=document.getElementById('mic'), ans=document.getElementById('ans');
     var cut=document.getElementById('cut'), vstate=document.getElementById('vstate');
     var talkTimer=null, seq=0;
@@ -233,7 +233,7 @@
         var en=lang()==='en';
         // La identidad de Neo la pone el cerebro (persona:'neo'); la pregunta va limpia.
         var r=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'content-type':'application/json'},
-          body:JSON.stringify(Object.assign({question:text, persona:'neo', lang:(en?'en':'es'), voice:true, timestamps:true, voiceId:DADemo.voiceId(en?'en':'es')}, DACTX.body()))});
+          body:JSON.stringify(Object.assign({question:text, avatar:'neo', persona:'neo', lang:(en?'en':'es'), voice:true, timestamps:true, voiceId:DADemo.voiceId(en?'en':'es')}, DACTX.body()))});
         var d=await r.json();
         if(mine!==seq) return;
         var a=(d.answer||'').trim();
