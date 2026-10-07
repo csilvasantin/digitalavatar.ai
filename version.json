@@ -1,6 +1,6 @@
 {
-  "version": "v.07.10.2026.r23.22:24",
-  "builtAt": "2026-10-07T20:24:31Z",
+  "version": "v.07.10.2026.r24.22:25",
+  "builtAt": "2026-10-07T20:25:08Z",
   "note": "Modo pedido: la cara reenvía al quiosco el pedido estructurado (order-draft) que arma el cerebro.",
   "novedades": [
     "Modo pedido del quiosco Starbucks: el avatar rellena el carrito mientras hablas",
@@ -9,5 +9,5 @@
   ],
   "signature": "MorfeoMacMini · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "retorno/pre-neo-turn-20261007"
+  "rollback": "retorno/pre-neo-labios-20261007"
 }

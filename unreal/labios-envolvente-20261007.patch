@@ -1,0 +1,105 @@
+--- a/Source/DigitalAvatarMH/DigitalAvatarBridge.h	2026-10-07 22:17:02
++++ b/Source/DigitalAvatarMH/DigitalAvatarBridge.h	2026-10-07 22:17:02
+@@ -123,6 +123,18 @@
+ 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Digital Avatar|Face")
+ 	bool bDriveFaceMorphTargets = true;
+ 
++	/** Ganancia de las poses de visema (la boca se quedaba corta: 7-oct-2026). */
++	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Digital Avatar|Face")
++	float VisemeGain = 1.45f;
++
++	/** Apertura de mandíbula guiada por la ENVOLVENTE real del audio (0 = sólo visemas). */
++	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Digital Avatar|Face")
++	float JawEnvGain = 0.80f;
++
++	/** Adelanto visual de la boca respecto al audio (s); la vista percibe mejor la boca un pelín antes. */
++	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Digital Avatar|Face")
++	float MouthLeadSeconds = 0.05f;
++
+ 	/**
+ 	 * DIAGNÓSTICO: si está activo, mueve la mandíbula en bucle continuo (sin audio)
+ 	 * para verificar que SetMorphTarget realmente deforma la cara del MetaHuman.
+@@ -143,6 +155,9 @@
+ 	// ── Lip-sync por visemas (sustituto de Audio2Face) ──
+ 	struct FVisemeKey { FName Viseme; float T0; float T1; };
+ 	TArray<FVisemeKey> VisemeTrack;   // línea de tiempo viseme↔[t0,t1] desde alignment
++	TArray<float> SpeechEnv;          // envolvente RMS normalizada (0..1) del PCM, 100 muestras/s
++	double SpeechStartReal = 0.0;     // reloj REAL (FPlatformTime) al arrancar el audio: el audio no sigue al tiempo de juego
++	float SpeechEnvAt(float T) const;
+ 	double SpeechStartTime = 0.0;     // tiempo de mundo al empezar a hablar
+ 	void BuildVisemeTrack(const TSharedPtr<FJsonObject>& Alignment);
+ 	void UpdateFaceCurves(float DeltaTime);
+--- a/Source/DigitalAvatarMH/DigitalAvatarBridge.cpp	2026-10-07 22:17:02
++++ b/Source/DigitalAvatarMH/DigitalAvatarBridge.cpp	2026-10-07 22:17:02
+@@ -304,6 +304,23 @@
+ 	ProceduralWave->SoundGroup = SOUNDGROUP_Voice;
+ 	ProceduralWave->bLooping = false;
+ 
++	// Envolvente de la voz (RMS cada 10 ms) para que la mandíbula siga al AUDIO de verdad,
++	// no sólo a las letras: abre en las sílabas fuertes y cierra en pausas y oclusivas.
++	{
++		const int16* S = reinterpret_cast<const int16*>(Pcm.GetData());
++		const int32 NS = Pcm.Num() / 2;
++		const int32 Hop = FMath::Max(1, SampleRate / 100);
++		SpeechEnv.Reset();
++		for (int32 i = 0; i < NS; i += Hop)
++		{
++			double Acc = 0.0; const int32 E = FMath::Min(NS, i + Hop);
++			for (int32 j = i; j < E; ++j) { const double v = S[j] / 32768.0; Acc += v * v; }
++			SpeechEnv.Add((float)FMath::Sqrt(Acc / FMath::Max(1, E - i)));
++		}
++		TArray<float> Sorted = SpeechEnv; Sorted.Sort();
++		const float Ref = Sorted.Num() ? FMath::Max(1e-4f, Sorted[FMath::Clamp((int32)(Sorted.Num() * 0.95f), 0, Sorted.Num() - 1)]) : 1.f;
++		for (float& v : SpeechEnv) { v = FMath::Clamp(v / Ref, 0.f, 1.f); }
++	}
+ 	ProceduralWave->QueueAudio(Pcm.GetData(), Pcm.Num());
+ 
+ 	if (AudioComp)
+@@ -312,6 +329,7 @@
+ 		AudioComp->Play();
+ 		// Arranca el lip-sync por visemas sincronizado con la reproducción.
+ 		SpeechStartTime = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0;
++		SpeechStartReal = FPlatformTime::Seconds();
+ 		bIsSpeaking = (VisemeTrack.Num() > 0);
+ 		bSpeakPending = false;   // ya arrancó esta frase; el tick encadenará la siguiente
+ 		UE_LOG(LogDigitalAvatar, Log, TEXT("[DigitalAvatar] ✅ Audio en reproducción (OnSpeechStarted). Cola restante: %d"), SpeechQueue.Num());
+@@ -437,6 +455,14 @@
+ 	}
+ }
+ 
++float UDigitalAvatarBridge::SpeechEnvAt(float T) const
++{
++	if (SpeechEnv.Num() == 0 || T < 0.f) return 0.f;
++	const float F = T * 100.f; const int32 I = (int32)F;
++	if (I >= SpeechEnv.Num() - 1) return I < SpeechEnv.Num() ? SpeechEnv[I] : 0.f;
++	return FMath::Lerp(SpeechEnv[I], SpeechEnv[I + 1], F - I);
++}
++
+ void UDigitalAvatarBridge::UpdateFaceCurves(float DeltaTime)
+ {
+ 	// DIAGNÓSTICO: oscila la mandíbula continuamente (ignora el audio) por LiveLink.
+@@ -471,7 +497,7 @@
+ 	TMap<FName, float> Target;
+ 	if (bIsSpeaking && VisemeTrack.Num() > 0 && GetWorld())
+ 	{
+-		const float Elapsed = (float)(GetWorld()->GetTimeSeconds() - SpeechStartTime);
++		const float Elapsed = (float)(FPlatformTime::Seconds() - SpeechStartReal) + MouthLeadSeconds;
+ 		FName Active = NAME_None;
+ 		for (int32 i = 0; i < VisemeTrack.Num(); ++i)
+ 		{
+@@ -482,6 +508,15 @@
+ 		{
+ 			if (const TMap<FName, float>* Pose = VisemePoses().Find(Active)) { Target = *Pose; }
+ 		}
++		// Dinámica real del audio: la pose del visema se escala con la energía de la voz y la
++		// mandíbula nunca abre menos de lo que pide la envolvente. En silencio, boca cerrada.
++		const float Env = SpeechEnvAt(Elapsed);
++		const float Dyn = 0.55f + 0.75f * Env;
++		for (TPair<FName, float>& C : Target) { C.Value = FMath::Clamp(C.Value * VisemeGain * Dyn, 0.f, 1.f); }
++		float& JawT = Target.FindOrAdd(FName(TEXT("jawOpen")));
++		JawT = FMath::Max(JawT, FMath::Pow(Env, 0.8f) * JawEnvGain);
++		if (Env < 0.05f) { JawT = FMath::Min(JawT, 0.04f); }
++		JawT = FMath::Min(JawT, 0.88f);
+ 		if (Elapsed > VisemeTrack.Last().T1 + 0.4f) { bIsSpeaking = false; }
+ 	}
+ 
