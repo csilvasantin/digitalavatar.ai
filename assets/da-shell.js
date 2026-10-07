@@ -187,7 +187,7 @@
       '<div class="da-title" data-es="Avanzado" data-en="Advanced">' + T('Avanzado', 'Advanced') + '</div>' +
       '<div class="da-links" id="daAdvancedLinks">' + ADVANCED.map(linkHtml).join('') + '</div></nav>';
     var expert = '<section class="da-expert is-collapsed" id="daExpert" aria-label="EXPERTO · CLI" aria-hidden="true">' +
-      '<div class="yk-rail-navhd">⌘ EXPERTO · CLI</div>' +
+      '<div class="yk-rail-navhd" data-es="⌘ EXPERTO · CLI" data-en="⌘ EXPERT · CLI">' + T('⌘ EXPERTO · CLI', '⌘ EXPERT · CLI') + '</div>' +
       '<div class="yk-expert">' +
       '<section class="generator-slot" aria-label="' + T('Motor del avatar', 'Avatar engine') + '">' +
       '<pre class="generator-console" id="daEngine"></pre></section>' +
@@ -263,15 +263,16 @@
   }
 
   function engineLines() {
+    var en = lang() === 'en';
     return [
       'DIGITALAVATAR ENGINE',
-      'version: ' + (versionText() || 'sin sello'),
+      (en ? 'version: ' : 'versión: ') + (versionText() || (en ? 'no seal' : 'sin sello')),
       'avatar: neo',
-      'nivel: ' + nivelActual(),
-      'voz: ' + vozActual(),
-      'cerebro: brain.digitalavatar.ai',
+      (en ? 'level: ' : 'nivel: ') + nivelActual(),
+      (en ? 'voice: ' : 'voz: ') + vozActual(),
+      (en ? 'brain: ' : 'cerebro: ') + 'brain.digitalavatar.ai',
       'metahuman host: ' + hostState,
-      'estado: ' + (engineState || (lang() === 'en' ? 'ready' : 'listo'))
+      (en ? 'status: ' : 'estado: ') + (engineState || (en ? 'ready' : 'listo'))
     ];
   }
 
@@ -432,6 +433,7 @@
     document.documentElement.lang = next;
     document.dispatchEvent(new CustomEvent('da:lang', {detail: {lang: next}}));
     translate();
+    try { paintEngine(); } catch (e) {}
   }
 
   function run(text) {
@@ -642,7 +644,7 @@
     });
 
     paintEngine();
-    log('CLI de DigitalAvatar · ADmiraNeXT · escribe /help');
+    log(lang() === 'en' ? 'DigitalAvatar CLI · ADmiraNeXT · type /help' : 'CLI de DigitalAvatar · ADmiraNeXT · escribe /help');
     probeHost();
     fetch('/version.json', {cache: 'no-store'}).then(function (response) {
       return response.ok ? response.json() : null;

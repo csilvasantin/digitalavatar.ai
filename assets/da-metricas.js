@@ -46,6 +46,8 @@
   Object.keys(AVATARES).forEach(function (k) {
     advanced.push({href: '/metricas/?' + new URLSearchParams(Object.assign({}, cfg.q || {}, {avatar: k})).toString(), es: AVATARES[k], en: AVATARES[k], current: (cfg.q || {}).avatar === k});
   });
+  var qNoAv = Object.assign({}, cfg.q || {}); delete qNoAv.avatar;
+  advanced.push({href: '/metricas/?' + new URLSearchParams(qNoAv).toString(), es: 'Todos los avatares', en: 'All avatars', current: !(cfg.q || {}).avatar});
   advanced.push({group: true, es: 'Panel', en: 'Panel'});
   advanced.push({href: '/metricas/salir', es: 'Salir de métricas', en: 'Sign out of metrics', current: false});
 
@@ -58,7 +60,7 @@
       periodo: verb('periodo', DIAS, 'periodo: /periodo 1|7|30|90', 'period: /periodo 1|7|30|90', 'days'),
       pruebas: {es: 'pruebas internas: /pruebas on|off', en: 'internal tests: /pruebas on|off', run: function (args, api) {
         var on = /^(on|si|sí|1|yes)$/i.test(String(args).trim());
-        api.log(on ? 'Incluyo pruebas internas' : 'Solo uso real'); setTimeout(function () { go('qa', on ? '1' : null); }, 150);
+        var en = api.lang() === 'en'; api.log(on ? (en ? 'Including internal tests' : 'Incluyo pruebas internas') : (en ? 'Real usage only' : 'Solo uso real')); setTimeout(function () { go('qa', on ? '1' : null); }, 150);
       }}
     }
   };
@@ -70,10 +72,18 @@
     paintLang();
     new MutationObserver(paintLang).observe(document.documentElement, {attributes: true, attributeFilter: ['lang']});
   }
+  // El panel lo pinta el servidor en el idioma de ?lang= o de la cookie da_lang. Si el shell
+  // (localStorage da_lang, /idioma, botón Idioma) pide otro, se guarda la cookie y se recarga.
   function paintLang() {
-    var en = (document.documentElement.lang || '').indexOf('en') === 0;
-    var nodes = document.querySelectorAll('[data-mes][data-men]');
-    for (var i = 0; i < nodes.length; i++) nodes[i].textContent = nodes[i].getAttribute(en ? 'data-men' : 'data-mes');
+    var want = (document.documentElement.lang || '').indexOf('en') === 0 ? 'en' : 'es';
+    var have = cfg.lang === 'en' ? 'en' : 'es';
+    try { document.cookie = 'da_lang=' + want + '; Path=/; Max-Age=31536000; SameSite=Lax; Secure'; } catch (e) {}
+    if (want === have) return;
+    var guard = 'da_mx_reload_' + want;
+    try { if (sessionStorage.getItem(guard) === location.search) return; sessionStorage.setItem(guard, location.search); } catch (e) {}
+    var q = new URLSearchParams(location.search); q.delete('lang');
+    var s = q.toString();
+    location.replace('/metricas/' + (s ? '?' + s : ''));
   }
   document.addEventListener('da:lang', paintLang);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire); else wire();

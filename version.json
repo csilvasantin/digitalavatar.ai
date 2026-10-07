@@ -1,14 +1,14 @@
 {
-  "version": "v.07.10.2026.r17.12:02",
-  "builtAt": "2026-10-07T10:02:00Z",
-  "note": "Arreglo: el panel de métricas ya carga su menú cuadrático y la marca blanca (la caché guardaba una versión vacía del script).",
+  "version": "v.07.10.2026.r18.12:06",
+  "builtAt": "2026-10-07T10:06:00Z",
+  "note": "Las métricas ya salen enteras en inglés con /idioma en (títulos, filtros, notas, temas y el CLI experto), y el menú Avanzado marca con un punto la marca y el avatar activos.",
   "novedades": [
+    "/idioma en traduce todo el panel de métricas, también lo que pinta el servidor, y lo recuerda",
+    "El CLI experto y el motor salen en inglés (EXPERT · CLI, level, status)",
+    "▤ Avanzado marca con ● la marca y el avatar activos (y «Todos los avatares»)",
     "digitalavatar.ai/metricas con la barra cuadrática común: ☰ Opciones, ▤ Avanzado y ⌘ Experto con su CLI",
     "Marca blanca: selector Starbucks, 365 o AdmiraNeXT que viste el panel con los colores de la marca y filtra las métricas",
-    "CLI del panel: /marca, /persona, /plataforma, /periodo, /pruebas e /idioma",
-    "El panel Avanzado lleva la marca y el avatar a un clic; el idioma cambia también las etiquetas del panel",
-    "Panel de métricas en digitalavatar.ai/metricas, sin redirecciones, con la sesión de AdmiraNeXT",
-    "Pestañas por avatar (Admirito, Luna, Neo), marca y plataforma"
+    "CLI del panel: /marca, /persona, /plataforma, /periodo, /pruebas e /idioma"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
