@@ -132,7 +132,10 @@
     tier: tier, lang: lang, avatar: avatar,
     profile: function () { return profile; },
     ready: function () { return pending || Promise.resolve(profile); },
-    chips: function (fallback) { return profile && profile.chips && profile.chips.length ? profile.chips : (fallback || []); },
+    // Chip de demo (7-oct-2026): «Demo · 30 s» → el cerebro lo trata como /demo (pitch de 30 s).
+    chips: function (fallback) { var l = profile && profile.chips && profile.chips.length ? profile.chips : (fallback || []); return l.some(function (c) { return /^\/?demo\b/i.test(String(c)); }) ? l : ['Demo · 30 s'].concat(l); },
+    // ?demo=1: lanza el pitch al cargar (una vez), con el ask de cada página.
+    demoOnLoad: function (askFn) { try { if (new URLSearchParams(root.location.search).get('demo') !== '1') return; } catch (_) { return; } (pending || Promise.resolve()).then(function () { setTimeout(function () { askFn('/demo'); }, 700); }); },
     idle: function (fallback) { return profile && profile.idle && profile.idle.length ? profile.idle : (fallback || []); },
     greeting: function (fallback) { return (profile && profile.greeting) || fallback || ''; },
     who: function (fallback) { return (profile && profile.who) || fallback || ''; },

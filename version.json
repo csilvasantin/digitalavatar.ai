@@ -1,11 +1,11 @@
 {
-  "version": "v.07.10.2026.r5.07:37",
-  "builtAt": "2026-10-07T05:37:31Z",
-  "note": "Luna (human) y Neo (metahuman) estrenan el composer compacto de Admirito.",
+  "version": "v.07.10.2026.r6.08:47",
+  "builtAt": "2026-10-07T06:47:06Z",
+  "note": "Voz propia por avatar, labios de Luna por amplitud y /demo de 30 s.",
   "novedades": [
-    "Luna y Neo usan el composer compacto: sugerencias, ESP|ENG y micro/detener/preguntar dentro de la caja",
-    "Desaparecen la barra grande de idioma y los tres botones grandes",
-    "El aviso MODO WEB de Neo es ahora discreto"
+    "Cada avatar con su voz: Admirito alegre, Luna cálida y Neo sereno",
+    "Luna mueve los labios con la energía real de su voz, y también en modo solo texto",
+    "/demo, el chip «Demo · 30 s» o ?demo=1: pitch de 30 s para esta tienda; Admirito acaba con un bailecito"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
