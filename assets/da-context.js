@@ -188,7 +188,6 @@
     var m = /^\/?demo\s+(auto|todas|todos|all|pausa|pause|reanudar|resume|continuar|siguiente|next|stop|off|parar|estado|status|help|ayuda|lista|\?)$/i.exec(norm(question));
     if (!m || root.self === root.top) return null;
     var isHelp = /^(help|ayuda|lista|\?)$/.test(m[1]);
-    if (isHelp && !LOCAL) return null;
     demoPending = null;
     clearTimeout(demoOpeningTimer); demoOpeningTimer = null;
     if (!demoParentOrigin) return Promise.resolve({ok: false, confirmed: false, message: demoFeedback('No trusted host is available; the demo command is not confirmed.', 'No hay un anfitrión de confianza disponible; la orden de demo no está confirmada.')});
