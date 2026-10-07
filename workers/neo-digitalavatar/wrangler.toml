@@ -1,0 +1,7 @@
+# Worker neo-digitalavatar (cuenta csilvasantin@gmail.com). Fuente recuperada de producción
+# el 7-oct-2026 y ampliada con la inyección de da-turn.js. Deploy:
+#   cd workers/neo-digitalavatar && npx wrangler@4.119.0 deploy
+name = "neo-digitalavatar"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
