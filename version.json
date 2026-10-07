@@ -1,7 +1,7 @@
 {
-  "version": "v.07.10.2026.r16.11:43",
-  "builtAt": "2026-10-07T09:43:00Z",
-  "note": "El panel de métricas ya usa la plataforma cuadrática de Admira: ☰ Opciones, ▤ Avanzado y ⌘ Experto (oculto al cargar), y la marca blanca cambia el tema y filtra los datos.",
+  "version": "v.07.10.2026.r17.12:02",
+  "builtAt": "2026-10-07T10:02:00Z",
+  "note": "Arreglo: el panel de métricas ya carga su menú cuadrático y la marca blanca (la caché guardaba una versión vacía del script).",
   "novedades": [
     "digitalavatar.ai/metricas con la barra cuadrática común: ☰ Opciones, ▤ Avanzado y ⌘ Experto con su CLI",
     "Marca blanca: selector Starbucks, 365 o AdmiraNeXT que viste el panel con los colores de la marca y filtra las métricas",
