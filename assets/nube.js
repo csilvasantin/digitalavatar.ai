@@ -14,7 +14,8 @@
  * postMessage (como best.html): da-ask {question,lang} · da-lang · da-audio {on} → da-answer.
  * Bailes (7-oct-2026): giro, baile, voltereta, gelatina y lluvia (con arcoíris) cada ~9–15 s de reposo;
  * ?dance=1 los enseña todos en bucle, ?dance=<nombre> uno solo (alias spin, dance, flip, jelly, rain).
- * Slash: /animacion 1|giro … /animacion help (también /animación, /animation, /ayuda animacion).
+ * Slash: /animacion 1|giro … /animacion help; /quien soy; /perfil; /aprender|/train (admin); /help.
+ * Identidad: avatar=admirito (tier good). Nunca se mezcla con Alex ni Neo.
  */
 (function () {
   'use strict';
@@ -498,6 +499,85 @@
     var h = DANCE_HELP[LANG] || DANCE_HELP.es;
     return h.title + '\n' + h.lines.join('\n') + '\n' + h.usage;
   }
+
+  // ───────────────────────── Identidad Admirito ─────────────────────────
+  function parseIdentityCommand(raw) {
+    var t = String(raw || '').trim();
+    var m = t.match(/^\/\s*(quien\s+soy|whoami|perfil|profile|aprender|train|olvidar|forget|help|ayuda|avatar\s+help)\s*(.*)$/i);
+    if (!m) return null;
+    var verb = m[1].toLowerCase().replace(/\s+/g, ' ');
+    var arg = String(m[2] || '').trim();
+    if (verb === 'quien soy' || verb === 'whoami') return { kind: 'who' };
+    if (verb === 'perfil' || verb === 'profile') return { kind: 'profile' };
+    if (verb === 'aprender' || verb === 'train') return { kind: 'train', fact: arg };
+    if (verb === 'olvidar' || verb === 'forget') return { kind: 'forget', fact: arg };
+    if (verb === 'help' || verb === 'ayuda' || verb === 'avatar help') return { kind: 'help' };
+    return null;
+  }
+  function identityHelpText() {
+    if (LANG === 'en') {
+      return 'Admirito · commands\n'
+        + '/quien soy — who I am\n'
+        + '/perfil — my profile and trained facts\n'
+        + '/animacion help — the 5 dances\n'
+        + '/animacion 1|giro … 5|lluvia — play a dance\n'
+        + '/aprender <fact> — teach me (needs admin token; see help)\n'
+        + '/olvidar <text> — forget a fact (admin)\n'
+        + 'Training API: POST /metahuman/train with Bearer ADMIN_TOKEN.';
+    }
+    return 'Admirito · comandos\n'
+      + '/quien soy — quién soy\n'
+      + '/perfil — mi perfil y hechos aprendidos\n'
+      + '/animacion help — los 5 bailes\n'
+      + '/animacion 1|giro … 5|lluvia — lanza un baile\n'
+      + '/aprender <hecho> — enseñarme algo (hace falta token de admin)\n'
+      + '/olvidar <texto> — olvidar un hecho (admin)\n'
+      + 'API: POST https://brain.digitalavatar.ai/metahuman/train con Authorization: Bearer <ADMIN_TOKEN>.';
+  }
+  function handleIdentityCommand(cmd) {
+    if (cmd.kind === 'help') { showHelpReply(identityHelpText()); return; }
+    if (cmd.kind === 'who') {
+      var who = DACTX.who && DACTX.who();
+      showHelpReply(who || (LANG === 'en'
+        ? "Hi! I'm Admirito, the green AdmiraNeXT cloud."
+        : '¡Hola! Soy Admirito, la nube verde de AdmiraNeXT.'));
+      return;
+    }
+    if (cmd.kind === 'profile') {
+      var sum = DACTX.summary && DACTX.summary();
+      if (sum) { showHelpReply(sum); return; }
+      DACTX.refresh().then(function () { showHelpReply((DACTX.summary && DACTX.summary()) || identityHelpText()); });
+      return;
+    }
+    if (cmd.kind === 'train' || cmd.kind === 'forget') {
+      var token = '';
+      try { token = String(window.DA_ADMIN_TOKEN || localStorage.getItem('da_admin_token') || '').trim(); } catch (_) {}
+      if (!cmd.fact) {
+        showHelpReply(LANG === 'en'
+          ? 'Usage: /' + (cmd.kind === 'train' ? 'aprender' : 'olvidar') + ' <text>. Needs ADMIN_TOKEN (not available in this page by default).'
+          : 'Uso: /' + (cmd.kind === 'train' ? 'aprender' : 'olvidar') + ' <texto>. Hace falta ADMIN_TOKEN (esta página no lo trae por defecto).');
+        return;
+      }
+      if (!token) {
+        showHelpReply(LANG === 'en'
+          ? 'I can only learn through the admin API:\nPOST /metahuman/train {\"avatar\":\"admirito\",\"fact\":\"…\"}\nAuthorization: Bearer <ADMIN_TOKEN>\n(The token is not embedded in this page on purpose.)'
+          : 'Solo puedo aprender por la API de admin:\nPOST /metahuman/train {\"avatar\":\"admirito\",\"fact\":\"…\"}\nAuthorization: Bearer <ADMIN_TOKEN>\n(El token no va en esta página a propósito.)');
+        return;
+      }
+      var path = cmd.kind === 'train' ? '/metahuman/train' : '/metahuman/forget';
+      fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ avatar: 'admirito', fact: cmd.fact }) })
+        .then(function (r) { return r.json().catch(function () { return {}; }); })
+        .then(function (d) {
+          if (!d || !d.ok) { showHelpReply((LANG === 'en' ? 'Could not save: ' : 'No se pudo guardar: ') + (d && d.error || 'error')); return; }
+          DACTX.refresh();
+          showHelpReply(LANG === 'en'
+            ? (cmd.kind === 'train' ? 'Learned. ' : 'Forgot. ') + (d.facts || []).slice(-3).join(' · ')
+            : (cmd.kind === 'train' ? 'Aprendido. ' : 'Olvidado. ') + (d.facts || []).slice(-3).join(' · '));
+        })
+        .catch(function (e) { showHelpReply(String(e.message || e)); });
+    }
+  }
+
   function parseAnimCommand(raw) {
     var t = String(raw || '').trim();
     // /animación, /animaciones, /animation, /animacion; also "/ayuda animacion"
@@ -528,6 +608,13 @@
     warmGraph();
     question = String(question || $('q').value || '').trim();
     if (!question) return;
+    var idCmd = parseIdentityCommand(question);
+    if (idCmd) {
+      $('q').value = '';
+      clearHelpClass();
+      handleIdentityCommand(idCmd);
+      return;
+    }
     var cmd = parseAnimCommand(question);
     if (cmd) {
       $('q').value = '';
@@ -662,7 +749,7 @@
 
   drawMouth();
   applyLang(LANG);
-  DACTX.init({ tier: 'good', lang: LANG });
+  DACTX.init({ tier: 'good', avatar: 'admirito', lang: LANG });
   if (!DOCK && !KIOSK && !EMBED) loadLocations();
   requestAnimationFrame(frame);
 })();
