@@ -171,7 +171,7 @@
     body[data-da-composer=compact] .ask input{padding:8px 10px;min-height:36px;font-size:.88rem}
     body[data-da-composer=compact] .stage-bar{font-size:.66rem!important;padding:3px 8px!important;letter-spacing:.06em;opacity:.85}
   </style>
-  <script src="/assets/da-context.js?v=20261007-salas-3"></script>
+  <script src="/assets/da-context.js?v=20261007-demo-controls-1"></script>
   <script src="/assets/da-neo-player.js?v=20261004-proxy-1"></script>
   <script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
   <script>
@@ -230,6 +230,15 @@
     window.__daArmStream=armStream;
     async function ask(){
       var text=(q.value||'').trim(); if(!text) return;
+      var demoControl=DACTX.demoCommand && DACTX.demoCommand(text);
+      if(demoControl){
+        var controlMine=++seq; DADemo.stop(); clearTimeout(talkTimer); q.value=''; send.disabled=false;
+        paint('listo'); setAns(lang()==='en'?'Waiting for host confirmation…':'Esperando confirmación del anfitrión…',true);
+        var result=await demoControl;
+        if(controlMine!==seq) return;
+        setAns(result.message,true); paint(result.ok?'listo':'error',result.ok?'':result.message);
+        return;
+      }
       if(DACTX.demoAsk) text=DACTX.demoAsk(text);   // /demo <solución> (da-context.js)
       var mine=++seq;
       var lab=L();
