@@ -1,13 +1,14 @@
 {
-  "version": "v.07.10.2026.r22.22:06",
-  "builtAt": "2026-10-07T20:06:37Z",
-  "note": "Neo se ve y se oye fuera de la red de casa: el reproductor pide un relé TURN de Cloudflare de corta duración.",
+  "version": "v.07.10.2026.r23.22:24",
+  "builtAt": "2026-10-07T20:24:21Z",
+  "note": "Neo mueve la boca de verdad: la mandíbula sigue la energía real de su voz, y el relé de voz en vivo vuelve a estar arriba.",
   "novedades": [
-    "Neo (MetaHuman) se ve y se oye desde cualquier red: el reproductor usa un relé TURN de Cloudflare cuando no hay camino directo",
-    "La credencial dura 10 minutos y la acuña el servidor (api.yokup.com/turn); se renueva sola sólo si el relé está en uso",
-    "Funciona también en redes que sólo dejan salir por el puerto 443"
+    "Neo (MetaHuman) abre y cierra la boca siguiendo la energía real de su voz, no solo las letras: abre en las sílabas fuertes y cierra en las pausas",
+    "Visemas más marcados y sincronizados con el reloj real del audio",
+    "El relé de voz en vivo (mandíbula desde el móvil) vuelve a estar arriba y arranca solo en el MBP16",
+    "Se ve y se oye desde cualquier red gracias al relé TURN de Cloudflare (r22)"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "retorno/pre-neo-turn-20261007"
+  "rollback": "retorno/pre-neo-labios-20261007"
 }
