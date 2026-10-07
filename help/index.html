@@ -28,10 +28,10 @@
     footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);color:var(--dim);font:11px var(--mono)}
   </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.07.10.2026.r3.06:50">
+<meta name="admiranext-version" content="v.07.10.2026.r4.07:03">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
-<script defer src="/assets/da-shell.js?v=20261006-nube-1" data-section="/ ayuda" data-section-en="/ help"></script>
+<script defer src="/assets/da-shell.js?v=20261007-luna-1" data-section="/ ayuda" data-section-en="/ help"></script>
 </head>
 <body>
 <div class="wrap">
@@ -55,21 +55,21 @@
     <li><b>En una pantalla</b>, cuando hace falta que alguien atienda y no hay nadie detrás.</li>
   </ul>
 
-  <h2>Tres niveles</h2>
+  <h2>Tres categorías</h2>
   <ul>
-    <li><b>Good · <a href="/nube.html">la nube Admirito</a></b>: la mascota de la casa, animada. Sencilla y
+    <li><b>Avatar · <a href="/nube.html">la nube Admirito</a></b>: la mascota de la casa, animada. Sencilla y
       muy ligera: mueve los labios cuando habla, parpadea, mira alrededor y hace cosas si nadie la
       toca (y se duerme si la dejas un rato). Tócala y se pone contenta. Si nadie le pregunta, cada poco
       hace un número para que la mires: una pirueta, un bailecito con notas, una voltereta, una gelatina
       disco con bracitos o un nubarrón que acaba en arcoíris. Para verlos todos seguidos: <a href="/nube.html?dance=1">nube.html?dance=1</a>.
       También desde la caja: <code>/animacion 1</code>…<code>/animacion 5</code> (o el nombre: giro, baile, voltereta, gelatina, lluvia)
       y <code>/animacion help</code> para la lista. Chips, idioma y micrófono van dentro de la caja de texto.</li>
-    <li><b>Tres identidades</b>: Good = <b>Admirito</b> (nube), Better = <b>Alex</b> (anfitriona web),
-      Best = <b>Neo</b> (MetaHuman). Cada uno tiene perfil y hechos propios; no se mezclan.
+    <li><b>Tres identidades</b>: avatar = <b>Admirito</b> (nube), human = <b>Luna</b> (anfitriona web),
+      metahuman = <b>Neo</b> (MetaHuman). <code>/avatar avatar|human|metahuman</code> (good/better/best siguen de alias). Cada uno tiene perfil y hechos propios; no se mezclan.
       «¿Quién eres?» responde en carácter. Entrenar: <code>POST /metahuman/train</code> con Bearer ADMIN_TOKEN.</li>
-    <li lang="en"><b>Three identities</b>: Good=<b>Admirito</b>, Better=<b>Alex</b>, Best=<b>Neo</b>. Isolated profiles/facts. Train via <code>POST /metahuman/train</code> with ADMIN_TOKEN.</li>
-    <li><b>Better · <a href="/best.html">la chica web</a></b>: avatar 3D realista que habla siempre.</li>
-    <li><b>Best · <a href="/metahuman.html">Neo</a></b>: el MetaHuman en directo, lo opuesto a la nube.</li>
+    <li lang="en"><b>Three identities</b>: avatar=<b>Admirito</b>, human=<b>Luna</b>, metahuman=<b>Neo</b> (good/better/best kept as aliases). Isolated profiles/facts. Train via <code>POST /metahuman/train</code> with ADMIN_TOKEN.</li>
+    <li><b>Human · <a href="/best.html">Luna</a></b>: la anfitriona web, cálida y amable, avatar 3D realista que habla siempre.</li>
+    <li><b>Metahuman · <a href="/metahuman.html">Neo</a></b>: el MetaHuman en directo, lo opuesto a la nube.</li>
   </ul>
 
   <h2>Qué se le puede pedir</h2>
@@ -94,6 +94,6 @@
     <a href="https://www.admiranext.com/normativa">normativa</a>
   </footer>
 </div>
-<section id="avatar-conversation-language"><h2>Idioma y controles del avatar / Avatar language and controls</h2><p lang="es">Al abrir el avatar se hereda el idioma actual del site: ESP en castellano y ENG en inglés. El modelo inicial es Good · Admirito, independiente de la calidad del Xpacio (también en Matrix). El selector Modelo del avatar permite elegir Good · Admirito, Better · Chica o Best · Neo; también sirven /avatar digital good, /avatar digital better y /avatar digital best. Una elección explícita de modelo se conserva en esta pestaña. ESP muestra Micrófono, Detener y Preguntar; ENG muestra Microphone, Stop y Ask. Cambiar ESP/ENG dentro de la conversación conserva la pregunta escrita y detiene la voz/escucha anterior, sin enviar una pregunta ni activar el micrófono. Al cerrar y reabrir vuelve a heredarse el idioma del site; cambiar el idioma del site actualiza la conversación abierta sin recargar el iframe. Best utiliza el MetaHuman Neo y conserva el respaldo web existente cuando el host no emite.</p><p lang="en">Opening the avatar inherits the current site language: ESP for Spanish and ENG for English. The initial model is Good · Admirito, independent of Xpace quality (including Matrix). The Avatar model selector offers Good · Admirito, Better · Girl or Best · Neo; /avatar digital good, /avatar digital better and /avatar digital best also work. An explicit model choice is retained for this tab. ESP shows Micrófono, Detener and Preguntar; ENG shows Microphone, Stop and Ask. Switching ESP/ENG in the conversation preserves the typed question and stops the previous speech/listening without sending a question or enabling the microphone. Closing and reopening inherits the site language again; changing the site language updates the open conversation without reloading its iframe. Best uses the Neo MetaHuman and retains the existing web fallback when the render host is unavailable.</p></section>
+<section id="avatar-conversation-language"><h2>Idioma y controles del avatar / Avatar language and controls</h2><p lang="es">Al abrir el avatar se hereda el idioma actual del site: ESP en castellano y ENG en inglés. El modelo inicial es Avatar · Admirito, independiente de la calidad del Xpacio (también en Matrix). El selector Modelo del avatar permite elegir Avatar · Admirito, Human · Luna o Metahuman · Neo; también sirven /avatar digital good, /avatar digital better y /avatar digital best. Una elección explícita de modelo se conserva en esta pestaña. ESP muestra Micrófono, Detener y Preguntar; ENG muestra Microphone, Stop y Ask. Cambiar ESP/ENG dentro de la conversación conserva la pregunta escrita y detiene la voz/escucha anterior, sin enviar una pregunta ni activar el micrófono. Al cerrar y reabrir vuelve a heredarse el idioma del site; cambiar el idioma del site actualiza la conversación abierta sin recargar el iframe. Best utiliza el MetaHuman Neo y conserva el respaldo web existente cuando el host no emite.</p><p lang="en">Opening the avatar inherits the current site language: ESP for Spanish and ENG for English. The initial model is Avatar · Admirito, independent of Xpace quality (including Matrix). The Avatar model selector offers Avatar · Admirito, Human · Luna or Metahuman · Neo; /avatar digital good, /avatar digital better and /avatar digital best also work. An explicit model choice is retained for this tab. ESP shows Micrófono, Detener and Preguntar; ENG shows Microphone, Stop and Ask. Switching ESP/ENG in the conversation preserves the typed question and stops the previous speech/listening without sending a question or enabling the microphone. Closing and reopening inherits the site language again; changing the site language updates the open conversation without reloading its iframe. Best uses the Neo MetaHuman and retains the existing web fallback when the render host is unavailable.</p></section>
 </body>
 </html>

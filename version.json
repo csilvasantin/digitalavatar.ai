@@ -1,11 +1,11 @@
 {
-  "version": "v.07.10.2026.r3.06:50",
-  "builtAt": "2026-10-07T04:50:18Z",
-  "note": "Tres identidades: Admirito (good), Alex (better) y Neo (best); perfiles y hechos aislados; /quien soy, /perfil, /aprender (admin).",
+  "version": "v.07.10.2026.r4.07:03",
+  "builtAt": "2026-10-07T05:03:23Z",
+  "note": "Categorías nuevas: avatar (Admirito), human (Luna) y metahuman (Neo). Alex pasa a llamarse Luna.",
   "novedades": [
-    "Cada nivel tiene nombre propio: Admirito (nube), Alex (anfitriona web) y Neo (MetaHuman); «¿Quién eres?» responde distinto",
-    "Perfil y hechos entrenados por avatar en el cerebro (no se mezclan proyectos ni memorias)",
-    "Comandos /quien soy, /perfil, /aprender|/train, /olvidar|/forget y /help en la nube; train vía ADMIN_TOKEN"
+    "Las tres categorías del avatar se llaman ahora avatar, human y metahuman: Admirito, Luna y Neo",
+    "Alex pasa a llamarse Luna: se presenta como Luna, cálida, amable y profesional",
+    "/avatar avatar|human|metahuman; good, better y best siguen funcionando como alias"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
