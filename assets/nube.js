@@ -631,6 +631,8 @@
     }
     stopDance();
     stopAll();
+    // /demo <solución>: presenta la solución y luego la página abre su demo (da-context.js).
+    if (DACTX.demoAsk) question = DACTX.demoAsk(question);
     var mine = ++asking;
     $('q').value = ''; clearHelpClass(); setStatus(T[LANG].thinking); if (DADemo) DADemo.setState('pensando'); $('btnSend').disabled = true; setCaption('…');
     S.mode = 'thinking';
@@ -642,6 +644,7 @@
       if (!j.ok) { S.mode = 'idle'; setStatus('❌ ' + (j.error || ('HTTP ' + res.status)), 'err'); setCaption(''); if (DADemo) DADemo.setState('listo'); notifyParent({ error: j.error || ('HTTP ' + res.status) }); return; }
       var answer = j.answer || '';
       DACTX.remember(question, answer);
+      if (DACTX.demoDone) DACTX.demoDone(answer);
       // /demo de Admirito: termina con un bailecito al acabar de hablar.
       var danceAfter = !!j.dance && !REDUCED;
       if (j.audioBase64 && !MUTED && DADemo) {

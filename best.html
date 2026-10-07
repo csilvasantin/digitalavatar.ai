@@ -367,6 +367,7 @@ function tickCaption(){ if(!capTrack||!audioEl) return; const t=audioEl.currentT
 function notifyParent(payload){ try{ if(window.self!==window.top) window.parent.postMessage(Object.assign({type:'da-answer'},payload||{}),'*'); }catch(e){} }
 async function ask(question){
   question=(question||$('q').value).trim(); if(!question) return;
+  if(DACTX.demoAsk) question=DACTX.demoAsk(question);   // /demo <solución> (da-context.js)
   $('q').value=''; setStatus(T[LANG].thinking); $('btnSend').disabled=true; setCaption('…'); thinking=true;
   if(!KIOSK && window.DADemo){ DADemo.unlock(); DADemo.stop(); DADemo.setState('pensando'); }
   try{ const res=await fetch(API+'/metahuman/ask',{method:'POST',headers:{'Content-Type':'application/json'},
@@ -375,6 +376,7 @@ async function ask(question){
     if(!j.ok){ thinking=false; setStatus('❌ '+(j.error||('HTTP '+res.status)),'err'); setCaption(''); notifyParent({error:(j.error||('HTTP '+res.status))}); return; }
     const answer=j.answer||'';
     DACTX.remember(question, answer);
+    if(DACTX.demoDone) DACTX.demoDone(answer);
     if(MUTED){ thinking=false; setCaption(answer); speakTextOnly(answer); setStatus(''); resetAttract(); listenAfterReply(); notifyParent({answer:answer,muted:true,spoke:false}); return; }   // mudo: respuesta solo en subtítulo
     if(j.audioBase64){
       if(audioEl){try{audioEl.pause();}catch(e){}}
