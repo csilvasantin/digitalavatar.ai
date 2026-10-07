@@ -96,11 +96,9 @@
     if (ctx.sector) b.sector = ctx.sector;
     if (ctx.brand) b.brand = ctx.brand;
     if (ctx.site || ctx.city) b.site = {name: ctx.site || '', city: ctx.city || ''};
-    if (tier() === 'best') {
-      var h = historyFor(avatar());
-      if (h.length) b.history = h.slice(-6);
-      if (ctx.live) b.context = ctx.live;
-    }
+    // Historial: en best siempre; con marca (p. ej. Starbucks) también, para el pedido paso a paso.
+    if (tier() === 'best' || ctx.brand) { var h = historyFor(avatar()); if (h.length) b.history = h.slice(-6); }
+    if (tier() === 'best' && ctx.live) b.context = ctx.live;
     if (extra) for (var k in extra) if (Object.prototype.hasOwnProperty.call(extra, k) && extra[k] !== undefined && extra[k] !== '') b[k] = extra[k];
     return b;
   }
