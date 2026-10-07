@@ -1,11 +1,11 @@
 {
-  "version": "v.07.10.2026.r6.08:47",
-  "builtAt": "2026-10-07T06:47:06Z",
-  "note": "Voz propia por avatar, labios de Luna por amplitud y /demo de 30 s.",
+  "version": "v.07.10.2026.r7.08:55",
+  "builtAt": "2026-10-07T06:55:31Z",
+  "note": "Luna en modo solo texto no pide voz; ?caption=off para grabar los labios.",
   "novedades": [
-    "Cada avatar con su voz: Admirito alegre, Luna cálida y Neo sereno",
-    "Luna mueve los labios con la energía real de su voz, y también en modo solo texto",
-    "/demo, el chip «Demo · 30 s» o ?demo=1: pitch de 30 s para esta tienda; Admirito acaba con un bailecito"
+    "Con el audio apagado, Luna ya no pide voz al cerebro (ahorra créditos) y sigue moviendo los labios con el texto",
+    "?caption=off oculta el subtítulo para ver la boca en grabaciones",
+    "/demo se queda en unos 30 segundos y llama a cada tienda por su sector"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
