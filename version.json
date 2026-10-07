@@ -1,13 +1,13 @@
 {
-  "version": "v.07.10.2026.r20.12:58",
-  "builtAt": "2026-10-07T10:58:37Z",
-  "note": "La primera orden /demo help del avatar incrustado pide el listado al anfitrión incluso antes de recibir el catálogo local, sin proveedor ni voz.",
+  "version": "v.07.10.2026.r21.21:34",
+  "builtAt": "2026-10-07T19:34:50Z",
+  "note": "Neo vuelve a hablar en el stream: la respuesta se publica en la sala que sondea Unreal. En el gemelo, el idioma ESP/ENG pasa a la barra superior.",
   "novedades": [
-    "/demo help, ayuda, lista y ? esperan el listado real del anfitrión desde la primera apertura",
-    "La ayuda falla localmente si no hay anfitrión de confianza, sin caer al cerebro",
-    "Números, nombres y ayuda del avatar independiente conservan su comportamiento"
+    "Neo (MetaHuman): cada respuesta se publica en la sala del render (/metahuman/say), y Unreal la locuta con su voz y labios en el stream",
+    "Antes /metahuman/ask no la publicaba y Neo se quedaba callado aunque el cerebro respondía",
+    "Con ?langui=host (lo usa el gemelo), Admirito, Luna y Neo ocultan su selector ESP/ENG porque lo pone el anfitrión arriba"
   ],
-  "signature": "Trinity · MacBook Pro 16",
+  "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "retorno/pre-da-matrix-20261006"
+  "rollback": "retorno/pre-neo-voz-20261007"
 }
