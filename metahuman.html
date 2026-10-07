@@ -53,14 +53,14 @@
   .alt{ color:var(--muted); font-size:.8rem; text-align:center } .alt a{ color:var(--accent); text-decoration:none; font-weight:600 }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.07.10.2026.r4.07:03">
+<meta name="admiranext-version" content="v.07.10.2026.r5.07:37">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
 <script defer src="/assets/da-shell.js?v=20261007-luna-1" data-section="/ metahuman" data-section-en="/ metahuman"></script>
 <script defer src="https://www.admiranext.com/assets/sello-novedades.js?v=20261006-sello-1" data-target="#daVersion" data-floating="off"></script>
-<link rel="stylesheet" href="/assets/da-conversation-controls.css?v=20261006-controls-1">
+<link rel="stylesheet" href="/assets/da-conversation-controls.css?v=20261007-composer-2">
 </head>
-<body>
+<body data-da-composer="compact">
   <nav id="evo" aria-label="Evolución del avatar">
     <a data-evo="nube" href="nube.html">Nube</a>
     <a data-evo="vectorial" href="vectorial.html">Vectorial</a>
@@ -110,15 +110,22 @@
       </div>
       <div class="ask">
         <div class="vstate" id="vstate" data-s="listo">Listo</div>
-        <div class="askrow">
+        <div class="composer" id="composer">
+        <div class="hintchips chips" id="daChips" role="list" aria-label="Sugerencias"></div>
+        <div class="askrow bar">
           <input id="q" type="text" data-i18n-ph="qPh" placeholder="Pregúntale algo a Neo…" autocomplete="off">
+          <div class="lang-pills" id="langPills" role="group" aria-label="Idioma del avatar">
+            <button type="button" data-lang="es" aria-label="Español" aria-pressed="true">ESP</button>
+            <button type="button" data-lang="en" aria-label="English" aria-pressed="false">ENG</button>
+          </div>
+          
           <button id="mic" data-i18n-title="micT" title="Hablar" aria-label="Hablar por micrófono">🎤</button>
           <button id="cut" type="button" data-i18n="cutT">Detener</button>
           <button id="send" data-i18n="sendT">Preguntar</button>
         </div>
+        </div>
         <div id="ans" class="ans"></div>
       </div>
-      <div class="chips" id="daChips" aria-label="Sugerencias"></div>
     </div>
   </div>
   <style>
@@ -153,6 +160,16 @@
     .ask #mic.rec{ border-color:#ff6b6b; color:#ff6b6b }
     .ans{ min-height:0; color:var(--muted); font-size:.86rem; line-height:1.5; padding:0 4px; white-space:pre-wrap }
     .ans.show{ color:var(--txt); background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:11px 14px }
+      /* Composer compacto (como nube): mic/detener/preguntar e idioma dentro de la caja; MODO WEB discreto */
+    body[data-da-composer=compact] .askrow{flex-wrap:nowrap}
+    body[data-da-composer=compact] .ask .da-conversation-action span{display:none}
+    body[data-da-composer=compact] .ask .askrow input{flex:1 1 0}
+    body[data-da-composer=compact] .ask .askrow button svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9}
+    body[data-da-composer=compact] .ask .askrow button{width:34px;height:34px;min-height:34px;padding:0;border-radius:10px;flex:0 0 auto}
+    body[data-da-composer=compact] .ask .lang-pills button{width:auto;min-width:34px;height:28px;min-height:28px;padding:3px 7px;border:0;border-radius:8px;background:transparent;color:#9bb8cc;font:700 11px system-ui}
+    body[data-da-composer=compact] .ask .lang-pills button[aria-pressed=true]{background:#c0f3e6;color:#09281f}
+    body[data-da-composer=compact] .ask input{padding:8px 10px;min-height:36px;font-size:.88rem}
+    body[data-da-composer=compact] .stage-bar{font-size:.66rem!important;padding:3px 8px!important;letter-spacing:.06em;opacity:.85}
   </style>
   <script src="/assets/da-context.js?v=20261007-luna-1"></script>
   <script src="/assets/da-neo-player.js?v=20261004-proxy-1"></script>
@@ -489,6 +506,6 @@
     if(btn) btn.onclick=function(){ apply(window.DA_LANG==='en' ? 'es' : 'en'); };
   })();
   </script>
-<script defer src="/assets/da-conversation-controls.js?v=20261006-defaults-1"></script>
+<script defer src="/assets/da-conversation-controls.js?v=20261007-composer-2"></script>
 </body>
 </html>
