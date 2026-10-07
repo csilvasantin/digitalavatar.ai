@@ -81,7 +81,7 @@
     var el = document.createElement('a');
     el.id = 'daAction'; el.href = a.url; el.target = '_blank'; el.rel = 'noopener';
     el.textContent = '☕ ' + (a.label || 'Pedir en el quiosco') + ' →';
-    el.setAttribute('style', 'position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 118px);z-index:60;padding:11px 20px;border-radius:999px;background:#00704A;color:#fff;font:700 15px/1.1 -apple-system,Inter,system-ui,sans-serif;text-decoration:none;box-shadow:0 10px 30px rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.85)');
+    el.setAttribute('style', 'position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 170px);z-index:60;padding:11px 20px;border-radius:999px;background:#00704A;color:#fff;font:700 15px/1.1 -apple-system,Inter,system-ui,sans-serif;text-decoration:none;box-shadow:0 10px 30px rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.85)');
     document.body.appendChild(el);
     setTimeout(function () { if (el.parentNode) el.remove(); }, 60000);
   }
