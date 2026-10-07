@@ -1,7 +1,7 @@
 {
-  "version": "v.07.10.2026.r9.10:01",
-  "builtAt": "2026-10-07T08:01:49Z",
-  "note": "Admirito habla en un bocadillo de cómic encima de la nube y las sugerencias viven dentro de la caja de texto.",
+  "version": "v.07.10.2026.r10.10:06",
+  "builtAt": "2026-10-07T08:06:18Z",
+  "note": "El bocadillo de Admirito ya no se encoge en pantallas anchas: muestra varias líneas y hace scroll si la respuesta es larga.",
   "novedades": [
     "La respuesta de Admirito sale en un bocadillo con pico hacia la nube (con scroll si es larga)",
     "Las sugerencias (Demo · 30 s, ¿Quién eres?…) van dentro de la caja «Escribe o pulsa 🎙️», en una fila que se desliza",
