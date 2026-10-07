@@ -230,6 +230,7 @@
     window.__daArmStream=armStream;
     async function ask(){
       var text=(q.value||'').trim(); if(!text) return;
+      if(DACTX.demoAsk) text=DACTX.demoAsk(text);   // /demo <solución> (da-context.js)
       var mine=++seq;
       var lab=L();
       DADemo.unlock();
@@ -256,6 +257,7 @@
         var a=(d.answer||'').trim();
         setAns(a||lab.noAnswer,true);
         if(a) DACTX.remember(text, a);
+        if(DACTX.demoDone) DACTX.demoDone(a);
         if(offline && d.audioBase64){
           var audio=DADemo.load(d.audioBase64, d.mime);
           audio.onended=function(){ if(mine===seq) paint('listo'); };
