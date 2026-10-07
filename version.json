@@ -1,11 +1,11 @@
 {
-  "version": "v.07.10.2026.r8.09:20",
-  "builtAt": "2026-10-07T07:20:19Z",
-  "note": "Por defecto sale Admirito.",
+  "version": "v.07.10.2026.r9.10:01",
+  "builtAt": "2026-10-07T08:01:49Z",
+  "note": "Admirito habla en un bocadillo de cómic encima de la nube y las sugerencias viven dentro de la caja de texto.",
   "novedades": [
-    "Al abrir digitalavatar.ai sale Admirito por defecto (la nube)",
-    "?tier=human sigue en Luna y ?tier=metahuman abre a Neo",
-    "Admirito habla como un chico y con voz en castellano de España"
+    "La respuesta de Admirito sale en un bocadillo con pico hacia la nube (con scroll si es larga)",
+    "Las sugerencias (Demo · 30 s, ¿Quién eres?…) van dentro de la caja «Escribe o pulsa 🎙️», en una fila que se desliza",
+    "También en el panel del avatar de las 5 plataformas (nivel avatar · Admirito)"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
