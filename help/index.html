@@ -3,97 +3,138 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>DigitalAvatar.ai · Ayuda — qué es y cómo se usa</title>
-  <meta name="description" content="DigitalAvatar.ai explicado para personas: qué es el avatar, dónde se usa dentro de la suite, qué se le puede pedir y a quién se avisa.">
+  <title>DigitalAvatar.ai · Ayuda — comandos, avatares y demos</title>
+  <meta name="description" content="Guía de DigitalAvatar.ai: todos los comandos (/animacion, /avatar, /demo, /idioma, /marca, /help), parámetros de URL, los tres avatares (Admirito, Luna, Neo), cómo lanzar demos desde cada plataforma AdmiraNeXT y el servidor MCP.">
   <link rel="icon" href="/apple-touch-icon.png">
+  <link rel="canonical" href="https://digitalavatar.ai/help/">
   <style>
-    :root{--bg:#05080f;--panel:#0b1420;--panel2:#0f1c2b;--line:#1b3346;--line2:#2a4d68;--ink:#eaf6ff;--muted:#86a6bd;--dim:#5b7a92;--brand:#5fd0ff;--ok:#6ce6a2;--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--sans:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif}
+    :root{--bg:#05080f;--panel:#0b1420;--panel2:#0f1c2b;--line:#1b3346;--line2:#2a4d68;--ink:#eaf6ff;--muted:#86a6bd;--dim:#5b7a92;--brand:#5fd0ff;--ok:#6ce6a2;--green:#8fd14f;--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--sans:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.65;-webkit-font-smoothing:antialiased}
-    .wrap{width:min(100% - 36px,900px);margin:0 auto;padding:28px 0 72px}
+    .wrap{width:min(100% - 36px,960px);margin:0 auto;padding:28px 0 72px}
     a{color:var(--brand);text-decoration:none}a:hover{text-decoration:underline}
+    html[data-l="es"] [lang="en"]:not(html){display:none!important}html[data-l="en"] [lang="es"]:not(html){display:none!important}
+    .bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .seg{display:inline-flex;border:1px solid var(--line2);border-radius:99px;overflow:hidden;font:12px var(--mono)}
+    .seg button{background:transparent;color:var(--muted);border:0;padding:6px 13px;cursor:pointer;font:inherit;letter-spacing:.08em}
+    .seg button.on{background:var(--brand);color:#04121c;font-weight:700}
     .kicker{margin:0;font:10px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--brand)}
-    h1{font-size:clamp(25px,4vw,36px);letter-spacing:-.02em;margin:14px 0 10px}
-    .lede{color:var(--muted);font-size:16.5px;max-width:70ch}
-    .puertas{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin:24px 0}
-    .puerta{padding:15px 17px;border:1px solid var(--line);border-radius:13px;background:var(--panel)}
-    .puerta b{display:block;font:10px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ok);margin-bottom:5px}
-    .puerta.silicio b{color:var(--brand)}
-    .puerta span{color:var(--muted);font-size:13.5px}
-    h2{font-size:21px;margin:34px 0 10px}
-    p{color:var(--muted);max-width:72ch;margin:0 0 11px}b{color:var(--ink)}
-    ol,ul{margin:0 0 12px 22px;color:var(--muted)}li{margin-bottom:8px}
-    code{font:12.5px var(--mono);color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
-    .nota{margin:16px 0;padding:14px 16px;border-left:3px solid var(--brand);background:var(--panel);color:var(--muted)}
-    .nota b{color:var(--ink)}
-    footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);color:var(--dim);font:11px var(--mono)}
+    h1{font-size:clamp(26px,4vw,38px);letter-spacing:-.02em;margin:12px 0 8px}
+    h2{font-size:21px;margin:42px 0 12px;padding-top:6px;border-top:1px solid var(--line)}
+    h3{font-size:16px;margin:0 0 6px}
+    .lede{color:var(--muted);font-size:16.5px;max-width:72ch}
+    .toc{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px}.toc a{border:1px solid var(--line);border-radius:99px;padding:4px 12px;font-size:13px;color:var(--ink);background:var(--panel)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+    .card{padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+    .card p{margin:4px 0;color:var(--muted);font-size:14.5px}
+    .tag{display:inline-block;font:11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ok);border:1px solid var(--line2);border-radius:99px;padding:1px 8px;margin-bottom:6px}
+    table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:14.5px}
+    td,th{padding:9px 13px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font:11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);background:var(--panel2)}
+    tr:last-child td{border-bottom:0}
+    code{font-family:var(--mono);font-size:13px;color:#bfe6ff;background:#0a1826;border:1px solid var(--line);border-radius:6px;padding:1px 6px;white-space:nowrap}
+    pre{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;overflow:auto;font:13px/1.5 var(--mono);color:#cfe9ff}
+    .go{display:inline-block;margin-top:8px;font-size:14px;font-weight:600}
+    .star{border-color:#2f6b3f;background:linear-gradient(180deg,#0c1d16,#0b1420)}
+    footer{margin-top:48px;color:var(--dim);font-size:13px}
   </style>
+  <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.07.10.2026.r10.10:06">
-<link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
+<meta name="admiranext-version" content="v.07.10.2026.r11.10:15">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261004-audio-3">
 <script defer src="/assets/da-shell.js?v=20261007-luna-1" data-section="/ ayuda" data-section-en="/ help"></script>
 </head>
 <body>
 <div class="wrap">
-  <p class="kicker">● DigitalAvatar.ai · ayuda</p>
-  <h1>Qué es el avatar y cómo se usa</h1>
-  <p class="lede">DigitalAvatar.ai es el <b>humano digital</b> de la suite AdmiraNeXT: un
-  MetaHuman renderizado en Unreal Engine y emitido en tiempo real, que conversa por texto o por
-  voz. Es la cara con la que la casa habla cuando hace falta una cara.</p>
-
-  <div class="puertas">
-    <div class="puerta"><b>Para personas · esta página</b><span>Qué es, dónde aparece y qué se le
-      puede pedir.</span></div>
-    <div class="puerta silicio"><b>Para máquinas</b><span>Contratos y estado:
-      <a href="/mcp/">digitalavatar.ai/mcp</a></span></div>
+  <div class="bar">
+    <p class="kicker">DigitalAvatar.ai · AdmiraNeXT · <span lang="es">Ayuda</span><span lang="en">Help</span></p>
+    <div class="seg" role="group" aria-label="Idioma / Language"><button type="button" data-set="es">ESP</button><button type="button" data-set="en">ENG</button></div>
   </div>
 
-  <h2>Dónde aparece</h2>
-  <ul>
-    <li><b>En admira.academy</b>, como el avatar que resuelve dudas de quien se está formando.</li>
-    <li><b>En esta web</b>, para hablar con él directamente y ver de qué es capaz.</li>
-    <li><b>En una pantalla</b>, cuando hace falta que alguien atienda y no hay nadie detrás.</li>
-  </ul>
+  <h1><span lang="es">Todo lo que sabe hacer tu avatar</span><span lang="en">Everything your avatar can do</span></h1>
+  <p class="lede" lang="es">DigitalAvatar.ai es el punto de contacto con el cliente: un avatar que conversa, conoce la tienda y habla con la voz de AdmiraNeXT. Aquí tienes los comandos que se escriben en su caja de texto, los parámetros de la URL, los tres avatares y cómo lanzar una demo desde cada plataforma.</p>
+  <p class="lede" lang="en">DigitalAvatar.ai is the client contact point: an avatar that talks, knows the store and speaks with the AdmiraNeXT voice. Here are the commands you type in its text box, the URL parameters, the three avatars and how to launch a demo from each platform.</p>
+  <nav class="toc">
+    <a href="#comandos"><span lang="es">Comandos</span><span lang="en">Commands</span></a>
+    <a href="#url"><span lang="es">Parámetros URL</span><span lang="en">URL parameters</span></a>
+    <a href="#avatares"><span lang="es">Los tres avatares</span><span lang="en">The three avatars</span></a>
+    <a href="#demos">Demos</a>
+    <a href="#plataformas"><span lang="es">Plataformas</span><span lang="en">Platforms</span></a>
+    <a href="#mcp">MCP</a>
+  </nav>
 
-  <h2>Tres categorías</h2>
-  <ul>
-    <li><b>Avatar · <a href="/nube.html">la nube Admirito</a></b>: la mascota de la casa, animada. Sencilla y
-      muy ligera: mueve los labios cuando habla, parpadea, mira alrededor y hace cosas si nadie la
-      toca (y se duerme si la dejas un rato). Tócala y se pone contenta. Si nadie le pregunta, cada poco
-      hace un número para que la mires: una pirueta, un bailecito con notas, una voltereta, una gelatina
-      disco con bracitos o un nubarrón que acaba en arcoíris. Para verlos todos seguidos: <a href="/nube.html?dance=1">nube.html?dance=1</a>.
-      También desde la caja: <code>/animacion 1</code>…<code>/animacion 5</code> (o el nombre: giro, baile, voltereta, gelatina, lluvia)
-      y <code>/animacion help</code> para la lista. Chips, idioma y micrófono van dentro de la caja de texto.</li>
-    <li><b>Tres identidades</b>: avatar = <b>Admirito</b> (nube), human = <b>Luna</b> (anfitriona web),
-      metahuman = <b>Neo</b> (MetaHuman). <code>/avatar avatar|human|metahuman</code> (good/better/best siguen de alias). Cada uno tiene perfil y hechos propios; no se mezclan.
-      «¿Quién eres?» responde en carácter. Entrenar: <code>POST /metahuman/train</code> con Bearer ADMIN_TOKEN.</li>
-    <li lang="en"><b>Three identities</b>: avatar=<b>Admirito</b>, human=<b>Luna</b>, metahuman=<b>Neo</b> (good/better/best kept as aliases). Isolated profiles/facts. Train via <code>POST /metahuman/train</code> with ADMIN_TOKEN.</li>
-    <li><b>Human · <a href="/best.html">Luna</a></b>: la anfitriona web, cálida y amable, avatar 3D realista que habla siempre.</li>
-    <li><b>Metahuman · <a href="/metahuman.html">Neo</a></b>: el MetaHuman en directo, lo opuesto a la nube.</li>
-  </ul>
+  <h2 id="comandos"><span lang="es">Comandos del chat</span><span lang="en">Chat commands</span></h2>
+  <p class="lede"><span lang="es">Escríbelos en la caja «Escribe o pulsa 🎙️» del avatar y pulsa Intro. No gastan cerebro ni voz (salvo <code>/demo</code>).</span><span lang="en">Type them in the avatar's «Type or tap 🎙️» box and press Enter. They don't use the brain or voice (except <code>/demo</code>).</span></p>
+  <table>
+    <tr><th><span lang="es">Comando</span><span lang="en">Command</span></th><th><span lang="es">Qué hace</span><span lang="en">What it does</span></th></tr>
+    <tr><td><code>/help</code> · <code>/ayuda</code></td><td><span lang="es">Muestra el resumen de comandos y el enlace a esta guía.</span><span lang="en">Shows the command summary and the link to this guide.</span></td></tr>
+    <tr><td><code>/animacion help</code></td><td><span lang="es">Lista los 5 bailes de Admirito.</span><span lang="en">Lists Admirito's 5 dances.</span></td></tr>
+    <tr><td><code>/animacion 1</code> · <code>giro</code></td><td><span lang="es">Giro completo.</span><span lang="en">Full spin.</span></td></tr>
+    <tr><td><code>/animacion 2</code> · <code>baile</code></td><td><span lang="es">Bailecito de lado a lado.</span><span lang="en">Side-to-side dance.</span></td></tr>
+    <tr><td><code>/animacion 3</code> · <code>voltereta</code></td><td><span lang="es">Voltereta en el aire.</span><span lang="en">Mid-air flip.</span></td></tr>
+    <tr><td><code>/animacion 4</code> · <code>gelatina</code></td><td><span lang="es">Efecto gelatina.</span><span lang="en">Jelly wobble.</span></td></tr>
+    <tr><td><code>/animacion 5</code> · <code>lluvia</code></td><td><span lang="es">Lluvia con arcoíris.</span><span lang="en">Rain with a rainbow.</span></td></tr>
+    <tr><td><code>/avatar avatar</code></td><td><span lang="es">Cambia a Admirito, la nube animada (categoría avatar).</span><span lang="en">Switches to Admirito, the animated cloud (avatar category).</span></td></tr>
+    <tr><td><code>/avatar human</code></td><td><span lang="es">Cambia a Luna, la anfitriona web (categoría human).</span><span lang="en">Switches to Luna, the web host (human category).</span></td></tr>
+    <tr><td><code>/avatar metahuman</code></td><td><span lang="es">Cambia a Neo, el MetaHuman (categoría metahuman).</span><span lang="en">Switches to Neo, the MetaHuman (metahuman category).</span></td></tr>
+    <tr><td><code>/demo</code></td><td><span lang="es">Pitch de demo de unos 30 s, en personaje y con la tienda/marca cargada. Admirito acaba con un bailecito.</span><span lang="en">About 30 s demo pitch, in character, with the loaded store/brand. Admirito ends with a little dance.</span></td></tr>
+    <tr><td><code>/idioma es</code> · <code>/idioma en</code></td><td><span lang="es">Cambia el idioma (castellano de España o inglés). Sin argumento, alterna.</span><span lang="en">Switches language (Spain Spanish or English). Without argument, toggles.</span></td></tr>
+    <tr><td><code>/marca starbucks</code> · <code>/marca 365</code> · <code>/marca off</code></td><td><span lang="es">Carga una marca blanca de cliente (con su tienda y sector) o vuelve a AdmiraNeXT. <code>/marca</code> sola dice la actual.</span><span lang="en">Loads a client white-label brand (with its store and sector) or goes back to AdmiraNeXT. <code>/marca</code> alone shows the current one.</span></td></tr>
+    <tr><td><code>/quien soy</code> · <code>/perfil</code></td><td><span lang="es">Quién es el avatar y lo que ha aprendido.</span><span lang="en">Who the avatar is and what it has learned.</span></td></tr>
+  </table>
 
-  <h2>Qué se le puede pedir</h2>
-  <ol>
-    <li><b>Que responda</b>: escríbele o háblale y contesta en tiempo real, con cara y voz.</li>
-    <li><b>Que explique algo de la casa</b>: conoce la suite y a qué se dedica cada pieza.</li>
-    <li><b>Que atienda en una pantalla</b>: es el mismo avatar, emitido donde haga falta.</li>
-  </ol>
+  <h2 id="url"><span lang="es">Parámetros de la URL</span><span lang="en">URL parameters</span></h2>
+  <table>
+    <tr><th><span lang="es">Parámetro</span><span lang="en">Parameter</span></th><th><span lang="es">Efecto</span><span lang="en">Effect</span></th><th><span lang="es">Ejemplo</span><span lang="en">Example</span></th></tr>
+    <tr><td><code>?tier=</code></td><td><span lang="es">Categoría: <code>avatar</code> (Admirito), <code>human</code> (Luna), <code>metahuman</code> (Neo). <code>good|better|best</code> siguen como alias.</span><span lang="en">Category: <code>avatar</code> (Admirito), <code>human</code> (Luna), <code>metahuman</code> (Neo). <code>good|better|best</code> still work as aliases.</span></td><td><a href="/?tier=metahuman">/?tier=metahuman</a></td></tr>
+    <tr><td><code>?dance=1</code></td><td><span lang="es">Admirito enseña los 5 bailes en bucle (<code>?dance=giro</code> solo uno).</span><span lang="en">Admirito shows the 5 dances in a loop (<code>?dance=giro</code> just one).</span></td><td><a href="/nube.html?dance=1">/nube.html?dance=1</a></td></tr>
+    <tr><td><code>?demo=1</code></td><td><span lang="es">Lanza el pitch <code>/demo</code> al cargar.</span><span lang="en">Runs the <code>/demo</code> pitch on load.</span></td><td><a href="/nube.html?demo=1">/nube.html?demo=1</a></td></tr>
+    <tr><td><code>?caption=off</code></td><td><span lang="es">Sin texto en pantalla: solo habla (ideal tótem y vídeo).</span><span lang="en">No on-screen text: voice only (great for kiosks and video).</span></td><td><a href="/best.html?caption=off">/best.html?caption=off</a></td></tr>
+    <tr><td><code>?lang=</code> · <code>?brand=</code> · <code>?site=</code> · <code>?sector=</code> · <code>?city=</code> · <code>?loc=</code></td><td><span lang="es">Idioma, marca blanca, nombre de tienda, sector, ciudad e id del punto del catálogo.</span><span lang="en">Language, white label, store name, sector, city and catalogue location id.</span></td><td><code>?brand=starbucks&amp;lang=en</code></td></tr>
+    <tr><td><code>?sala=</code></td><td><span lang="es">Sala del mando remoto: la página ejecuta lo que se encole por MCP en esa sala.</span><span lang="en">Remote-control room: the page runs whatever is queued via MCP for that room.</span></td><td><code>?sala=demo-starbucks</code></td></tr>
+    <tr><td><code>?audio=off</code> · <code>?kiosk=1</code> · <code>?dock=1</code></td><td><span lang="es">Solo texto (no gasta voz) · modo tótem · panel de la suite.</span><span lang="en">Text only (no voice spend) · kiosk mode · suite panel.</span></td><td><code>?kiosk=1</code></td></tr>
+  </table>
 
-  <div class="nota"><b>Una cosa que conviene entender.</b> El avatar no se «instala»: se emite. Lo
-  que ves es vídeo en directo de un motor que corre en otro sitio, así que su calidad depende de
-  la conexión — y si el motor está apagado, no hay avatar, no es que se haya roto la web.</div>
+  <h2 id="avatares"><span lang="es">Los tres avatares</span><span lang="en">The three avatars</span></h2>
+  <div class="grid">
+    <div class="card"><span class="tag">avatar</span><h3>Admirito</h3><p lang="es">El nubecito verde de AdmiraNeXT, un chico y la mascota de la casa. 2D ligero: carga al instante, mueve la boca, baila y hace cosas solo. Habla en castellano de España.</p><p lang="en">The green AdmiraNeXT cloud, a boy and the house mascot. Light 2D: loads instantly, moves his mouth, dances and lives on his own.</p><a class="go" href="/nube.html">/nube.html →</a></div>
+    <div class="card"><span class="tag">human</span><h3>Luna</h3><p lang="es">La anfitriona digital (Ready Player Me): cálida y profesional, guía por la tienda con datos reales y labios sincronizados.</p><p lang="en">The digital host (Ready Player Me): warm and professional, guides around the store with real data and lip-sync.</p><a class="go" href="/best.html">/best.html →</a></div>
+    <div class="card"><span class="tag">metahuman</span><h3>Neo</h3><p lang="es">El MetaHuman de Unreal Engine 5 por Pixel Streaming: la cara fotorrealista. Si el host de render está apagado, entra Luna.</p><p lang="en">The Unreal Engine 5 MetaHuman via Pixel Streaming: the photoreal face. If the render host is off, Luna steps in.</p><a class="go" href="/metahuman.html">/metahuman.html →</a></div>
+  </div>
 
-  <h2>Si algo se rompe</h2>
-  <p>Avísalo en el grupo <b>AgoraMatrix</b> de Telegram, que es la única bandeja del equipo. Di
-  qué le pediste y qué pasó: si no respondió, si no se vio o si se cortó. El responsable del
-  proyecto en el censo de Yokup es <b>NeoMacMini</b>.</p>
+  <h2 id="demos">Demos <span lang="es">de cliente</span><span lang="en">for clients</span></h2>
+  <div class="grid">
+    <div class="card star"><span class="tag" lang="es">Primera demo de cliente</span><span class="tag" lang="en">First client demo</span><h3>Starbucks · Paseo de Gracia</h3><p lang="es">Cafetería. El avatar se presenta, nombra la tienda y hace el pitch de 30 s.</p><p lang="en">Coffee shop. The avatar introduces itself, names the store and gives the 30 s pitch.</p>
+      <a class="go" href="/nube.html?brand=starbucks&amp;site=Starbucks+Paseo+de+Gracia&amp;sector=cafeteria&amp;city=Barcelona&amp;tier=avatar&amp;demo=1">Admirito →</a> · <a class="go" href="/best.html?brand=starbucks&amp;site=Starbucks+Paseo+de+Gracia&amp;sector=cafeteria&amp;city=Barcelona&amp;tier=human&amp;demo=1">Luna →</a> · <a class="go" href="/metahuman.html?brand=starbucks&amp;site=Starbucks+Paseo+de+Gracia&amp;sector=cafeteria&amp;city=Barcelona&amp;tier=metahuman&amp;demo=1">Neo →</a></div>
+    <div class="card"><span class="tag" lang="es">Panadería · cafetería</span><span class="tag" lang="en">Bakery · café</span><h3>365 Barcelona</h3><p lang="es">Panadería 365 de Barcelona, con el mismo flujo de demo.</p><p lang="en">365 bakery in Barcelona, same demo flow.</p>
+      <a class="go" href="/nube.html?brand=365&amp;site=365+Barcelona&amp;sector=panaderia&amp;city=Barcelona&amp;tier=avatar&amp;demo=1">Admirito →</a> · <a class="go" href="/best.html?brand=365&amp;site=365+Barcelona&amp;sector=panaderia&amp;city=Barcelona&amp;tier=human&amp;demo=1">Luna →</a></div>
+  </div>
+  <p class="lede"><span lang="es">Receta: abre el enlace (o escribe <code>/marca starbucks</code> y luego <code>/demo</code>). Para lanzarla a distancia en una pantalla, ábrela con <code>?sala=…</code> y usa la herramienta MCP <code>demo_lanzar</code>.</span><span lang="en">Recipe: open the link (or type <code>/marca starbucks</code> then <code>/demo</code>). To launch it remotely on a screen, open it with <code>?sala=…</code> and use the MCP tool <code>demo_lanzar</code>.</span></p>
 
-  <footer>
-    digitalavatar.ai/help · la puerta de carbono · para agentes,
-    <a href="/mcp/">digitalavatar.ai/mcp</a> · esta página existe por la regla 24 de la
-    <a href="https://www.admiranext.com/normativa">normativa</a>
-  </footer>
+  <h2 id="plataformas"><span lang="es">Lanzar la demo desde cada plataforma</span><span lang="en">Launching the demo from each platform</span></h2>
+  <table>
+    <tr><th><span lang="es">Plataforma</span><span lang="en">Platform</span></th><th><span lang="es">Para qué</span><span lang="en">What for</span></th><th><span lang="es">Cómo lanzar el avatar</span><span lang="en">How to launch the avatar</span></th></tr>
+    <tr><td><a href="https://admira.biz">admira.biz</a></td><td><span lang="es">Circuitos publicitarios (negocio)</span><span lang="en">Advertising circuits (business)</span></td><td rowspan="6"><span lang="es">En el CLI de la plataforma escribe <code>/avatarON</code> (aparece el panel del avatar), elige con <code>/avatar avatar|human|metahuman</code> y escribe <code>/demo</code>. Con marca: abre el enlace de demo de arriba añadiendo <code>&amp;from=&lt;plataforma&gt;</code>, o pide al MCP <code>demo_lanzar</code> con <code>marca</code> y <code>plataforma</code>. <code>/avatarOFF</code> lo oculta.</span><span lang="en">In the platform CLI type <code>/avatarON</code> (the avatar panel appears), pick with <code>/avatar avatar|human|metahuman</code> and type <code>/demo</code>. With a brand: open the demo link above adding <code>&amp;from=&lt;platform&gt;</code>, or ask the MCP <code>demo_lanzar</code> with <code>marca</code> and <code>plataforma</code>. <code>/avatarOFF</code> hides it.</span></td></tr>
+    <tr><td><a href="https://admira.store">admira.store</a></td><td><span lang="es">Gemelos digitales de tiendas</span><span lang="en">Digital twins of stores</span></td></tr>
+    <tr><td><a href="https://admira.studio">admira.studio</a></td><td><span lang="es">Contenidos</span><span lang="en">Content</span></td></tr>
+    <tr><td><a href="https://admira.tv">admira.tv</a></td><td><span lang="es">Listas de reproducción por dispositivo IoT</span><span lang="en">Playlists per IoT device</span></td></tr>
+    <tr><td><a href="https://admira.app">admira.app</a></td><td><span lang="es">Instalación, mantenimiento e incidencias (ITIL)</span><span lang="en">Installation, maintenance and incidents (ITIL)</span></td></tr>
+    <tr><td><a href="https://www.xpaceos.com">xpaceos.com</a></td><td><span lang="es">The Xpace OS: mapa de Xpaces y gemelos</span><span lang="en">The Xpace OS: map of Xpaces and twins</span></td></tr>
+    <tr><td><a href="https://www.admiranext.com">admiranext.com</a></td><td><span lang="es">La casa de la suite y las marcas blancas</span><span lang="en">Home of the suite and white labels</span></td><td><span lang="es">El panel del avatar (<code>assets/avatar.js</code>) sale en la portada; <code>/demo</code> desde su caja o un enlace de demo.</span><span lang="en">The avatar panel (<code>assets/avatar.js</code>) is on the home page; <code>/demo</code> from its box or a demo link.</span></td></tr>
+  </table>
+
+  <h2 id="mcp">MCP</h2>
+  <p class="lede"><span lang="es">Cualquier agente puede manejar los avatares por MCP (Streamable HTTP): hacerles decir algo, bailar, cambiar de categoría, lanzar demos y mandar comandos a las páginas abiertas.</span><span lang="en">Any agent can drive the avatars over MCP (Streamable HTTP): make them say something, dance, switch category, launch demos and send commands to open pages.</span> <a href="/mcp">digitalavatar.ai/mcp →</a></p>
+  <pre>{ "mcpServers": { "digitalavatar": { "type": "http", "url": "https://digitalavatar.ai/mcp" } } }</pre>
+
+  <footer>DigitalAvatar.ai · AdmiraNeXT · <span lang="es">guía de comandos</span><span lang="en">command guide</span> · GrokBot · MacMini</footer>
 </div>
-<section id="avatar-conversation-language"><h2>Idioma y controles del avatar / Avatar language and controls</h2><p lang="es">Al abrir el avatar se hereda el idioma actual del site: ESP en castellano y ENG en inglés. El modelo inicial es Avatar · Admirito, independiente de la calidad del Xpacio (también en Matrix). El selector Modelo del avatar permite elegir Avatar · Admirito, Human · Luna o Metahuman · Neo; también sirven /avatar digital good, /avatar digital better y /avatar digital best. Una elección explícita de modelo se conserva en esta pestaña. ESP muestra Micrófono, Detener y Preguntar; ENG muestra Microphone, Stop y Ask. Cambiar ESP/ENG dentro de la conversación conserva la pregunta escrita y detiene la voz/escucha anterior, sin enviar una pregunta ni activar el micrófono. Al cerrar y reabrir vuelve a heredarse el idioma del site; cambiar el idioma del site actualiza la conversación abierta sin recargar el iframe. Best utiliza el MetaHuman Neo y conserva el respaldo web existente cuando el host no emite.</p><p lang="en">Opening the avatar inherits the current site language: ESP for Spanish and ENG for English. The initial model is Avatar · Admirito, independent of Xpace quality (including Matrix). The Avatar model selector offers Avatar · Admirito, Human · Luna or Metahuman · Neo; /avatar digital good, /avatar digital better and /avatar digital best also work. An explicit model choice is retained for this tab. ESP shows Micrófono, Detener and Preguntar; ENG shows Microphone, Stop and Ask. Switching ESP/ENG in the conversation preserves the typed question and stops the previous speech/listening without sending a question or enabling the microphone. Closing and reopening inherits the site language again; changing the site language updates the open conversation without reloading its iframe. Best uses the Neo MetaHuman and retains the existing web fallback when the render host is unavailable.</p></section>
+<script>
+(function(){
+  var q=new URLSearchParams(location.search).get('lang'),s=null;try{s=localStorage.getItem('da_lang')}catch(_){}
+  var l=/^en/i.test(q||s||'')?'en':'es';
+  function set(x){l=x;document.documentElement.setAttribute('data-l',x);document.documentElement.lang=x;document.querySelectorAll('.seg button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-set')===x)});try{localStorage.setItem('da_lang',x)}catch(_){}}
+  document.querySelectorAll('.seg button').forEach(function(b){b.onclick=function(){set(b.getAttribute('data-set'))}});
+  set(l);
+})();
+</script>
 </body>
 </html>
