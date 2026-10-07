@@ -4,8 +4,8 @@
  * Quien incrusta la cara (admiranext.com/assets/avatar.js, el gemelo de admira.store /
  * xpaceos.com, un tótem) la abre con parámetros en la URL:
  *   ?loc=<id del punto>&lang=es|en&sector=<estanco|cafeteria|…>&brand=<marca blanca>
- *   &site=<nombre>&city=<ciudad>&tier=good|better|best&avatar=admirito|alex|neo
- * Tier → avatar por defecto: good→admirito, better→alex, best→neo. El historial de sesión
+ *   &site=<nombre>&city=<ciudad>&tier=avatar|human|metahuman (o good|better|best)&avatar=admirito|luna|neo
+ * Tier → avatar por defecto: avatar/good→admirito, human/better→luna, metahuman/best→neo. El historial de sesión
  * se guarda por avatar para que al cambiar de cara no se mezclen recuerdos.
  * y puede cambiarlos después con postMessage {type:'da-context', …mismos campos, live}
  * desde un origen de la red (lista ALLOWED). `live` = datos en vivo (p. ej. «Suena
@@ -19,8 +19,11 @@
   'use strict';
   var BRAIN = 'https://brain.digitalavatar.ai';
   var KEYS = ['loc', 'lang', 'sector', 'brand', 'site', 'city', 'tier', 'avatar', 'live'];
-  var TIER_AVATAR = { good: 'admirito', better: 'alex', best: 'neo' };
-  var AVATARS = ['admirito', 'alex', 'neo'];
+  var TIER_AVATAR = { good: 'admirito', better: 'luna', best: 'neo' };
+  // Categorías públicas (7-oct-2026): avatar/human/metahuman = good/better/best.
+  var CATEGORY_TIER = { avatar: 'good', human: 'better', metahuman: 'best' };
+  var AVATAR_ALIAS = { alex: 'luna' };
+  var AVATARS = ['admirito', 'luna', 'neo'];
   var TIERS = ['good', 'better', 'best'];
   var ALLOWED = /^https:\/\/([a-z0-9-]+\.)*(admiranext\.com|admira\.store|xpaceos\.com|admira\.studio|pixeria\.com|admira\.tv|clearchannel\.tv|admira\.biz|admira\.app|yokup\.com|digitalavatar\.ai|carlossilva\.info|csilvasantin\.github\.io)$|^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 
@@ -28,9 +31,11 @@
     if (v == null) return '';
     v = String(v).replace(/\s+/g, ' ').trim().slice(0, k === 'live' ? 600 : 120);
     if (k === 'lang') return /^en/i.test(v) ? 'en' : /^es/i.test(v) ? 'es' : '';
-    if (k === 'tier') return TIERS.indexOf(v.toLowerCase()) >= 0 ? v.toLowerCase() : '';
+    if (k === 'tier') { v = v.toLowerCase(); v = CATEGORY_TIER[v] || v; return TIERS.indexOf(v) >= 0 ? v : ''; }
     if (k === 'avatar') {
       v = v.toLowerCase();
+      if (AVATAR_ALIAS[v]) return AVATAR_ALIAS[v];
+      if (CATEGORY_TIER[v]) return TIER_AVATAR[CATEGORY_TIER[v]];
       if (AVATARS.indexOf(v) >= 0) return v;
       if (TIER_AVATAR[v]) return TIER_AVATAR[v];
       return '';

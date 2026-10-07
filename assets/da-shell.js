@@ -20,7 +20,7 @@
  *
  *   <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
  *   <link rel="stylesheet" href="/assets/da-shell.css?v=…">
- *   <script defer src="/assets/da-shell.js?v=…" data-section="/ inicio" data-section-en="/ home"></script>
+ *   <script defer src="/assets/da-shell.js?v=20261007-luna-1" data-section="/ inicio" data-section-en="/ home"></script>
  *
  * En un iframe no pinta nada (embed-mh y cualquier página enmarcada).
  */
@@ -66,8 +66,8 @@
 
   /* Las 11 herramientas viven en /help del CLI, no como baldosas. */
   /* Mismo mapa que el cargador de la suite (admiranext.com/assets/avatar.js):
-     good = Admirito, la nube animada (nube.html), better = chica RPM (hoy best.html),
-     best = Neo (metahuman.html, con caída a la chica si el host está apagado).
+     avatar (good) = Admirito, la nube animada (nube.html), human (better) = Luna RPM (best.html),
+     metahuman (best) = Neo (metahuman.html, con caída a Luna si el host está apagado).
      Los nombres viejos (2d, 3d, realista, metahuman) siguen abriendo su página;
      el calvo 3D (better.html) queda como etapa «3d» del museo, ya no es good. */
   var NIVELES = {
@@ -78,6 +78,10 @@
     metahuman: '/metahuman.html',
     nube: '/nube.html',
     good: '/nube.html',
+    avatar: '/nube.html',
+    human: '/best.html',
+    luna: '/best.html',
+    admirito: '/nube.html',
     better: '/best.html',
     best: '/metahuman.html'
   };
@@ -193,10 +197,11 @@
   function helpText() {
     if (lang() === 'en') {
       return '/help — this list\n' +
-        '/avatar — status and the three levels\n' +
-        '/avatar good — Admirito, the animated cloud (light 2D, lip-sync, lives on its own when idle)\n' +
-        '/avatar better — web girl (Ready Player Me, glasses)\n' +
-        '/avatar best — Neo, MetaHuman; the girl takes over if the render host is off\n' +
+        '/avatar — status and the three categories\n' +
+        '/avatar avatar — Admirito, the animated cloud (light 2D, lip-sync, lives on its own when idle)\n' +
+        '/avatar human — Luna, the web host (Ready Player Me)\n' +
+        '/avatar metahuman — Neo, MetaHuman; Luna takes over if the render host is off\n' +
+        '(good, better and best still work as aliases)\n' +
         '/avatarON shows the panel on the other suite sites · /avatarOFF hides it\n' +
         '/nivel <good|better|best|nube|vectorial|2d|3d|realista|metahuman> — same map; old names still open their page\n' +
         '/neo — open Neo (MetaHuman)\n' +
@@ -212,10 +217,11 @@
         'Tools: /avatar /good /better /best /nube /vectorial /2d /3d /realista /metahuman /neo /mcp /embed /embedmh /roadmap /ayuda';
     }
     return '/help — esta lista\n' +
-      '/avatar — estado y las tres opciones\n' +
-      '/avatar good — Admirito, la nube animada (2D ligera, mueve los labios y hace cosas sola)\n' +
-      '/avatar better — la chica web (Ready Player Me, gafas)\n' +
-      '/avatar best — Neo, MetaHuman; si el host de render está apagado, entra la chica\n' +
+      '/avatar — estado y las tres categorías\n' +
+      '/avatar avatar — Admirito, la nube animada (2D ligera, mueve los labios y hace cosas sola)\n' +
+      '/avatar human — Luna, la anfitriona web (Ready Player Me)\n' +
+      '/avatar metahuman — Neo, MetaHuman; si el host de render está apagado, entra Luna\n' +
+      '(good, better y best siguen como alias)\n' +
       '/avatarON muestra el panel en el resto de la suite · /avatarOFF lo oculta\n' +
       '/nivel <good|better|best|nube|vectorial|2d|3d|realista|metahuman> — el mismo mapa; los nombres viejos siguen abriendo su página\n' +
       '/neo — abre Neo (MetaHuman)\n' +
@@ -440,8 +446,8 @@
     }
     if (verb === 'avataron' || verb === 'avataroff') {
       log(lang() === 'en'
-        ? 'On digitalavatar.ai the avatar is the page. /avatar good|better|best changes level. /avatarON and /avatarOFF show or hide the panel on the other suite sites.'
-        : 'En digitalavatar.ai el avatar es la página. /avatar good|better|best cambia de nivel. /avatarON y /avatarOFF muestran u ocultan el panel en el resto de la suite.');
+        ? 'On digitalavatar.ai the avatar is the page. /avatar avatar|human|metahuman changes category. /avatarON and /avatarOFF show or hide the panel on the other suite sites.'
+        : 'En digitalavatar.ai el avatar es la página. /avatar avatar|human|metahuman cambia de categoría. /avatarON y /avatarOFF muestran u ocultan el panel en el resto de la suite.');
       return;
     }
     if (verb === 'avatar') {
@@ -452,8 +458,8 @@
       }
       if (avatarArg === 'on' || avatarArg === 'off' || avatarArg === 'reset') {
         log(lang() === 'en'
-          ? 'On digitalavatar.ai the avatar is the page. Use /avatar good, /avatar better or /avatar best.'
-          : 'En digitalavatar.ai el avatar es la página. Usa /avatar good, /avatar better o /avatar best.');
+          ? 'On digitalavatar.ai the avatar is the page. Use /avatar avatar, /avatar human or /avatar metahuman.'
+          : 'En digitalavatar.ai el avatar es la página. Usa /avatar avatar, /avatar human o /avatar metahuman.');
         return;
       }
       verb = 'nivel';
@@ -462,7 +468,7 @@
     if (verb === 'nivel' || verb === 'level') {
       var nivel = (p.args || '').toLowerCase();
       if (!NIVELES[nivel]) {
-        log('Uso: /nivel <good|better|best|nube|vectorial|2d|3d|realista|metahuman>  ·  /avatar <good|better|best>', 'err');
+        log('Uso: /nivel <good|better|best|nube|vectorial|2d|3d|realista|metahuman>  ·  /avatar <avatar|human|metahuman>', 'err');
         return;
       }
       try { sessionStorage.setItem('da_nivel', nivel); } catch (e) {}

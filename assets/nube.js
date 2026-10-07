@@ -15,7 +15,7 @@
  * Bailes (7-oct-2026): giro, baile, voltereta, gelatina y lluvia (con arcoíris) cada ~9–15 s de reposo;
  * ?dance=1 los enseña todos en bucle, ?dance=<nombre> uno solo (alias spin, dance, flip, jelly, rain).
  * Slash: /animacion 1|giro … /animacion help; /quien soy; /perfil; /aprender|/train (admin); /help.
- * Identidad: avatar=admirito (tier good). Nunca se mezcla con Alex ni Neo.
+ * Identidad: avatar=admirito (tier good). Nunca se mezcla con Luna ni Neo.
  */
 (function () {
   'use strict';
