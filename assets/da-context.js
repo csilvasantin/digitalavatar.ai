@@ -72,7 +72,7 @@
 
   // Métricas (7-oct-2026): id aleatorio de conversación por pestaña (sin datos personales),
   // plataforma de origen (?from= o el dominio que nos incrusta) y sala. Ver brain /metrics.
-  var CONV = '', FROM = '', SALA = '';
+  var CONV = '', FROM = '', SALA = '', CANAL = '', ORIGEN = '', DEMO_RUN = '';
   try {
     CONV = sessionStorage.getItem('da-conv') || '';
     if (!CONV) { CONV = Math.random().toString(36).slice(2, 12) + Date.now().toString(36).slice(-6); sessionStorage.setItem('da-conv', CONV); }
@@ -82,6 +82,17 @@
     FROM = String(qp.get('from') || '').toLowerCase().replace(/[^a-z0-9.-]/g, '').slice(0, 40);
     if (!FROM && document.referrer) { var rh = new URL(document.referrer).hostname.replace(/^www\./, ''); if (rh && rh !== root.location.hostname.replace(/^www\./, '')) FROM = rh; }
     SALA = String(qp.get('sala') || '').toLowerCase().replace(/[^a-z0-9_.-]/g, '').slice(0, 60);
+    // Registro (7-oct-2026, contrato «registro v1»): ?conv= del anfitrión (el quiosco enlaza así el pedido con
+    // la conversación); en modo pedido, sin ?conv=, una conversación NUEVA por carga (un cliente por iframe) en
+    // lugar de la de la pestaña. ?canal=, ?origen=real|demo|qa y ?demo_run= viajan tal cual al cerebro.
+    var cv = String(qp.get('conv') || '').toLowerCase().replace(/[^a-z0-9_.-]/g, '').slice(0, 40);
+    if (cv.length >= 6) CONV = cv;
+    else if (ctx.mode === 'order') CONV = 'k' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-6);
+    var cn = String(qp.get('canal') || '').toLowerCase();
+    if (/^(kiosko|ipad|gemelo|web|movil|tv)$/.test(cn)) CANAL = cn;
+    var og = String(qp.get('origen') || '').toLowerCase();
+    if (/^(real|demo|qa)$/.test(og)) ORIGEN = og;
+    DEMO_RUN = String(qp.get('demo_run') || '').toLowerCase().replace(/[^a-z0-9_.-]/g, '').slice(0, 40);
   } catch (_) {}
 
   // Pedido en curso: el último borrador (del anfitrión en da-context o del cerebro). Viaja
@@ -120,6 +131,9 @@
     if (CONV) b.conv = CONV;
     if (FROM) b.from = FROM;
     if (SALA) b.sala = SALA;
+    if (CANAL) b.canal = CANAL;
+    if (ORIGEN) b.origen = ORIGEN;
+    if (DEMO_RUN) b.demo_run = DEMO_RUN;
     if (ctx.loc) b.loc = ctx.loc;
     if (ctx.sector) b.sector = ctx.sector;
     if (ctx.brand) b.brand = ctx.brand;
@@ -339,6 +353,8 @@
     order: function () { return order; }, hostOrigin: function () { return demoParentOrigin; },
     demoCommand: demoCommand, demoAsk: demoAsk, demoDone: demoDone, subdemos: function () { return LOCAL; }, demos: function () { return DEMOS.map(function (d) { return { id: d.id, nombre: d.n, url: d.url }; }); },
     tier: tier, lang: lang, avatar: avatar,
+    // id de la conversación actual (el registro de digitalavatar.ai/metricas agrupa por él)
+    conv: function () { return CONV; },
     profile: function () { return profile; },
     ready: function () { return pending || Promise.resolve(profile); },
     // Chip de demo (7-oct-2026): «Demo · 30 s» → el cerebro lo trata como /demo (pitch de 30 s).

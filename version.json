@@ -1,13 +1,14 @@
 {
-  "version": "v.07.10.2026.r25.22:42",
-  "builtAt": "2026-10-07T20:41:42Z",
-  "note": "Neo responde al instante desde cualquier región: el canal de frases del cerebro pasa a un Durable Object fuertemente consistente.",
+  "version": "v.07.10.2026.r26.23:45",
+  "builtAt": "2026-10-07T21:45:07Z",
+  "note": "Registro de conversaciones y pedidos: cada cliente del quiosco es una conversación propia y el avatar avisa del canal, el origen (real/demo) y la tanda de demo para que el registro de /metricas lo separe.",
   "novedades": [
-    "Neo ya no tarda 15-60 s cuando le preguntas desde lejos: la frase llega a Unreal en menos de 1 s",
-    "El canal say del cerebro (omnipublicity-api) usa un Durable Object por sala en lugar de KV; mismo contrato para la página y para Unreal",
-    "Migración sin perder frases en vuelo y copia en KV para volver atrás sin pérdida (retorno/pre-say-do-20261007)"
+    "Nuevo registro protegido en digitalavatar.ai/metricas: un hilo por conversación con avatar, tienda, canal, idioma, cliente y su pedido con las fases recibido → preparando → preparado → recogido",
+    "Filtros por avatar, tienda, fecha y franja horaria, con o sin pedido y búsqueda de texto; KPIs, gráfico por horas, refresco en vivo, CSV y botón ES/EN",
+    "Los datos de demo (/demo pedido) y de la sala starbucks-qa quedan marcados y separados de los reales",
+    "El quiosco abre una conversación nueva por cliente y el avatar acepta ?conv, ?canal, ?origen y ?demo_run (contrato registro v1)"
   ],
   "signature": "GrokBot · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "retorno/pre-neo-say-do-20261007"
+  "rollback": "retorno/pre-registro-da-20261007"
 }
