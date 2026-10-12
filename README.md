@@ -70,5 +70,6 @@ cerebro **Grok (xAI)** · voz **ElevenLabs** · config **Cloudflare Workers + KV
 - [ ] `XAI_API_KEY` como secret del worker (Carlos).
 - [ ] Proyecto Unreal + integración Audio2Face (dev/artista UE — ver spec).
 - [ ] URL pública del player Pixel Streaming (Tailscale Funnel) → se enchufa en admira.app (`TWIN_HD_BASE`).
+- [ ] Portero bajo demanda en el MBP16 (#5733). La política y el plist sin `KeepAlive`/`RunAtLoad` están en [`ops/avatar-on-demand/`](ops/avatar-on-demand/CLOUD-RUNBOOK.md). La prueba de GPU sigue en el Mac.
 - [ ] Añadir el hostname del stand al CORS del worker omnipublicity.
 - [ ] (Opcional) registrar el dominio `digitalavatar.ai`.
