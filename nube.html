@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<script>(function(){var q=location.search,h=document.documentElement;if(/[?&]dock=1(?:&|$)/.test(q))h.classList.add('dock');if(/[?&]kiosk=(1|true)(?:&|$)/.test(q))h.classList.add('kiosk');if(/[?&]embed=1(?:&|$)/.test(q))h.classList.add('embed');})();</script>
+<script>(function(){var q=location.search,h=document.documentElement;if(/[?&]dock=1(?:&|$)/.test(q))h.classList.add('dock');if(/[?&]kiosk=(1|true)(?:&|$)/.test(q))h.classList.add('kiosk');if(/[?&]embed=1(?:&|$)/.test(q))h.classList.add('embed');var pj=/[?&]personaje=([a-z0-9-]{1,24})(?:&|$)/i.exec(q);if(pj)h.setAttribute('data-personaje',pj[1].toLowerCase());})();</script>
 <link rel="stylesheet" href="/assets/da-dock.css?v=20261004-avatar-2">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate"><meta http-equiv="Pragma" content="no-cache">
 <meta charset="UTF-8">
@@ -97,9 +97,47 @@
   body[data-da-composer=compact] .composer .bar .qfield .hintchips:empty{display:none!important}
   body[data-da-composer=compact] .composer .bar .qfield input{flex:0 0 auto; width:100%; min-height:26px; border:0; background:transparent; padding:2px 2px; border-radius:0}
   body[data-da-composer=compact] .composer .bar{align-items:stretch} body[data-da-composer=compact] .composer .bar > :not(.qfield){align-self:center}
+  /* ── PIELES (?personaje=<id> · Carlos, 14-oct-2026): disfraces de Admirito con la misma nube y el mismo
+     motor (assets/nube.js). Cada piel pone sus piezas con class="piel-parte" data-piel="<id>" y su CSS bajo
+     html[data-personaje="<id>"]; sin ese personaje, sus piezas no existen. Para añadir una (p. ej. arquitecto):
+     sus piezas, la línea que las enseña y su bloque de colores, como Bugito aquí abajo.
+     Piel BUGITO: «Bugito es una adaptación de Admirito» — rojo y negro, cuernos, rabito, cejas pícaras y colmillo. */
+  .piel-parte{display:none}
+  html[data-personaje="bugito"] .piel-parte[data-piel="bugito"]{display:inline}
+  html[data-personaje="bugito"] body{background:radial-gradient(120% 90% at 50% -10%, #3b0c0c 0%, #0b0405 62%)}
+  html[data-personaje="bugito"] #stage::before{background:radial-gradient(closest-side, rgba(226,48,46,.30), rgba(226,48,46,.08) 55%, transparent 75%)}
+  html[data-personaje="bugito"] #evo{display:none !important}
+  html[data-personaje="bugito"] .cuerpo-relleno{fill:#e2302e}
+  html[data-personaje="bugito"] .cuerpo-borde{fill:#170607}
+  html[data-personaje="bugito"] #nube:focus-visible .cuerpo-borde{stroke:#ffb4a8}
+  html[data-personaje="bugito"] #ojos ellipse{fill:#170607}
+  html[data-personaje="bugito"] #ojosFelices{stroke:#170607}
+  html[data-personaje="bugito"] #mejillas ellipse{fill:#ff9aa0}
+  html[data-personaje="bugito"] #bocaForma{stroke:#2a0507}
+  html[data-personaje="bugito"] #bocaForma:not([fill="none"]){fill:#2a0507}
+  html[data-personaje="bugito"] #lengua{fill:#ff8a8f}
+  html[data-personaje="bugito"] #brazos ellipse{fill:#e2302e; stroke:#170607}
+  html[data-personaje="bugito"] #sombra{fill:#2a0000}
+  html[data-personaje="bugito"] #piensa circle{fill:#ffb4a8}
+  html[data-personaje="bugito"] .brand b{color:#ff6b5e}
+  html[data-personaje="bugito"] .tier{background:#3a0d10; color:#ffb4a8; border-color:#7a1d1f}
+  html[data-personaje="bugito"] #stage #caption.bocadillo{background:#fff4f1; color:#2a0507; border-color:#c4211f}
+  html[data-personaje="bugito"] #stage #caption.bocadillo .sp1{color:#2a0507} html[data-personaje="bugito"] #stage #caption.bocadillo .sp0{color:#a8726c}
+  html[data-personaje="bugito"] .bubtail{border-top-color:#c4211f} html[data-personaje="bugito"] .bubtail::after{border-top-color:#fff4f1}
+  html[data-personaje="bugito"] .chip:hover{color:#ff8a7a; border-color:#ff8a7a}
+  /* Bugito no escucha ni habla con voz (lip-sync de texto) y en el banco el idioma lo pone la página: sitio para sus chips. */
+  html[data-personaje="bugito"] #btnMic, html[data-personaje="bugito"] #btnStop, html.dock[data-personaje="bugito"] #langPills{display:none !important}
+  html[data-personaje="bugito"] body[data-da-composer=compact] .composer .bar .qfield:focus-within{border-color:#ff6b5e}
+  .bichito{transform-box:fill-box; transform-origin:center; animation:bichito 1.15s cubic-bezier(.3,.1,.5,1) forwards}
+  @keyframes bichito{0%{opacity:0; transform:translate(0,0) rotate(0) scale(.6)} 12%{opacity:1} 100%{opacity:1; transform:translate(-330px,-40px) rotate(-540deg) scale(1)}}
+  .humo{fill:#9aa3ad; opacity:0; animation:humo 1.8s ease-out forwards}
+  @keyframes humo{0%{opacity:0; transform:translate(0,0) scale(.5)} 25%{opacity:.7} 100%{opacity:0; transform:translate(var(--hx,8px),-56px) scale(1.5)}}
+  .llama{opacity:0; transform-box:fill-box; transform-origin:50% 100%; animation:llama 1.2s ease-out forwards}
+  @keyframes llama{0%{opacity:0; transform:translate(0,0) scale(.3)} 30%{opacity:1; transform:translate(0,-10px) scale(1.1)} 100%{opacity:0; transform:translate(var(--lx,0px),-50px) scale(.4)}}
+  @media (prefers-reduced-motion:reduce){ .bichito,.humo,.llama{display:none} }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.07.10.2026.r21.21:34">
+<meta name="admiranext-version" content="v.14.10.2026.r1.13:44">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261007-metricas-3">
 <script defer src="/assets/da-shell.js?v=20261007-metricas-3" data-section="/ nube" data-section-en="/ cloud"></script>
@@ -136,7 +174,19 @@
       <ellipse id="sombra" cx="138.5" cy="222" rx="92" ry="9" fill="#000" opacity=".35"/>
       <g id="flota">
         <g id="cuerpo">
-          <path d="M213.31,59.13c-1,0-1.9.1-2.85.15a83,83,0,0,0-144,0c-1-.05-1.89-.15-2.85-.15A58.22,58.22,0,1,0,90.81,168.79a82.72,82.72,0,0,0,95.29,0A58.21,58.21,0,1,0,213.31,59.13Z" fill="#f3f9e8"/>
+          <!-- Bugito: rabito y cuernos detrás de la nube (la base queda tapada por el contorno). -->
+          <g id="bugCola" class="piel-parte" data-piel="bugito">
+            <path d="M246,154 C276,176 304,154 290,118" fill="none" stroke="#170607" stroke-width="12" stroke-linecap="round"/>
+            <path d="M246,154 C276,176 304,154 290,118" fill="none" stroke="#e2302e" stroke-width="5" stroke-linecap="round"/>
+            <path d="M290,94 L304,122 L290,116 L276,122 Z" fill="#e2302e" stroke="#170607" stroke-width="4.5" stroke-linejoin="round"/>
+          </g>
+          <g id="bugCuernos" class="piel-parte" data-piel="bugito" stroke="#170607" stroke-width="5" stroke-linejoin="round">
+            <path id="bugCuernoI" d="M84,44 Q66,10 58,-24 Q90,-4 118,30 Z" fill="#3a0b0d"/>
+            <path id="bugCuernoD" d="M193,44 Q211,10 219,-24 Q187,-4 159,30 Z" fill="#3a0b0d"/>
+            <path d="M74,10 Q68,-6 63,-16" fill="none" stroke="#c4211f" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M203,10 Q209,-6 214,-16" fill="none" stroke="#c4211f" stroke-width="3.5" stroke-linecap="round"/>
+          </g>
+          <path class="cuerpo-relleno" d="M213.31,59.13c-1,0-1.9.1-2.85.15a83,83,0,0,0-144,0c-1-.05-1.89-.15-2.85-.15A58.22,58.22,0,1,0,90.81,168.79a82.72,82.72,0,0,0,95.29,0A58.21,58.21,0,1,0,213.31,59.13Z" fill="#f3f9e8"/>
           <path class="cuerpo-borde" d="M213.31,59.13c-1,0-1.9.1-2.85.15a83,83,0,0,0-144,0c-1-.05-1.89-.15-2.85-.15A58.22,58.22,0,1,0,90.81,168.79a82.72,82.72,0,0,0,95.29,0A58.21,58.21,0,1,0,213.31,59.13Zm0,99.81a41.75,41.75,0,0,1-28.06-11,67.09,67.09,0,0,1-13.39,10.21,65.93,65.93,0,0,1-66.81,0A67.09,67.09,0,0,1,91.66,148,41.56,41.56,0,1,1,59,76a43.33,43.33,0,0,1,4.58-.26A41.39,41.39,0,0,1,76.11,77.7a66.43,66.43,0,0,1,124.69,0,41.39,41.39,0,0,1,12.51-1.93,43.33,43.33,0,0,1,4.58.26,41.58,41.58,0,0,1-4.58,82.91Z" fill="#689840"/>
           <g id="mejillas"><ellipse id="mejI" cx="92" cy="138" rx="15" ry="9" fill="#f5a3a3" opacity=".75"/><ellipse id="mejD" cx="185" cy="138" rx="15" ry="9" fill="#f5a3a3" opacity=".75"/></g>
           <g id="ojos">
@@ -150,6 +200,12 @@
             <path id="bocaForma" d="" fill="#1d2b12" stroke="#1d2b12" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
             <g clip-path="url(#bocaClip)"><ellipse id="lengua" cx="138.5" cy="170" rx="13" ry="9" fill="#e8706f"/></g>
           </g>
+          <!-- Bugito: cejas pícaras y un colmillo en la sonrisa. -->
+          <g id="bugCejas" class="piel-parte" data-piel="bugito" fill="none" stroke="#170607" stroke-width="7" stroke-linecap="round">
+            <path id="bugCejaI" d="M96,86 L126,94"/>
+            <path id="bugCejaD" d="M181,86 L151,94"/>
+          </g>
+          <path id="bugColmillo" class="piel-parte" data-piel="bugito" d="M127.5,140 L131,150 L134.5,140 Z" fill="#fff" stroke="#2a0507" stroke-width="1.2" stroke-linejoin="round"/>
         </g>
         <g id="piensa" transform="translate(212,22)"><circle cx="0" cy="0" r="5"/><circle cx="16" cy="-6" r="6"/><circle cx="34" cy="-14" r="7"/></g>
       </g>
@@ -185,7 +241,7 @@
 
 <script src="/assets/da-context.js?v=20261007-registro-1"></script>
 <script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
-<script src="/assets/nube.js?v=20261007-pedido-1"></script>
+<script src="/assets/nube.js?v=20261014-bugito-2"></script>
 <script defer src="/assets/da-conversation-controls.js?v=20261007-langui-1"></script>
 </body>
 </html>
