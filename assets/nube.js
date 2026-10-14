@@ -16,11 +16,15 @@
  * ?dance=1 los enseña todos en bucle, ?dance=<nombre> uno solo (alias spin, dance, flip, jelly, rain).
  * Slash: /animacion 1|giro … /animacion help; /quien soy; /perfil; /aprender|/train (admin); /help.
  * Identidad: avatar=admirito (tier good). Nunca se mezcla con Luna ni Neo.
- * Piel BUGITO (?personaje=bugito · Carlos, 14-oct-2026, «Bugito es una adaptación de Admirito»): la
- * misma nube con cuernos, rabito, cejas pícaras y colmillo, en rojo y negro; mismo motor, misma vida y
- * mismo lip-sync. Papel: el creador de incidencias del banco de pruebas (admira.biz/bugito.html).
- * No pregunta al cerebro: sus órdenes van al anfitrión (da-bugito-lanzar) y el anfitrión le cuenta qué
- * pasa (da-bugito {estado: aburrido|tramando|lanzando|celebrando|derrotado, incidencia, ticket}).
+ * PIELES (?personaje=<id> · Carlos, 14-oct-2026): disfraces de Admirito con el MISMO motor, la misma vida y el
+ * mismo lip-sync. Tabla PIELES: admirito (por defecto, sin piel) y bugito; la siguiente (arquitecto) se añade
+ * igual: su entrada en PIELES (textos y chips), sus piezas en nube.html (class="piel-parte" data-piel="<id>" + su
+ * bloque de CSS bajo html[data-personaje="<id>"]) y sus ganchos (frame, mouth, droop, gaze, ask, identidad,
+ * mensaje, titulo, estado). Mensajes del anfitrión: {type:'da-<id>', …}, sólo del padre y de un origen de la red.
+ * Bugito (personaje=bugito, «Bugito es una adaptación de Admirito»): rojo y negro, cuernos, rabito, cejas
+ * pícaras y colmillo; el creador de incidencias del banco de pruebas (admira.biz/bugito.html). No pregunta al
+ * cerebro: sus órdenes van al anfitrión (da-bugito-lanzar) y el anfitrión le cuenta qué pasa
+ * (da-bugito {estado: aburrido|tramando|lanzando|celebrando|derrotado|rechazado, incidencia, ticket}).
  */
 (function () {
   'use strict';
@@ -35,7 +39,17 @@
   var DACTX = window.DAContext;
   var DADemo = window.DADemo;
   var SVGNS = 'http://www.w3.org/2000/svg';
-  var PERSONAJE = /^bugito$/i.test(params.get('personaje') || '') ? 'bugito' : 'admirito';
+  // ───── Pieles: la tabla. Los ganchos de cada piel se le añaden más abajo (bloque «Piel <ID>»). ─────
+  var PIELES = {
+    admirito: null,   // la nube de siempre
+    bugito: { textos: {
+      es: { tag: 'Bugito, el diablillo de las incidencias', placeholder: 'Pídeme un fallo: «gira la pantalla», «lanza un popup»…',
+        aria: 'Bugito, el diablillo rojo de AdmiraNeXT', chips: ['Gira la pantalla', 'Cambia la resolución', 'Lanza un popup', 'Ábrela a medias', 'Vuelve a la normalidad'] },
+      en: { tag: 'Bugito, the incident imp', placeholder: 'Ask me for a fault: “rotate the screen”, “pop up a popup”…',
+        aria: 'Bugito, the little red AdmiraNeXT devil', chips: ['Rotate the screen', 'Change the resolution', 'Pop up a popup', 'Half-open it', 'Back to normal'] } } }
+  };
+  var PERSONAJE = (function () { var p = String(params.get('personaje') || '').toLowerCase(); return Object.prototype.hasOwnProperty.call(PIELES, p) && PIELES[p] ? p : 'admirito'; })();
+  var PIEL = PIELES[PERSONAJE] || null;
 
   var T = {
     es: { lang: 'es', tag: 'Admirito, la nube que habla', placeholder: 'Escribe o pulsa 🎙️ para hablar con Admirito…',
@@ -53,12 +67,7 @@
       loc: 'Xpacio (Admira.app location)', aria: 'Admirito, the AdmiraNeXT cloud',
       chips: ['Who are you?', 'What does this shop offer?', 'How can I pay?', 'Who can I ask?'] }
   };
-  if (PERSONAJE === 'bugito') {
-    T.es = Object.assign({}, T.es, { tag: 'Bugito, el diablillo de las incidencias', placeholder: 'Pídeme un fallo: «gira la pantalla», «lanza un popup»…',
-      aria: 'Bugito, el diablillo rojo de AdmiraNeXT', chips: ['Gira la pantalla', 'Cambia la resolución', 'Lanza un popup', 'Ábrela a medias', 'Vuelve a la normalidad'] });
-    T.en = Object.assign({}, T.en, { tag: 'Bugito, the incident imp', placeholder: 'Ask me for a fault: “rotate the screen”, “pop up a popup”…',
-      aria: 'Bugito, the little red AdmiraNeXT devil', chips: ['Rotate the screen', 'Change the resolution', 'Pop up a popup', 'Half-open it', 'Back to normal'] });
-  }
+  if (PIEL && PIEL.textos) { T.es = Object.assign({}, T.es, PIEL.textos.es); T.en = Object.assign({}, T.en, PIEL.textos.en); }
   var LANG = (params.get('lang') === 'en' ? 'en' : params.get('lang') === 'es' ? 'es' : '') || DACTX.get().lang || (localStorage.getItem('da_lang') === 'en' ? 'en' : 'es');
 
   // ───────────────────────── Cuerpo (SVG) ─────────────────────────
@@ -102,7 +111,7 @@
     return { mode: S.mode, mouthOpen: +mouth.a.toFixed(3), speaking: !!S.speak, speakKind: S.speak ? S.speak.kind : '', sleeping: S.mode === 'sleeping',
       dance: D ? D.name : '', danceT: D ? +D.t.toFixed(2) : 0, demo: DEMO || '',
       blink: +S.blink.toFixed(2), gaze: [+S.gaze.x.toFixed(2), +S.gaze.y.toFixed(2)], reduced: REDUCED, lang: LANG, tier: DACTX.tier(), muted: MUTED,
-      personaje: PERSONAJE, bugito: BUG ? BUG.estado : '' };
+      personaje: PERSONAJE, piel: PIEL && PIEL.estado ? PIEL.estado() : '' };
   };
 
   function touch() {
@@ -328,7 +337,7 @@
     // Boca
     updateMouthTarget(dt);
     if (o.mouth && !S.speak) { mouth.ta = o.mouth[0]; mouth.tr = o.mouth[1]; }
-    if (BUG && !S.speak) bugMouth(dt);
+    if (PIEL && PIEL.mouth && !S.speak) PIEL.mouth(dt);
     var k = 1 - Math.exp(-dt * 26);
     mouth.a += (mouth.ta - mouth.a) * k; mouth.r += (mouth.tr - mouth.r) * k;
     drawMouth();
@@ -339,7 +348,7 @@
     else if (S.nextBlink <= 0 && S.mode !== 'sleeping') { S.blink = 0.16; S.nextBlink = 2.2 + Math.random() * 3.8; if (Math.random() < 0.15) S.nextBlink = 0.25; }
     var bl = S.blink > 0 ? Math.sin((1 - S.blink / 0.16) * Math.PI) : 0;
     var wk = 0; if (S.wink >= 0) { S.wink += dt; wk = S.wink < 0.5 ? Math.sin(Math.min(1, S.wink / 0.5) * Math.PI) : 0; if (S.wink > 0.5) S.wink = -1; }
-    var sleepy = S.mode === 'sleeping' ? 1 : (BUG ? BUG.droop : 0);
+    var sleepy = S.mode === 'sleeping' ? 1 : (PIEL && PIEL.droop ? PIEL.droop() : 0);
     S.sleepEyes += (sleepy - S.sleepEyes) * Math.min(1, dt * 2.5);
 
     // Mirada: puntero > deriva al azar; pensando mira arriba; dormida, abajo
@@ -350,7 +359,7 @@
     else if (S.gaze.next <= 0) { var c = Math.random(); S.gaze.tx = c < 0.4 ? 0 : (Math.random() - 0.5) * 1.8; S.gaze.ty = c < 0.4 ? 0 : (Math.random() - 0.5) * 1.0; S.gaze.next = 0.9 + Math.random() * 2.6; }
     if (S.mode === 'sleeping') { S.gaze.tx = 0; S.gaze.ty = 0.4; }
     if (o.gaze) { S.gaze.tx = o.gaze[0]; S.gaze.ty = o.gaze[1]; }
-    else if (BUG && BUG.gaze && S.mode !== 'sleeping' && !(S.pointer && now - S.pointer.t < 2500)) { S.gaze.tx = BUG.gaze[0]; S.gaze.ty = BUG.gaze[1]; }
+    else if (PIEL && PIEL.gaze && S.mode !== 'sleeping' && !(S.pointer && now - S.pointer.t < 2500)) { var pg = PIEL.gaze(); if (pg) { S.gaze.tx = pg[0]; S.gaze.ty = pg[1]; } }
     var gk = Math.min(1, dt * 10); S.gaze.x += (S.gaze.tx - S.gaze.x) * gk; S.gaze.y += (S.gaze.ty - S.gaze.y) * gk;
 
     // Felicidad (^^) y rubor
@@ -392,7 +401,7 @@
     }
     el.piensa.classList.toggle('on', S.mode === 'thinking');
     el.piensa.setAttribute('opacity', S.mode === 'thinking' ? 1 : 0);
-    if (BUG) bugFrame(dt);
+    if (PIEL && PIEL.frame) PIEL.frame(dt);
     requestAnimationFrame(frame);
   }
 
@@ -555,7 +564,7 @@
       + 'API: POST https://brain.digitalavatar.ai/metahuman/train con Authorization: Bearer <ADMIN_TOKEN>.';
   }
   function handleIdentityCommand(cmd) {
-    if (BUG && (cmd.kind === 'help' || cmd.kind === 'who' || cmd.kind === 'profile')) { showHelpReply(cmd.kind === 'help' ? bugF().ayuda : bugF().quien); return; }
+    if (PIEL && PIEL.identidad) { var propia = PIEL.identidad(cmd.kind); if (propia) { showHelpReply(propia); return; } }
     if (cmd.kind === 'help') { showHelpReply(identityHelpText()); return; }
     if (cmd.kind === 'who') {
       var who = DACTX.who && DACTX.who();
@@ -662,7 +671,7 @@
       setTimeout(function () { if ($('status').textContent.indexOf(cmd.name) >= 0) setStatus(''); }, 1800);
       return;
     }
-    if (BUG) { bugAsk(question); return; }   // Bugito: sus órdenes van al anfitrión, nunca al cerebro
+    if (PIEL && PIEL.ask) { PIEL.ask(question); return; }   // una piel con papel propio no pregunta al cerebro
     stopDance();
     stopAll();
     // /demo <solución>: presenta la solución y luego la página abre su demo (da-context.js).
@@ -738,13 +747,13 @@
     try { localStorage.setItem('da_lang', LANG); } catch (_) {}
     document.documentElement.lang = t.lang;
     $('tag').textContent = t.tag; $('q').placeholder = t.placeholder; el.svg.setAttribute('aria-label', t.aria);
-    if (BUG) document.title = LANG === 'en' ? 'DigitalAvatar.ai — Bugito, the incident imp (Admirito with horns)' : 'DigitalAvatar.ai — Bugito, el diablillo de las incidencias (Admirito con cuernos)';
+    if (PIEL && PIEL.titulo) document.title = PIEL.titulo(LANG);
     var lt = $('langToggle'); if (lt) lt.textContent = LANG === 'es' ? 'EN' : 'ES';
     if (DACTX.get().lang !== LANG) DACTX.set({ lang: LANG });
     renderChips();
   }
   function renderChips() {
-    var list = BUG ? T[LANG].chips.slice() : DACTX.chips(T[LANG].chips);
+    var list = PIEL ? T[LANG].chips.slice() : DACTX.chips(T[LANG].chips);
     $('chips').innerHTML = list.map(function (c) { return '<span class="chip">' + esc(c) + '</span>'; }).join('');
     Array.prototype.forEach.call($('chips').children, function (node, i) { node.onclick = function () { $('q').value = list[i]; ask(); }; });
   }
@@ -902,6 +911,16 @@
     if (e === 'derrotado' && BUG.t < 5) { BUG.humoT -= dt; if (BUG.humoT <= 0) { humo(1); BUG.humoT = 0.8; } }
   }
   // Embebido en el banco: avisa al anfitrión de que ya escucha (para que le cuente el estado actual).
+  // Ganchos de la piel en la tabla (el motor no sabe nada de Bugito; sólo llama a estos).
+  Object.assign(PIELES.bugito, {
+    frame: bugFrame, mouth: bugMouth, ask: bugAsk,
+    droop: function () { return BUG ? BUG.droop : 0; },
+    gaze: function () { return BUG ? BUG.gaze : null; },
+    estado: function () { return BUG ? BUG.estado : ''; },
+    identidad: function (kind) { return kind === 'help' ? bugF().ayuda : (kind === 'who' || kind === 'profile') ? bugF().quien : ''; },
+    titulo: function (l) { return l === 'en' ? 'DigitalAvatar.ai — Bugito, the incident imp (Admirito with horns)' : 'DigitalAvatar.ai — Bugito, el diablillo de las incidencias (Admirito con cuernos)'; },
+    mensaje: function (d) { bugEstado(String(d.estado || ''), { incidencia: d.incidencia, ticket: d.ticket, texto: d.texto, silencio: d.silencio === true }); }
+  });
   if (BUG && window.self !== window.top) { try { var hostO = DACTX.hostOrigin ? DACTX.hostOrigin() : ''; if (hostO) window.parent.postMessage({ type: 'da-bugito-listo' }, hostO); } catch (_) {} }
 
   // ───────────────────────── Interacción ─────────────────────────
@@ -930,11 +949,11 @@
     else if (d.type === 'da-lang' && d.lang) applyLang(d.lang);
     else if (d.type === 'da-audio') { MUTED = d.on === false || d.on === 'off'; if (MUTED && S.speak && S.speak.audio) { var tx = S.speak.text; stopAll(); speakText(tx); } }
     else if (d.type === 'da-context') touch();
-    else if (d.type === 'da-bugito' && BUG) {
-      // Sólo el anfitrión que me incrusta, desde un origen de la red (mismo criterio que da-context).
+    else if (PIEL && PIEL.mensaje && d.type === 'da-' + PERSONAJE) {
+      // Mensajes de la piel ({type:'da-<id>'}): sólo el anfitrión que me incrusta, desde un origen de la red.
       if (ev.source !== window.parent || !(DACTX.allowed && DACTX.allowed(ev.origin))) return;
       if (d.lang && d.lang !== LANG) applyLang(d.lang);
-      bugEstado(String(d.estado || ''), { incidencia: d.incidencia, ticket: d.ticket, texto: d.texto, silencio: d.silencio === true });
+      PIEL.mensaje(d);
     }
   });
 

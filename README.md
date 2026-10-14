@@ -101,6 +101,12 @@ Contract: the avatar posts `{type:"da-demo", id:"", texto:"/demo …", requestId
 
 Validation: `node --test tests/*.test.mjs` covers the legacy demo flow, alias routing, trusted ACKs, timeout/failure and the real `ask` functions of all four renderers, without calling a provider.
 
+## Pieles de Admirito / Admirito skins (`nube.html?personaje=<id>`)
+
+ES: Admirito admite disfraces con el mismo motor: la tabla `PIELES` de `assets/nube.js` (admirito por defecto, `bugito`, y las que vengan, como `arquitecto`). Añadir una = su entrada en `PIELES` (textos y chips), sus piezas en `nube.html` (`class="piel-parte" data-piel="<id>"` + su CSS bajo `html[data-personaje="<id>"]`) y sus ganchos (`frame`, `mouth`, `droop`, `gaze`, `ask`, `identidad`, `mensaje`, `titulo`, `estado`). El anfitrión le habla con `{type:"da-<id>"}`; un `personaje` desconocido es Admirito.
+
+EN: Admirito supports costumes on the same engine: the `PIELES` table in `assets/nube.js`. A new skin = its `PIELES` entry, its parts in `nube.html` and its hooks; the host talks to it with `{type:"da-<id>"}`; an unknown `personaje` is plain Admirito.
+
 ## Bugito, la piel diablillo de Admirito / Bugito, Admirito's imp skin
 
 ES: `nube.html?personaje=bugito` es Admirito con otra piel (Carlos, 14-oct-2026: «Bugito es una adaptación de Admirito»): la misma página y el mismo `assets/nube.js` (cuerpo, vida propia, bailes y lip-sync), en rojo y negro, con cuernos, rabito, cejas pícaras y colmillo. Es el creador de incidencias del banco de pruebas de admira.biz (`/bugito.html`): no pregunta al cerebro; sus chips («Gira la pantalla», «Cambia la resolución», «Lanza un popup», «Ábrela a medias», «Vuelve a la normalidad») piden el fallo al anfitrión y el anfitrión le cuenta qué pasa. Sin el parámetro, Admirito no cambia. Se carga como Admirito, por el cargador común `https://www.admiranext.com/assets/avatar.js` (`/bugito` en el ⌘ Experto).
