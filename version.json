@@ -8,7 +8,7 @@
     "Sus chips (gira la pantalla, cambia la resolución, lanza un popup, ábrela a medias, vuelve a la normalidad) piden el fallo al banco de pruebas (da-bugito-lanzar); nunca pregunta al cerebro",
     "Admirito no cambia: sin el parámetro, las piezas de Bugito no existen"
   ],
-  "signature": "SubNeoMBP14 · MBP14",
+  "signature": "SubNeoMBP14 · MacBookProNegro14",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
   "rollback": "389c965 (main antes de Bugito)"
 }
