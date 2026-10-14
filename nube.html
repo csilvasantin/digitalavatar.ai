@@ -125,6 +125,8 @@
   html[data-personaje="bugito"] #stage #caption.bocadillo .sp1{color:#2a0507} html[data-personaje="bugito"] #stage #caption.bocadillo .sp0{color:#a8726c}
   html[data-personaje="bugito"] .bubtail{border-top-color:#c4211f} html[data-personaje="bugito"] .bubtail::after{border-top-color:#fff4f1}
   html[data-personaje="bugito"] .chip:hover{color:#ff8a7a; border-color:#ff8a7a}
+  /* Bugito no escucha ni habla con voz (lip-sync de texto) y en el banco el idioma lo pone la página: sitio para sus chips. */
+  html[data-personaje="bugito"] #btnMic, html[data-personaje="bugito"] #btnStop, html.dock[data-personaje="bugito"] #langPills{display:none !important}
   html[data-personaje="bugito"] body[data-da-composer=compact] .composer .bar .qfield:focus-within{border-color:#ff6b5e}
   .bichito{transform-box:fill-box; transform-origin:center; animation:bichito 1.15s cubic-bezier(.3,.1,.5,1) forwards}
   @keyframes bichito{0%{opacity:0; transform:translate(0,0) rotate(0) scale(.6)} 12%{opacity:1} 100%{opacity:1; transform:translate(-330px,-40px) rotate(-540deg) scale(1)}}
