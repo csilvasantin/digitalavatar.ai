@@ -1,14 +1,13 @@
 {
-  "version": "v.14.10.2026.r1.13:44",
-  "builtAt": "2026-10-14T11:44:42Z",
-  "note": "SELLAR AL PUBLICAR (rN y HH:MM reales en version.json y en el meta de nube.html). Bugito: la piel diablillo de Admirito (nube.html?personaje=bugito) para el banco de pruebas del Creador de incidencias de admira.biz.",
+  "version": "v.14.10.2026.rN.HH:MM",
+  "builtAt": "SELLAR-AL-PUBLICAR",
+  "note": "SELLAR AL PUBLICAR (rN y HH:MM reales en version.json y en el meta de nube.html). El Arquitecto: Admirito con casco de obra (nube.html?personaje=arquitecto) para el estudio /arquitecto de admira.biz (crear, reformar e inventariar Xpacios).",
   "novedades": [
-    "Bugito es Admirito con otra piel: la misma nube, el mismo motor, la misma vida y el mismo lip-sync, en rojo y negro, con cuernos, rabito, cejas pícaras y colmillo (nube.html?personaje=bugito)",
-    "Estados aburrido, tramando, lanzando, celebrando y derrotado, con sus frases en castellano e inglés; el anfitrión se los cuenta por postMessage (da-bugito) desde un origen de la red",
-    "Sus chips (gira la pantalla, cambia la resolución, lanza un popup, ábrela a medias, vuelve a la normalidad) piden el fallo al banco de pruebas (da-bugito-lanzar); nunca pregunta al cerebro",
-    "Admirito no cambia: sin el parámetro, las piezas de Bugito no existen"
+    "El Arquitecto es Admirito disfrazado: el mismo Admirito blanco y verde con casco amarillo de obra, gafas redondas, lápiz en la oreja y rollo de planos, sobre papel de plano azul (nube.html?personaje=arquitecto)",
+    "Estados reposo, escuchando, midiendo, dibujando, entregando y dudando, con cinta métrica, trazos de plano y el plano que se desenrolla; frases como «Vamos a medir», «Esto pide una reforma» e «Inventario listo, firmo el acta»",
+    "Lo que se le dice, escrito o por su micro, va al estudio (da-arquitecto-orden: crear, reformar, inventariar o una descripción); el estudio le cuenta en qué está (da-arquitecto). Nunca pregunta al cerebro"
   ],
   "signature": "SubNeoMBP14 · MacBookProNegro14",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "389c965 (main antes de Bugito)"
+  "rollback": "f547616 (main con Bugito, sin el Arquitecto)"
 }

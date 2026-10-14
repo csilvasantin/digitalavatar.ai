@@ -129,8 +129,8 @@ test('Bugito nunca pregunta al cerebro: las órdenes van al anfitrión y la char
 test('la tabla de pieles: admirito por defecto, bugito, y una desconocida cae a Admirito', () => {
   assert.match(nube, /var PIELES = \{\n    admirito: null,/);
   assert.match(nube, /Object\.assign\(PIELES\.bugito, \{/);
-  const otro = carga({ search: '?personaje=arquitecto&embed=1' });
-  assert.equal(otro.win.__nube().personaje, 'admirito', 'hasta que exista su piel, es Admirito');
+  const otro = carga({ search: '?personaje=pirata&embed=1' });
+  assert.equal(otro.win.__nube().personaje, 'admirito', 'una piel que no existe es Admirito');
   const raro = carga({ search: '?personaje=__proto__&embed=1' });
   assert.equal(raro.win.__nube().personaje, 'admirito');
   // El motor sólo llama a ganchos genéricos: ningún «BUG» fuera del bloque de la piel.

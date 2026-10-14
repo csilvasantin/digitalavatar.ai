@@ -135,9 +135,37 @@
   .llama{opacity:0; transform-box:fill-box; transform-origin:50% 100%; animation:llama 1.2s ease-out forwards}
   @keyframes llama{0%{opacity:0; transform:translate(0,0) scale(.3)} 30%{opacity:1; transform:translate(0,-10px) scale(1.1)} 100%{opacity:0; transform:translate(var(--lx,0px),-50px) scale(.4)}}
   @media (prefers-reduced-motion:reduce){ .bichito,.humo,.llama{display:none} }
+  /* Piel ARQUITECTO (?personaje=arquitecto · Carlos, 14-oct-2026: «/arquitecto … admirito se disfrace de arquitecto»):
+     el mismo Admirito, blanco y verde, con casco amarillo de obra, gafas redondas, lápiz en la oreja y rollo de planos,
+     sobre papel de plano azul. Papel: el estudio del Arquitecto de admira.biz (crear, reformar e inventariar Xpacios). */
+  html[data-personaje="arquitecto"] .piel-parte[data-piel="arquitecto"]{display:inline}
+  html[data-personaje="arquitecto"] body{background:linear-gradient(rgba(143,196,255,.07) 1px, transparent 1px) 0 0/28px 28px,
+    linear-gradient(90deg, rgba(143,196,255,.07) 1px, transparent 1px) 0 0/28px 28px, radial-gradient(120% 90% at 50% -10%, #17406e 0%, #071a30 62%)}
+  html[data-personaje="arquitecto"] #stage::before{background:radial-gradient(closest-side, rgba(255,194,26,.26), rgba(255,194,26,.07) 55%, transparent 75%)}
+  html[data-personaje="arquitecto"] #evo{display:none !important}
+  html[data-personaje="arquitecto"] .brand b{color:#ffc21a}
+  html[data-personaje="arquitecto"] .tier{background:#10335c; color:#cfe6ff; border-color:#2f6db5}
+  html[data-personaje="arquitecto"] #stage #caption.bocadillo{background:#f4f9ff; color:#0f2740; border-color:#2f6db5}
+  html[data-personaje="arquitecto"] #stage #caption.bocadillo .sp1{color:#0f2740} html[data-personaje="arquitecto"] #stage #caption.bocadillo .sp0{color:#6d86a3}
+  html[data-personaje="arquitecto"] #stage #caption.bocadillo.help{background:#f4f9ff; border-color:#2f6db5}
+  html[data-personaje="arquitecto"] .bubtail{border-top-color:#2f6db5} html[data-personaje="arquitecto"] .bubtail::after{border-top-color:#f4f9ff}
+  html[data-personaje="arquitecto"] .chip:hover{color:#ffc21a; border-color:#ffc21a}
+  html[data-personaje="arquitecto"] body[data-da-composer=compact] .composer .bar .qfield:focus-within{border-color:#ffc21a}
+  html[data-personaje="arquitecto"] #piensa circle{fill:#ffd451}
+  /* En su estudio el idioma lo pone la página (como Bugito): sitio para sus chips. El micro se queda: el Arquitecto escucha. */
+  html.dock[data-personaje="arquitecto"] #langPills{display:none !important}
+  .onda{fill:none; stroke:#cfe6ff; stroke-width:4; stroke-linecap:round; opacity:0; transform-box:fill-box; transform-origin:0 50%; animation:onda 1.1s ease-out forwards}
+  @keyframes onda{0%{opacity:0; transform:scale(.6)} 30%{opacity:.9} 100%{opacity:0; transform:translate(14px,0) scale(1.25)}}
+  .cinta{transform-box:fill-box; transform-origin:0 50%; animation:cinta 2.1s cubic-bezier(.3,.1,.3,1) forwards}
+  @keyframes cinta{0%{opacity:0; transform:scaleX(.02)} 10%{opacity:1} 70%{opacity:1; transform:scaleX(1)} 100%{opacity:0; transform:scaleX(1)}}
+  .trazo{fill:none; stroke:#8fc4ff; stroke-width:3.2; stroke-linecap:round; stroke-dasharray:1; stroke-dashoffset:1; opacity:0; animation:trazo 1.6s ease-out forwards}
+  @keyframes trazo{0%{stroke-dashoffset:1; opacity:0} 8%{opacity:1} 55%{stroke-dashoffset:0; opacity:1} 100%{stroke-dashoffset:0; opacity:0}}
+  .plano{transform-box:fill-box; transform-origin:100% 50%; animation:plano 2.6s cubic-bezier(.2,.8,.3,1) forwards}
+  @keyframes plano{0%{opacity:0; transform:scaleX(.05)} 12%{opacity:1} 45%{transform:scaleX(1)} 85%{opacity:1; transform:scaleX(1)} 100%{opacity:0; transform:scaleX(1)}}
+  @media (prefers-reduced-motion:reduce){ .onda,.cinta,.trazo,.plano{display:none} }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
-<meta name="admiranext-version" content="v.14.10.2026.r1.13:44">
+<meta name="admiranext-version" content="v.14.10.2026.rN.HH:MM">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261007-metricas-3">
 <script defer src="/assets/da-shell.js?v=20261007-metricas-3" data-section="/ nube" data-section-en="/ cloud"></script>
@@ -188,6 +216,28 @@
           </g>
           <path class="cuerpo-relleno" d="M213.31,59.13c-1,0-1.9.1-2.85.15a83,83,0,0,0-144,0c-1-.05-1.89-.15-2.85-.15A58.22,58.22,0,1,0,90.81,168.79a82.72,82.72,0,0,0,95.29,0A58.21,58.21,0,1,0,213.31,59.13Z" fill="#f3f9e8"/>
           <path class="cuerpo-borde" d="M213.31,59.13c-1,0-1.9.1-2.85.15a83,83,0,0,0-144,0c-1-.05-1.89-.15-2.85-.15A58.22,58.22,0,1,0,90.81,168.79a82.72,82.72,0,0,0,95.29,0A58.21,58.21,0,1,0,213.31,59.13Zm0,99.81a41.75,41.75,0,0,1-28.06-11,67.09,67.09,0,0,1-13.39,10.21,65.93,65.93,0,0,1-66.81,0A67.09,67.09,0,0,1,91.66,148,41.56,41.56,0,1,1,59,76a43.33,43.33,0,0,1,4.58-.26A41.39,41.39,0,0,1,76.11,77.7a66.43,66.43,0,0,1,124.69,0,41.39,41.39,0,0,1,12.51-1.93,43.33,43.33,0,0,1,4.58.26,41.58,41.58,0,0,1-4.58,82.91Z" fill="#689840"/>
+          <!-- Arquitecto: el lápiz en la «oreja» (asoma bajo el ala del casco), el casco amarillo de obra y el rollo de planos. -->
+          <g id="arqLapiz" class="piel-parte" data-piel="arquitecto" transform="translate(196,50) rotate(-30)">
+            <rect x="-8" y="-4.5" width="8" height="9" rx="2" fill="#ff8fa3" stroke="#5a3b00" stroke-width="2"/>
+            <rect x="-2" y="-4.5" width="4" height="9" fill="#c9c9c9" stroke="#5a3b00" stroke-width="1.6"/>
+            <rect x="2" y="-4.5" width="44" height="9" fill="#ffc93c" stroke="#5a3b00" stroke-width="2"/>
+            <path d="M3,-1.5 L45,-1.5 M3,1.5 L45,1.5" stroke="#e0a000" stroke-width="1.2"/>
+            <path d="M46,-4.5 L58,0 L46,4.5 Z" fill="#f3d6a4" stroke="#5a3b00" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M54.5,-1.3 L58,0 L54.5,1.3 Z" fill="#2b2b2b"/>
+          </g>
+          <g id="arqCasco" class="piel-parte" data-piel="arquitecto">
+            <path d="M86,41 C84,3 108,-16 138.5,-16 C169,-16 193,3 191,41 Z" fill="#ffc21a" stroke="#5a3b00" stroke-width="5" stroke-linejoin="round"/>
+            <path d="M127,-15 L150,-15 L152,41 L125,41 Z" fill="#ffd451" stroke="#5a3b00" stroke-width="3.5" stroke-linejoin="round"/>
+            <path d="M101,9 Q107,-5 121,-10" fill="none" stroke="#fff3c4" stroke-width="5" stroke-linecap="round" opacity=".85"/>
+            <path d="M60,45 Q138.5,27 217,45 Q219,55 207,55 Q138.5,41 70,55 Q58,55 60,45 Z" fill="#ffb300" stroke="#5a3b00" stroke-width="5" stroke-linejoin="round"/>
+          </g>
+          <g id="arqRollo" class="piel-parte" data-piel="arquitecto" transform="translate(-14,166) rotate(-22)">
+            <rect x="0" y="-10" width="64" height="20" rx="4" fill="#3d7fd0" stroke="#133a66" stroke-width="3"/>
+            <path d="M8,-4 L52,-4 M8,3 L40,3" stroke="#cfe6ff" stroke-width="1.8" stroke-linecap="round"/>
+            <rect x="22" y="-10" width="5" height="20" fill="#ffc93c" stroke="#5a3b00" stroke-width="1.5"/>
+            <ellipse cx="64" cy="0" rx="5" ry="10" fill="#d9ecff" stroke="#133a66" stroke-width="2.5"/>
+            <path d="M64,-4 Q67,0 64,4 Q61,0 64,-2" fill="none" stroke="#3d7fd0" stroke-width="1.5"/>
+          </g>
           <g id="mejillas"><ellipse id="mejI" cx="92" cy="138" rx="15" ry="9" fill="#f5a3a3" opacity=".75"/><ellipse id="mejD" cx="185" cy="138" rx="15" ry="9" fill="#f5a3a3" opacity=".75"/></g>
           <g id="ojos">
             <g id="ojoI"><ellipse cx="111" cy="110" rx="12.5" ry="17" fill="#1d2b12"/><circle class="brillo" cx="115.5" cy="103" r="5" fill="#fff"/></g>
@@ -206,6 +256,18 @@
             <path id="bugCejaD" d="M181,86 L151,94"/>
           </g>
           <path id="bugColmillo" class="piel-parte" data-piel="bugito" d="M127.5,140 L131,150 L134.5,140 Z" fill="#fff" stroke="#2a0507" stroke-width="1.2" stroke-linejoin="round"/>
+          <!-- Arquitecto: gafas redondas (de las de Le Corbusier) y cejas que se concentran al medir y dibujar. -->
+          <g id="arqGafas" class="piel-parte" data-piel="arquitecto" fill="none" stroke="#1a1a1a" stroke-linecap="round">
+            <circle cx="111" cy="110" r="22" fill="rgba(190,225,255,.22)" stroke-width="5"/>
+            <circle cx="166" cy="110" r="22" fill="rgba(190,225,255,.22)" stroke-width="5"/>
+            <path d="M133,106 Q138.5,100 144,106" stroke-width="4.5"/>
+            <path d="M89,104 L68,97 M188,104 L209,97" stroke-width="4.5"/>
+            <path d="M97,99 Q101,93 107,92" stroke="#ffffff" stroke-width="2.5" opacity=".7"/>
+          </g>
+          <g id="arqCejas" class="piel-parte" data-piel="arquitecto" fill="none" stroke="#3b2a14" stroke-width="5.5" stroke-linecap="round">
+            <path id="arqCejaI" d="M96,80 Q111,73 126,78"/>
+            <path id="arqCejaD" d="M151,78 Q166,73 181,80"/>
+          </g>
         </g>
         <g id="piensa" transform="translate(212,22)"><circle cx="0" cy="0" r="5"/><circle cx="16" cy="-6" r="6"/><circle cx="34" cy="-14" r="7"/></g>
       </g>
@@ -241,7 +303,7 @@
 
 <script src="/assets/da-context.js?v=20261007-registro-1"></script>
 <script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
-<script src="/assets/nube.js?v=20261014-bugito-2"></script>
+<script src="/assets/nube.js?v=20261014-arquitecto-1"></script>
 <script defer src="/assets/da-conversation-controls.js?v=20261007-langui-1"></script>
 </body>
 </html>
