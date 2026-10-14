@@ -1,14 +1,14 @@
 {
-  "version": "v.07.10.2026.r26.23:45",
-  "builtAt": "2026-10-07T21:45:07Z",
-  "note": "Registro de conversaciones y pedidos: cada cliente del quiosco es una conversación propia y el avatar avisa del canal, el origen (real/demo) y la tanda de demo para que el registro de /metricas lo separe.",
+  "version": "v.14.10.2026.r1.12:24",
+  "builtAt": "2026-10-14T10:24:00Z",
+  "note": "Bugito: la piel diablillo de Admirito (nube.html?personaje=bugito) para el banco de pruebas del Creador de incidencias de admira.biz.",
   "novedades": [
-    "Nuevo registro protegido en digitalavatar.ai/metricas: un hilo por conversación con avatar, tienda, canal, idioma, cliente y su pedido con las fases recibido → preparando → preparado → recogido",
-    "Filtros por avatar, tienda, fecha y franja horaria, con o sin pedido y búsqueda de texto; KPIs, gráfico por horas, refresco en vivo, CSV y botón ES/EN",
-    "Los datos de demo (/demo pedido) y de la sala starbucks-qa quedan marcados y separados de los reales",
-    "El quiosco abre una conversación nueva por cliente y el avatar acepta ?conv, ?canal, ?origen y ?demo_run (contrato registro v1)"
+    "Bugito es Admirito con otra piel: la misma nube, el mismo motor, la misma vida y el mismo lip-sync, en rojo y negro, con cuernos, rabito, cejas pícaras y colmillo (nube.html?personaje=bugito)",
+    "Estados aburrido, tramando, lanzando, celebrando y derrotado, con sus frases en castellano e inglés; el anfitrión se los cuenta por postMessage (da-bugito) desde un origen de la red",
+    "Sus chips (gira la pantalla, cambia la resolución, lanza un popup, ábrela a medias, vuelve a la normalidad) piden el fallo al banco de pruebas (da-bugito-lanzar); nunca pregunta al cerebro",
+    "Admirito no cambia: sin el parámetro, las piezas de Bugito no existen"
   ],
-  "signature": "GrokBot · MacMini",
+  "signature": "SubNeoMBP14 · MBP14",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "retorno/pre-registro-da-20261007"
+  "rollback": "389c965 (main antes de Bugito)"
 }
