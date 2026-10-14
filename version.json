@@ -1,6 +1,6 @@
 {
-  "version": "v.14.10.2026.rN.HH:MM",
-  "builtAt": "SELLAR-AL-PUBLICAR",
+  "version": "v.14.10.2026.r1.13:44",
+  "builtAt": "2026-10-14T11:44:42Z",
   "note": "SELLAR AL PUBLICAR (rN y HH:MM reales en version.json y en el meta de nube.html). Bugito: la piel diablillo de Admirito (nube.html?personaje=bugito) para el banco de pruebas del Creador de incidencias de admira.biz.",
   "novedades": [
     "Bugito es Admirito con otra piel: la misma nube, el mismo motor, la misma vida y el mismo lip-sync, en rojo y negro, con cuernos, rabito, cejas pícaras y colmillo (nube.html?personaje=bugito)",
