@@ -1,13 +1,12 @@
 {
-  "version": "v.14.10.2026.r2.14:06",
-  "builtAt": "SELLAR-AL-PUBLICAR",
-  "note": "SELLAR AL PUBLICAR (rN y HH:MM reales en version.json y en el meta de nube.html). El Arquitecto: Admirito con casco de obra (nube.html?personaje=arquitecto) para el estudio /arquitecto de admira.biz (crear, reformar e inventariar Xpacios).",
+  "version": "v.16.10.2026.r1.16:06",
+  "builtAt": "2026-10-16T14:06:22.913541+00:00",
+  "note": "Admirito despacha las órdenes explícitas de creación al motor Experto del anfitrión y espera su confirmación.",
   "novedades": [
-    "El Arquitecto es Admirito disfrazado: el mismo Admirito blanco y verde con casco amarillo de obra, gafas redondas, lápiz en la oreja y rollo de planos, sobre papel de plano azul (nube.html?personaje=arquitecto)",
-    "Estados reposo, escuchando, midiendo, dibujando, entregando y dudando, con cinta métrica, trazos de plano y el plano que se desenrolla; frases como «Vamos a medir», «Esto pide una reforma» e «Inventario listo, firmo el acta»",
-    "Lo que se le dice, escrito o por su micro, va al estudio (da-arquitecto-orden: crear, reformar, inventariar o una descripción); el estudio le cuenta en qué está (da-arquitecto). Nunca pregunta al cerebro"
+    "/crear cartela tintaelectronica se envía al motor compartido de la suite, sin preguntar al cerebro ni duplicar la orden.",
+    "Confirmación de ejecución por origen, ventana e identificador de petición."
   ],
-  "signature": "SubNeoMBP14 · MacBookProNegro14",
+  "signature": "Codex · MacStudio",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
   "rollback": "f547616 (main con Bugito, sin el Arquitecto)"
 }

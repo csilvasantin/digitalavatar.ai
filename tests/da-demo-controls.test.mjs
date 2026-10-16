@@ -87,3 +87,10 @@ for(const [file,end] of renderers)for(const command of ['/demo pausa','/demo hel
  nodes.q.value='/demo estado';const second=sandbox.ask('/demo estado');h.ack(h.posts[0][0],{message:'stale'});await first;assert.equal(captions.includes('stale'),false);
  h.ack(h.posts[1][0],{ok:false,message:'No hay una demo activa.'});await second;assert.equal(captions.at(-1),'No hay una demo activa.');
 });
+
+test('explicit creation commands bypass brain and voice, preserve the brief and require the command ACK',async()=>{
+ const h=load({referrer:'https://admira.studio/creador/'});const pending=h.api.demoCommand('/crear cartela tintaelectronica Diagonal & café');
+ const [p,target]=h.posts[0];assert.equal(p.type,'da-command');assert.equal(p.texto,'/crear cartela tintaelectronica Diagonal & café');assert.equal(target,'https://admira.studio');
+ let done=false;pending.then(()=>done=true);h.msg({type:'da-demo-result',requestId:p.requestId,ok:true},{origin:target});await Promise.resolve();assert.equal(done,false);
+ h.msg({type:'da-command-result',requestId:p.requestId,ok:true,message:'Creador · 4 cartelas'},{origin:target});assert.equal((await pending).confirmed,true);assert.equal(h.fetches.length,0);
+});
