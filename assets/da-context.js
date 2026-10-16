@@ -231,8 +231,9 @@
   function demoFeedback(en, es) { return lang() === 'en' ? en : es; }
   function demoCommand(question) {
     var m = /^\/?demo\s+(auto|todas|todos|all|pausa|pause|reanudar|resume|continuar|siguiente|next|stop|off|parar|estado|status|help|ayuda|lista|\?)$/i.exec(norm(question));
-    if (!m || root.self === root.top) return null;
-    var isHelp = /^(help|ayuda|lista|\?)$/.test(m[1]);
+    var generic=!m&&/^\/[a-z][a-z0-9-]*(?:\s|$)/i.test(String(question||'').trim())&&!/^\/demo(?:\s|$)/i.test(String(question||'').trim());
+    if ((!m&&!generic) || root.self === root.top) return null;
+    var isHelp = !generic&&/^(help|ayuda|lista|\?)$/.test(m[1]);
     demoPending = null;
     clearTimeout(demoOpeningTimer); demoOpeningTimer = null;
     if (!demoParentOrigin) return Promise.resolve({ok: false, confirmed: false, message: demoFeedback('No trusted host is available; the demo command is not confirmed.', 'No hay un anfitrión de confianza disponible; la orden de demo no está confirmada.')});
@@ -243,9 +244,9 @@
         delete demoRequests[requestId];
         resolve({ok: false, confirmed: false, message: demoFeedback('The host did not confirm the demo command. Check its state before retrying.', 'El anfitrión no confirmó la orden de demo. Comprueba su estado antes de reintentar.')});
       }, 20000);
-      demoRequests[requestId] = {resolve: resolve, timeout: timeout};
+      demoRequests[requestId] = {resolve: resolve, timeout: timeout, replyType:generic?'da-command-result':'da-demo-result'};
       try {
-        root.parent.postMessage({type: 'da-demo', id: '', texto: '/demo ' + (isHelp ? 'help' : m[1].toLowerCase()), requestId: requestId}, demoParentOrigin);
+        root.parent.postMessage({type: generic?'da-command':'da-demo', id: '', texto: generic?String(question).trim():'/demo ' + (isHelp ? 'help' : m[1].toLowerCase()), requestId: requestId}, demoParentOrigin);
       } catch (_) {
         clearTimeout(timeout); delete demoRequests[requestId];
         resolve({ok: false, confirmed: false, message: demoFeedback('The demo command could not reach the host.', 'La orden de demo no pudo llegar al anfitrión.')});
@@ -328,11 +329,11 @@
 
   root.addEventListener('message', function (ev) {
     var d = ev && ev.data;
-    if (d && typeof d === 'object' && d.type === 'da-demo-result') {
+    if (d && typeof d === 'object' && (d.type === 'da-demo-result'||d.type==='da-command-result')) {
       if (ev.source !== root.parent || !demoParentOrigin || ev.origin !== demoParentOrigin) return;
       if (typeof d.requestId !== 'string') return;
       var request = demoRequests[d.requestId];
-      if (!request) return;
+      if (!request||request.replyType!==d.type) return;
       clearTimeout(request.timeout); delete demoRequests[d.requestId];
       request.resolve({ok: d.ok === true, confirmed: true, message: String(d.message || demoFeedback('The host returned a response.', 'El anfitrión devolvió una respuesta.')).slice(0, 4000), estado: d.estado});
       return;
