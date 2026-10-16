@@ -171,6 +171,7 @@
   // Valores por defecto de cada página (p. ej. nube.html = good); la URL manda.
   function init(defaults) {
     if (defaults) for (var k in defaults) if (KEYS.indexOf(k) >= 0 && !fromUrl[k]) { var v = clean(k, defaults[k]); if (v) ctx[k] = v; }
+    if(root.self!==root.top&&demoParentOrigin){try{root.parent.postMessage({type:'da-command-catalog-request'},demoParentOrigin);}catch(_){}}
     return refresh();
   }
 
@@ -223,7 +224,7 @@
   // Local playback controls are host commands, never questions for the brain.
   // The host acknowledges the request after its dispatcher has run; silence is not success.
   var demoRequests = Object.create(null), demoRequestSeq = 0, demoRequestPrefix = 'da-demo-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
-  var demoParentOrigin = '';
+  var demoParentOrigin = '', hostCommands=[];
   try {
     var embeddingOrigin = new URL(document.referrer).origin;
     if (ALLOWED.test(embeddingOrigin)) demoParentOrigin = embeddingOrigin;
@@ -231,7 +232,7 @@
   function demoFeedback(en, es) { return lang() === 'en' ? en : es; }
   function demoCommand(question) {
     var m = /^\/?demo\s+(auto|todas|todos|all|pausa|pause|reanudar|resume|continuar|siguiente|next|stop|off|parar|estado|status|help|ayuda|lista|\?)$/i.exec(norm(question));
-    var generic=!m&&/^\/[a-z][a-z0-9-]*(?:\s|$)/i.test(String(question||'').trim())&&!/^\/demo(?:\s|$)/i.test(String(question||'').trim());
+    var generic=!m&&(hostCommands.indexOf(norm(question))>=0||/^\/[a-z][a-z0-9-]*(?:\s|$)/i.test(String(question||'').trim())&&!/^\/demo(?:\s|$)/i.test(String(question||'').trim()));
     if ((!m&&!generic) || root.self === root.top) return null;
     var isHelp = !generic&&/^(help|ayuda|lista|\?)$/.test(m[1]);
     demoPending = null;
@@ -329,6 +330,7 @@
 
   root.addEventListener('message', function (ev) {
     var d = ev && ev.data;
+    if(d&&d.type==='da-command-catalog'&&ev.source===root.parent&&demoParentOrigin&&ev.origin===demoParentOrigin){hostCommands=Array.isArray(d.commands)?d.commands.filter(x=>typeof x==='string'&&/^\/[a-z0-9- ]{1,200}$/i.test(x)).slice(0,32).map(norm):[];return;}
     if (d && typeof d === 'object' && (d.type === 'da-demo-result'||d.type==='da-command-result')) {
       if (ev.source !== root.parent || !demoParentOrigin || ev.origin !== demoParentOrigin) return;
       if (typeof d.requestId !== 'string') return;
