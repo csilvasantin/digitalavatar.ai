@@ -1,10 +1,10 @@
 {
-  "version": "v.16.10.2026.r1.16:06",
-  "builtAt": "2026-10-16T14:06:22.913541+00:00",
-  "note": "Admirito despacha las órdenes explícitas de creación al motor Experto del anfitrión y espera su confirmación.",
+  "version": "v.16.10.2026.r2.16:25",
+  "builtAt": "2026-10-16T14:26:04.202679+00:00",
+  "note": "Admirito obtiene del anfitrión el catálogo de órdenes explícitas adicionales, incluida la demo Starbucks 180.",
   "novedades": [
-    "/crear cartela tintaelectronica se envía al motor compartido de la suite, sin preguntar al cerebro ni duplicar la orden.",
-    "Confirmación de ejecución por origen, ventana e identificador de petición."
+    "Las órdenes adicionales de demo provienen del catálogo del motor Experto; Admirito las ejecuta por la misma entrada.",
+    "Starbucks 180 conserva los controles y demos anteriores."
   ],
   "signature": "Codex · MacStudio",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",

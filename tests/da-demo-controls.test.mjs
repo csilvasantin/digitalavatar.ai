@@ -94,3 +94,8 @@ test('explicit creation commands bypass brain and voice, preserve the brief and 
  let done=false;pending.then(()=>done=true);h.msg({type:'da-demo-result',requestId:p.requestId,ok:true},{origin:target});await Promise.resolve();assert.equal(done,false);
  h.msg({type:'da-command-result',requestId:p.requestId,ok:true,message:'Creador · 4 cartelas'},{origin:target});assert.equal((await pending).confirmed,true);assert.equal(h.fetches.length,0);
 });
+
+test('a new demo is forwarded only when its exact command is advertised by the trusted parent',async()=>{
+ const h=load();h.msg({type:'da-command-catalog',commands:['/demo starbucks 180']},{origin:'https://evil.example'});assert.equal(h.api.demoCommand('/demo starbucks 180'),null);
+ h.msg({type:'da-command-catalog',commands:['/demo starbucks 180']});const p=h.api.demoCommand('/demo starbucks 180');const req=h.posts.at(-1)[0];assert.equal(req.type,'da-command');assert.equal(req.texto,'/demo starbucks 180');h.msg({type:'da-command-result',requestId:req.requestId,ok:true,message:'Starbucks 180'});assert.equal((await p).confirmed,true);assert.equal(h.api.demoCommand('/demo 1'),null);assert.equal(h.fetches.length,0);
+});
