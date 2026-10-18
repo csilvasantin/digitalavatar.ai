@@ -163,6 +163,54 @@
   .plano{transform-box:fill-box; transform-origin:100% 50%; animation:plano 2.6s cubic-bezier(.2,.8,.3,1) forwards}
   @keyframes plano{0%{opacity:0; transform:scaleX(.05)} 12%{opacity:1} 45%{transform:scaleX(1)} 85%{opacity:1; transform:scaleX(1)} 100%{opacity:0; transform:scaleX(1)}}
   @media (prefers-reduced-motion:reduce){ .onda,.cinta,.trazo,.plano{display:none} }
+  /* Piel SUPERVISOR (?personaje=supervisor · Carlos, 18-oct-2026: la tercera mascota del ⌘ Experto, la Insta360 del
+     MacMini que vigila el MBP16 y abre incidencias en admira.app/supervisor): el mismo Admirito, en menta y teal, con
+     gorra de vigilante con placa y el ojo derecho hecho objetivo de cámara (diafragma, anillo de enfoque y piloto REC),
+     sobre un fondo de monitor de vigilancia. El color es el de su tarjeta en admira.biz, rgba(127,227,161,…). */
+  html[data-personaje="supervisor"] .piel-parte[data-piel="supervisor"]{display:inline}
+  html[data-personaje="supervisor"] body{background:repeating-linear-gradient(0deg, rgba(127,227,161,.035) 0 1px, transparent 1px 4px),
+    radial-gradient(120% 90% at 50% -10%, #0e3b34 0%, #04110f 62%)}
+  html[data-personaje="supervisor"] #stage::before{background:radial-gradient(closest-side, rgba(127,227,161,.28), rgba(127,227,161,.08) 55%, transparent 75%)}
+  html[data-personaje="supervisor"] #evo{display:none !important}
+  html[data-personaje="supervisor"] .cuerpo-relleno{fill:#eefcf6}
+  html[data-personaje="supervisor"] .cuerpo-borde{fill:#1f8a70}
+  html[data-personaje="supervisor"] #nube:focus-visible .cuerpo-borde{stroke:#bff5d6}
+  /* El ojo derecho es el objetivo (#supLente copia su mirada y su parpadeo, que hace de obturador). */
+  html[data-personaje="supervisor"] #ojoD, html[data-personaje="supervisor"] #ojosFelices path:nth-child(2){display:none}
+  html[data-personaje="supervisor"] #ojos ellipse{fill:#0b2d27}
+  html[data-personaje="supervisor"] #ojosFelices{stroke:#0b2d27}
+  html[data-personaje="supervisor"] #bocaForma{stroke:#0b2d27}
+  html[data-personaje="supervisor"] #bocaForma:not([fill="none"]){fill:#0b2d27}
+  html[data-personaje="supervisor"] #brazos ellipse{fill:#eefcf6; stroke:#1f8a70}
+  html[data-personaje="supervisor"] #sombra{fill:#001a14}
+  html[data-personaje="supervisor"] #piensa circle{fill:#7fe3a1}
+  html[data-personaje="supervisor"] .brand b{color:#7fe3a1}
+  html[data-personaje="supervisor"] .tier{background:#0b2d27; color:#bff5d6; border-color:#23977a}
+  html[data-personaje="supervisor"] #stage #caption.bocadillo{background:#f1fdf7; color:#0b2d27; border-color:#23977a}
+  html[data-personaje="supervisor"] #stage #caption.bocadillo .sp1{color:#0b2d27} html[data-personaje="supervisor"] #stage #caption.bocadillo .sp0{color:#5f8f81}
+  html[data-personaje="supervisor"] #stage #caption.bocadillo.help{background:#f1fdf7; border-color:#23977a}
+  html[data-personaje="supervisor"] .bubtail{border-top-color:#23977a} html[data-personaje="supervisor"] .bubtail::after{border-top-color:#f1fdf7}
+  html[data-personaje="supervisor"] .chip:hover{color:#7fe3a1; border-color:#7fe3a1}
+  html[data-personaje="supervisor"] body[data-da-composer=compact] .composer .bar .qfield:focus-within{border-color:#7fe3a1}
+  /* El Supervisor mira, no escucha: sin micro ni corte de voz (lip-sync de texto, como Bugito); el idioma lo pone la página. */
+  html[data-personaje="supervisor"] #btnMic, html[data-personaje="supervisor"] #btnStop, html.dock[data-personaje="supervisor"] #langPills{display:none !important}
+  /* Piloto REC: parpadea al vigilar, rápido en alerta, fijo al enfocar y apagado sin señal; cristal empañado si no ve. */
+  html[data-personaje="supervisor"] #supRec{animation:supRec 1.6s steps(1) infinite}
+  @keyframes supRec{0%{opacity:1} 50%{opacity:.18}}
+  #supLente[data-estado="alerta"] #supRec{animation-duration:.4s}
+  #supLente[data-estado="enfocando"] #supRec{animation:none; opacity:1}
+  #supLente[data-estado="sin-senal"] #supRec{animation:none; opacity:1; fill:#4a1d1d}
+  #supLente[data-estado="ciego"] .sup-vidrio{fill:#9fb3ae}
+  #supLente[data-estado="sin-senal"] .sup-vidrio{fill:#121b1a}
+  .sup-pulso{fill:none; stroke-width:2.6; opacity:0; transform-box:fill-box; transform-origin:center; animation:supPulso 1.2s ease-out forwards}
+  @keyframes supPulso{0%{opacity:.9; transform:scale(.7)} 100%{opacity:0; transform:scale(2.3)}}
+  .sup-flash{fill:#ffffff; opacity:0; animation:supFlash .5s ease-out forwards}
+  @keyframes supFlash{0%{opacity:0} 15%{opacity:.95} 100%{opacity:0}}
+  .sup-ruido{stroke:#cfeee4; stroke-width:1.6; stroke-linecap:round; opacity:0; animation:supRuido .22s steps(2) forwards}
+  @keyframes supRuido{0%{opacity:.9} 100%{opacity:0}}
+  .sup-marca{font:800 28px ui-rounded,system-ui,sans-serif; opacity:0; animation:supMarca 1.6s ease-out forwards}
+  @keyframes supMarca{0%{opacity:0; transform:translate(0,0) scale(.6)} 20%{opacity:1} 100%{opacity:0; transform:translate(12px,-44px) scale(1.15)}}
+  @media (prefers-reduced-motion:reduce){ html[data-personaje="supervisor"] #supRec{animation:none} .sup-pulso,.sup-flash,.sup-ruido,.sup-marca{display:none} }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
 <meta name="admiranext-version" content="v.16.10.2026.r2.16:25">
@@ -198,7 +246,8 @@
     <!-- Admirito: la nube del imagotipo de Admira (contorno #689840 de admira-logo_green.svg), la misma
          mascota del cargador común admiranext.com/assets/avatar.js, animada con SVG + JS (sin 3D). -->
     <svg id="nube" viewBox="-30 -40 337 290" role="img" aria-label="Admirito, la nube de AdmiraNeXT" tabindex="0" xmlns="http://www.w3.org/2000/svg">
-      <defs><clipPath id="bocaClip"><path id="bocaClipPath" d=""/></clipPath></defs>
+      <defs><clipPath id="bocaClip"><path id="bocaClipPath" d=""/></clipPath>
+        <radialGradient id="supVidrio" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#2a8c78"/><stop offset=".55" stop-color="#0d4a3f"/><stop offset="1" stop-color="#03201b"/></radialGradient></defs>
       <ellipse id="sombra" cx="138.5" cy="222" rx="92" ry="9" fill="#000" opacity=".35"/>
       <g id="flota">
         <g id="cuerpo">
@@ -230,6 +279,18 @@
             <path d="M127,-15 L150,-15 L152,41 L125,41 Z" fill="#ffd451" stroke="#5a3b00" stroke-width="3.5" stroke-linejoin="round"/>
             <path d="M101,9 Q107,-5 121,-10" fill="none" stroke="#fff3c4" stroke-width="5" stroke-linecap="round" opacity=".85"/>
             <path d="M60,45 Q138.5,27 217,45 Q219,55 207,55 Q138.5,41 70,55 Q58,55 60,45 Z" fill="#ffb300" stroke="#5a3b00" stroke-width="5" stroke-linejoin="round"/>
+          </g>
+          <!-- Supervisor: gorra de vigilante (copa teal, cinta con franja menta, visera negra) con la placa del ojo que todo lo ve. -->
+          <g id="supGorra" class="piel-parte" data-piel="supervisor" stroke="#04120f" stroke-linejoin="round">
+            <path d="M84,42 C78,30 66,14 64,6 C62,-6 96,-16 138.5,-16 C181,-16 215,-6 213,6 C211,14 199,30 193,42 Z" fill="#165a4c" stroke-width="5"/>
+            <path d="M84,2 Q108,-10 134,-12" fill="none" stroke="#3aa58c" stroke-width="4" stroke-linecap="round" opacity=".75"/>
+            <path d="M84,40 L193,40 L192,57 Q138.5,52 85,57 Z" fill="#0b2d27" stroke-width="4.5"/>
+            <path d="M88,48 Q138.5,44 189,48" fill="none" stroke="#7fe3a1" stroke-width="2.4"/>
+            <path d="M138.5,1 L152,6.5 L151,20 Q149,30 138.5,35 Q128,30 126,20 L125,6.5 Z" fill="#f2c94c" stroke="#5a4300" stroke-width="2.6"/>
+            <ellipse cx="138.5" cy="18" rx="7.5" ry="4.8" fill="#fffbea" stroke="#0b2d27" stroke-width="1.6"/>
+            <circle cx="138.5" cy="18" r="2.6" fill="#0b2d27" stroke="none"/>
+            <path d="M78,55 Q138.5,43 199,55 Q205,65 190,69 Q138.5,59 87,69 Q72,65 78,55 Z" fill="#06100e" stroke-width="4"/>
+            <path d="M94,57 Q138.5,49 183,57" fill="none" stroke="#3a4f4b" stroke-width="2.4" stroke-linecap="round"/>
           </g>
           <g id="arqRollo" class="piel-parte" data-piel="arquitecto" transform="translate(-14,166) rotate(-22)">
             <rect x="0" y="-10" width="64" height="20" rx="4" fill="#3d7fd0" stroke="#133a66" stroke-width="3"/>
@@ -268,6 +329,21 @@
             <path id="arqCejaI" d="M96,80 Q111,73 126,78"/>
             <path id="arqCejaD" d="M151,78 Q166,73 181,80"/>
           </g>
+          <!-- Supervisor: el ojo-objetivo (carcasa, anillo de enfoque estriado, aro menta, cristal, diafragma, brillos y piloto
+               REC) en el sitio del ojo derecho, y una sola ceja escrutadora sobre el ojo de carne. -->
+          <g id="supLente" class="piel-parte" data-piel="supervisor" data-estado="vigilando">
+            <circle cx="166" cy="110" r="21" fill="#0b2d27" stroke="#04120f" stroke-width="3.5"/>
+            <circle id="supAnillo" cx="166" cy="110" r="18.2" fill="none" stroke="#2f7f6d" stroke-width="3" stroke-dasharray="2.4 2"/>
+            <circle cx="166" cy="110" r="15" fill="#0d3a33" stroke="#7fe3a1" stroke-width="2.4"/>
+            <circle class="sup-vidrio" cx="166" cy="110" r="12.6" fill="url(#supVidrio)"/>
+            <circle id="supIris" cx="166" cy="110" r="5.8" fill="#020a09" stroke="#3fd1a0" stroke-width="1.5"/>
+            <circle cx="171" cy="104.5" r="3.1" fill="#fff" opacity=".92"/>
+            <circle cx="161" cy="115.5" r="1.5" fill="#fff" opacity=".55"/>
+            <circle id="supRec" cx="181" cy="95" r="3.6" fill="#ff4d4d" stroke="#04120f" stroke-width="1.5"/>
+          </g>
+          <g id="supCejas" class="piel-parte" data-piel="supervisor" fill="none" stroke="#0b2d27" stroke-width="6" stroke-linecap="round">
+            <path id="supCeja" d="M96,83 Q111,76 126,81"/>
+          </g>
         </g>
         <g id="piensa" transform="translate(212,22)"><circle cx="0" cy="0" r="5"/><circle cx="16" cy="-6" r="6"/><circle cx="34" cy="-14" r="7"/></g>
       </g>
@@ -303,7 +379,7 @@
 
 <script src="/assets/da-context.js?v=20261016-host-command-catalog-1"></script>
 <script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
-<script src="/assets/nube.js?v=20261014-arquitecto-1"></script>
+<script src="/assets/nube.js?v=20261018-supervisor-1"></script>
 <script defer src="/assets/da-conversation-controls.js?v=20261007-langui-1"></script>
 </body>
 </html>
