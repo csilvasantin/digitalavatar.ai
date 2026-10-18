@@ -31,7 +31,8 @@
   var AVATAR_ALIAS = { alex: 'luna' };
   var AVATARS = ['admirito', 'luna', 'neo'];
   var TIERS = ['good', 'better', 'best'];
-  var ALLOWED = /^https:\/\/([a-z0-9-]+\.)*(admiranext\.com|admira\.store|xpaceos\.com|admira\.studio|pixeria\.com|admira\.tv|clearchannel\.tv|admira\.biz|admira\.app|yokup\.com|digitalavatar\.ai|carlossilva\.info|csilvasantin\.github\.io|ainimation\.studio)$|^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+  // admira.live (18-oct-2026): la cámara del Supervisor (/supervisor) vive en Admira Live y su cara sale allí en el panel.
+  var ALLOWED = /^https:\/\/([a-z0-9-]+\.)*(admiranext\.com|admira\.live|admira\.store|xpaceos\.com|admira\.studio|pixeria\.com|admira\.tv|clearchannel\.tv|admira\.biz|admira\.app|yokup\.com|digitalavatar\.ai|carlossilva\.info|csilvasantin\.github\.io|ainimation\.studio)$|^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 
   // Anfitriones que pueden recibir la acción de pedido (origen exacto en postMessage).
   var ORDER_HOSTS = /^https:\/\/([a-z0-9-]+\.)*(ainimation\.studio|admira\.store|xpaceos\.com|admiranext\.com)$|^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;

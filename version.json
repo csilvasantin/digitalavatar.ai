@@ -1,12 +1,12 @@
 {
-  "version": "v.16.10.2026.r2.16:25",
-  "builtAt": "2026-10-16T14:26:04.202679+00:00",
-  "note": "Admirito obtiene del anfitrión el catálogo de órdenes explícitas adicionales, incluida la demo Starbucks 180.",
+  "version": "v.18.10.2026.r1.10:21",
+  "builtAt": "2026-10-18T08:21:58.682630+00:00",
+  "note": "El Supervisor tiene cara: cuarta piel de Admirito (nube.html?personaje=supervisor), con gorra de vigilante y ojo de cámara.",
   "novedades": [
-    "Las órdenes adicionales de demo provienen del catálogo del motor Experto; Admirito las ejecuta por la misma entrada.",
-    "Starbucks 180 conserva los controles y demos anteriores."
+    "Supervisor, la tercera mascota del ⌘ Experto: Admirito en menta y teal con gorra de vigilante y el ojo derecho hecho objetivo de cámara, en siete estados (vigilando, enfocando, alerta, conforme, dudando, ciego y sin señal).",
+    "admira.live es anfitrión de confianza de las caras: allí vive la cámara del Supervisor y su cara sale junto a ella."
   ],
-  "signature": "Codex · MacStudio",
+  "signature": "Morfeo · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "f547616 (main con Bugito, sin el Arquitecto)"
+  "rollback": "7f314d9 (main sin el Supervisor)"
 }
