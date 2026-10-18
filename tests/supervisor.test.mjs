@@ -183,3 +183,20 @@ test('la piel se engancha a la tabla PIELES con los ganchos genéricos del motor
   assert.doesNotMatch(motor.replace(/\/\*[\s\S]*?\*\//, ''), /\bSUP\b|supEstado|supFrame/, 'el motor no sabe nada del Supervisor');
   assert.doesNotMatch(nube.slice(nube.indexOf('// ───────────────────────── Piel SUPERVISOR')), /fetch\(|api\.yokup\.com/, 'la piel no lee el tablero por su cuenta');
 });
+
+test('admira.live es anfitrión de confianza: allí está la cámara del Supervisor y su cara sale junto a ella', () => {
+  const ctx = fs.readFileSync(new URL('../assets/da-context.js', import.meta.url), 'utf8');
+  const carga = (referrer) => {
+    const win = { location: { search: '', hostname: 'digitalavatar.ai' }, addEventListener() {}, parent: { postMessage() {} } };
+    win.self = win; win.top = {};
+    const document = { referrer, getElementById: () => null, createElement: () => ({}), head: { appendChild() {} } };
+    vm.runInNewContext(ctx, { window: win, document, URL, URLSearchParams, setTimeout() {}, clearTimeout() {}, fetch: async () => ({ ok: false, json: async () => ({}) }) });
+    return win.DAContext;
+  };
+  const live = carga('https://www.admira.live/analizar?supervisor=1');
+  assert.equal(live.allowed('https://www.admira.live'), true);
+  assert.equal(live.hostOrigin(), 'https://www.admira.live', 'la cara sabe a quién mandar sus órdenes');
+  assert.equal(live.allowed('https://admira.live.evil.example'), false);
+  assert.equal(live.allowed('http://www.admira.live'), false, 'sólo https');
+  assert.equal(carga('https://evil.example/').hostOrigin(), '');
+});
