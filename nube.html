@@ -163,35 +163,39 @@
   .plano{transform-box:fill-box; transform-origin:100% 50%; animation:plano 2.6s cubic-bezier(.2,.8,.3,1) forwards}
   @keyframes plano{0%{opacity:0; transform:scaleX(.05)} 12%{opacity:1} 45%{transform:scaleX(1)} 85%{opacity:1; transform:scaleX(1)} 100%{opacity:0; transform:scaleX(1)}}
   @media (prefers-reduced-motion:reduce){ .onda,.cinta,.trazo,.plano{display:none} }
+  /* Piel SUPERVISOR · ÁNGEL (Carlos, 20-oct-2026: «como un ángel en contraposición de Bugito, con corona y look divino»):
+     nube blanca y oro con aureola, corona y alitas que aletean, luz cálida radiante. Conserva el ojo-objetivo (ahora dorado,
+     «el ojo que todo lo ve») y sus estados. Antes: */
   /* Piel SUPERVISOR (?personaje=supervisor · Carlos, 18-oct-2026: la tercera mascota del ⌘ Experto, la Insta360 del
      MacMini que vigila el MBP16 y abre incidencias en admira.app/supervisor): el mismo Admirito, en menta y teal, con
      gorra de vigilante con placa y el ojo derecho hecho objetivo de cámara (diafragma, anillo de enfoque y piloto REC),
      sobre un fondo de monitor de vigilancia. El color es el de su tarjeta en admira.biz, rgba(127,227,161,…). */
   html[data-personaje="supervisor"] .piel-parte[data-piel="supervisor"]{display:inline}
-  html[data-personaje="supervisor"] body{background:repeating-linear-gradient(0deg, rgba(127,227,161,.035) 0 1px, transparent 1px 4px),
-    radial-gradient(120% 90% at 50% -10%, #0e3b34 0%, #04110f 62%)}
-  html[data-personaje="supervisor"] #stage::before{background:radial-gradient(closest-side, rgba(127,227,161,.28), rgba(127,227,161,.08) 55%, transparent 75%)}
+  html[data-personaje="supervisor"] body{background:radial-gradient(60% 45% at 50% 30%, rgba(255,236,170,.22) 0%, transparent 70%),
+    repeating-conic-gradient(from 0deg at 50% 32%, rgba(255,240,190,.05) 0 6deg, transparent 6deg 18deg),
+    radial-gradient(120% 90% at 50% -10%, #3a3018 0%, #120e06 62%)}
+  html[data-personaje="supervisor"] #stage::before{background:radial-gradient(closest-side, rgba(255,226,140,.42), rgba(255,236,170,.12) 55%, transparent 75%)}
   html[data-personaje="supervisor"] #evo{display:none !important}
-  html[data-personaje="supervisor"] .cuerpo-relleno{fill:#eefcf6}
-  html[data-personaje="supervisor"] .cuerpo-borde{fill:#1f8a70}
-  html[data-personaje="supervisor"] #nube:focus-visible .cuerpo-borde{stroke:#bff5d6}
+  html[data-personaje="supervisor"] .cuerpo-relleno{fill:#fffdf4}
+  html[data-personaje="supervisor"] .cuerpo-borde{fill:#d4a82a}
+  html[data-personaje="supervisor"] #nube:focus-visible .cuerpo-borde{stroke:#fff1b8}
   /* El ojo derecho es el objetivo (#supLente copia su mirada y su parpadeo, que hace de obturador). */
   html[data-personaje="supervisor"] #ojoD, html[data-personaje="supervisor"] #ojosFelices path:nth-child(2){display:none}
-  html[data-personaje="supervisor"] #ojos ellipse{fill:#0b2d27}
-  html[data-personaje="supervisor"] #ojosFelices{stroke:#0b2d27}
-  html[data-personaje="supervisor"] #bocaForma{stroke:#0b2d27}
-  html[data-personaje="supervisor"] #bocaForma:not([fill="none"]){fill:#0b2d27}
-  html[data-personaje="supervisor"] #brazos ellipse{fill:#eefcf6; stroke:#1f8a70}
-  html[data-personaje="supervisor"] #sombra{fill:#001a14}
-  html[data-personaje="supervisor"] #piensa circle{fill:#7fe3a1}
-  html[data-personaje="supervisor"] .brand b{color:#7fe3a1}
-  html[data-personaje="supervisor"] .tier{background:#0b2d27; color:#bff5d6; border-color:#23977a}
-  html[data-personaje="supervisor"] #stage #caption.bocadillo{background:#f1fdf7; color:#0b2d27; border-color:#23977a}
-  html[data-personaje="supervisor"] #stage #caption.bocadillo .sp1{color:#0b2d27} html[data-personaje="supervisor"] #stage #caption.bocadillo .sp0{color:#5f8f81}
-  html[data-personaje="supervisor"] #stage #caption.bocadillo.help{background:#f1fdf7; border-color:#23977a}
-  html[data-personaje="supervisor"] .bubtail{border-top-color:#23977a} html[data-personaje="supervisor"] .bubtail::after{border-top-color:#f1fdf7}
-  html[data-personaje="supervisor"] .chip:hover{color:#7fe3a1; border-color:#7fe3a1}
-  html[data-personaje="supervisor"] body[data-da-composer=compact] .composer .bar .qfield:focus-within{border-color:#7fe3a1}
+  html[data-personaje="supervisor"] #ojos ellipse{fill:#3a2a08}
+  html[data-personaje="supervisor"] #ojosFelices{stroke:#3a2a08}
+  html[data-personaje="supervisor"] #bocaForma{stroke:#3a2a08}
+  html[data-personaje="supervisor"] #bocaForma:not([fill="none"]){fill:#3a2a08}
+  html[data-personaje="supervisor"] #brazos ellipse{fill:#fffdf4; stroke:#d4a82a}
+  html[data-personaje="supervisor"] #sombra{fill:#e8c35a; opacity:.18}
+  html[data-personaje="supervisor"] #piensa circle{fill:#ffe9a8}
+  html[data-personaje="supervisor"] .brand b{color:#ffd76a}
+  html[data-personaje="supervisor"] .tier{background:#3a2a08; color:#fff1b8; border-color:#c99a1e}
+  html[data-personaje="supervisor"] #stage #caption.bocadillo{background:#fffbea; color:#3a2a08; border-color:#c99a1e}
+  html[data-personaje="supervisor"] #stage #caption.bocadillo .sp1{color:#3a2a08} html[data-personaje="supervisor"] #stage #caption.bocadillo .sp0{color:#a08540}
+  html[data-personaje="supervisor"] #stage #caption.bocadillo.help{background:#fffbea; border-color:#c99a1e}
+  html[data-personaje="supervisor"] .bubtail{border-top-color:#c99a1e} html[data-personaje="supervisor"] .bubtail::after{border-top-color:#fffbea}
+  html[data-personaje="supervisor"] .chip:hover{color:#ffd76a; border-color:#ffd76a}
+  html[data-personaje="supervisor"] body[data-da-composer=compact] .composer .bar .qfield:focus-within{border-color:#ffd76a}
   /* El Supervisor mira, no escucha: sin micro ni corte de voz (lip-sync de texto, como Bugito); el idioma lo pone la página. */
   html[data-personaje="supervisor"] #btnMic, html[data-personaje="supervisor"] #btnStop, html.dock[data-personaje="supervisor"] #langPills{display:none !important}
   /* Piloto REC: parpadea al vigilar, rápido en alerta, fijo al enfocar y apagado sin señal; cristal empañado si no ve. */
@@ -211,6 +215,17 @@
   .sup-marca{font:800 28px ui-rounded,system-ui,sans-serif; opacity:0; animation:supMarca 1.6s ease-out forwards}
   @keyframes supMarca{0%{opacity:0; transform:translate(0,0) scale(.6)} 20%{opacity:1} 100%{opacity:0; transform:translate(12px,-44px) scale(1.15)}}
   @media (prefers-reduced-motion:reduce){ html[data-personaje="supervisor"] #supRec{animation:none} .sup-pulso,.sup-flash,.sup-ruido,.sup-marca{display:none} }
+  /* Ángel: flota suave, la aureola respira y las alas aletean. */
+  html[data-personaje="supervisor"] #nube{filter:drop-shadow(0 0 18px rgba(255,220,120,.45))}
+  #supAureola{transform-box:fill-box; transform-origin:center; animation:supAureola 3.2s ease-in-out infinite}
+  @keyframes supAureola{0%,100%{opacity:.85; transform:translateY(0)} 50%{opacity:1; transform:translateY(-4px)}}
+  #supAlaI{transform-box:fill-box; transform-origin:100% 70%; animation:supAlaI 2.4s ease-in-out infinite}
+  #supAlaD{transform-box:fill-box; transform-origin:0% 70%; animation:supAlaD 2.4s ease-in-out infinite}
+  @keyframes supAlaI{0%,100%{transform:rotate(0)} 50%{transform:rotate(-9deg)}}
+  @keyframes supAlaD{0%,100%{transform:rotate(0)} 50%{transform:rotate(9deg)}}
+  .sup-destello{animation:supDestello 2.8s ease-in-out infinite} .sup-destello:nth-of-type(2){animation-delay:1.1s} .sup-destello:nth-of-type(3){animation-delay:1.9s}
+  @keyframes supDestello{0%,100%{opacity:.15} 50%{opacity:1}}
+  @media (prefers-reduced-motion:reduce){ #supAureola,#supAlaI,#supAlaD,.sup-destello{animation:none} }
 </style>
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
 <meta name="admiranext-version" content="v.18.10.2026.r1.10:21">
@@ -247,10 +262,19 @@
          mascota del cargador común admiranext.com/assets/avatar.js, animada con SVG + JS (sin 3D). -->
     <svg id="nube" viewBox="-30 -40 337 290" role="img" aria-label="Admirito, la nube de AdmiraNeXT" tabindex="0" xmlns="http://www.w3.org/2000/svg">
       <defs><clipPath id="bocaClip"><path id="bocaClipPath" d=""/></clipPath>
-        <radialGradient id="supVidrio" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#2a8c78"/><stop offset=".55" stop-color="#0d4a3f"/><stop offset="1" stop-color="#03201b"/></radialGradient></defs>
+        <radialGradient id="supVidrio" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#7fc8ff"/><stop offset=".55" stop-color="#2c5d9e"/><stop offset="1" stop-color="#0d1f3d"/></radialGradient>
+        <linearGradient id="supOro" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#f5c842"/><stop offset="1" stop-color="#c9921a"/></linearGradient>
+        <radialGradient id="supLuz" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fffbe6"/><stop offset="1" stop-color="#fff3c4" stop-opacity="0"/></radialGradient></defs>
       <ellipse id="sombra" cx="138.5" cy="222" rx="92" ry="9" fill="#000" opacity=".35"/>
       <g id="flota">
         <g id="cuerpo">
+          <!-- Supervisor ángel: alitas blancas con plumas doradas detrás de la nube (lo contrario del rabito de Bugito). -->
+          <g id="supAlas" class="piel-parte" data-piel="supervisor" stroke="#c99a1e" stroke-width="3.5" stroke-linejoin="round">
+            <g id="supAlaI"><path d="M20,120 C-30,90 -38,30 -6,10 C2,40 18,52 34,58 C14,70 8,96 20,120 Z" fill="#ffffff"/>
+              <path d="M-2,30 C8,50 20,58 30,62 M-10,56 C4,74 16,80 24,84 M-4,84 C8,96 16,102 22,106" fill="none" stroke="#e6c46a" stroke-width="2.4" stroke-linecap="round"/></g>
+            <g id="supAlaD"><path d="M257,120 C307,90 315,30 283,10 C275,40 259,52 243,58 C263,70 269,96 257,120 Z" fill="#ffffff"/>
+              <path d="M279,30 C269,50 257,58 247,62 M287,56 C273,74 261,80 253,84 M281,84 C269,96 261,102 255,106" fill="none" stroke="#e6c46a" stroke-width="2.4" stroke-linecap="round"/></g>
+          </g>
           <!-- Bugito: rabito y cuernos detrás de la nube (la base queda tapada por el contorno). -->
           <g id="bugCola" class="piel-parte" data-piel="bugito">
             <path d="M246,154 C276,176 304,154 290,118" fill="none" stroke="#170607" stroke-width="12" stroke-linecap="round"/>
@@ -280,17 +304,22 @@
             <path d="M101,9 Q107,-5 121,-10" fill="none" stroke="#fff3c4" stroke-width="5" stroke-linecap="round" opacity=".85"/>
             <path d="M60,45 Q138.5,27 217,45 Q219,55 207,55 Q138.5,41 70,55 Q58,55 60,45 Z" fill="#ffb300" stroke="#5a3b00" stroke-width="5" stroke-linejoin="round"/>
           </g>
-          <!-- Supervisor: gorra de vigilante (copa teal, cinta con franja menta, visera negra) con la placa del ojo que todo lo ve. -->
-          <g id="supGorra" class="piel-parte" data-piel="supervisor" stroke="#04120f" stroke-linejoin="round">
-            <path d="M84,42 C78,30 66,14 64,6 C62,-6 96,-16 138.5,-16 C181,-16 215,-6 213,6 C211,14 199,30 193,42 Z" fill="#165a4c" stroke-width="5"/>
-            <path d="M84,2 Q108,-10 134,-12" fill="none" stroke="#3aa58c" stroke-width="4" stroke-linecap="round" opacity=".75"/>
-            <path d="M84,40 L193,40 L192,57 Q138.5,52 85,57 Z" fill="#0b2d27" stroke-width="4.5"/>
-            <path d="M88,48 Q138.5,44 189,48" fill="none" stroke="#7fe3a1" stroke-width="2.4"/>
-            <path d="M138.5,1 L152,6.5 L151,20 Q149,30 138.5,35 Q128,30 126,20 L125,6.5 Z" fill="#f2c94c" stroke="#5a4300" stroke-width="2.6"/>
-            <ellipse cx="138.5" cy="18" rx="7.5" ry="4.8" fill="#fffbea" stroke="#0b2d27" stroke-width="1.6"/>
-            <circle cx="138.5" cy="18" r="2.6" fill="#0b2d27" stroke="none"/>
-            <path d="M78,55 Q138.5,43 199,55 Q205,65 190,69 Q138.5,59 87,69 Q72,65 78,55 Z" fill="#06100e" stroke-width="4"/>
-            <path d="M94,57 Q138.5,49 183,57" fill="none" stroke="#3a4f4b" stroke-width="2.4" stroke-linecap="round"/>
+          <!-- Supervisor ángel: aureola dorada flotando y corona de oro con gemas (lo contrario de los cuernos de Bugito).
+               Conserva el id supGorra (contrato de tests y nube.js). -->
+          <g id="supGorra" class="piel-parte" data-piel="supervisor" stroke-linejoin="round">
+            <ellipse cx="138.5" cy="-8" rx="70" ry="40" fill="url(#supLuz)" stroke="none" opacity=".8"/>
+            <g id="supAureola"><ellipse cx="138.5" cy="-26" rx="58" ry="11" fill="none" stroke="#c9921a" stroke-width="9"/>
+              <ellipse cx="138.5" cy="-26" rx="58" ry="11" fill="none" stroke="#ffe58a" stroke-width="5"/></g>
+            <path d="M92,44 L86,4 L108,22 L122,-6 L138.5,16 L155,-6 L169,22 L191,4 L185,44 Q138.5,36 92,44 Z" fill="url(#supOro)" stroke="#8a5f00" stroke-width="4.5"/>
+            <path d="M92,44 Q138.5,36 185,44 L186,52 Q138.5,44 91,52 Z" fill="#e0aa26" stroke="#8a5f00" stroke-width="3.5"/>
+            <circle cx="86" cy="2" r="5" fill="#fff3b0" stroke="#8a5f00" stroke-width="2.5"/><circle cx="191" cy="2" r="5" fill="#fff3b0" stroke="#8a5f00" stroke-width="2.5"/>
+            <circle cx="122" cy="-8" r="5" fill="#fff3b0" stroke="#8a5f00" stroke-width="2.5"/><circle cx="155" cy="-8" r="5" fill="#fff3b0" stroke="#8a5f00" stroke-width="2.5"/>
+            <path d="M138.5,20 L146,30 L138.5,40 L131,30 Z" fill="#5fb8ff" stroke="#1d4f86" stroke-width="2"/>
+            <circle cx="112" cy="36" r="3.6" fill="#ff6b8a" stroke="#7a1d35" stroke-width="1.4"/><circle cx="165" cy="36" r="3.6" fill="#ff6b8a" stroke="#7a1d35" stroke-width="1.4"/>
+            <path d="M100,30 L104,14" stroke="#fffbe6" stroke-width="3" stroke-linecap="round" opacity=".85"/>
+            <path class="sup-destello" d="M40,-10 l3,8 8,3 -8,3 -3,8 -3,-8 -8,-3 8,-3 Z" fill="#fff3b0" stroke="none"/>
+            <path class="sup-destello" d="M236,-2 l2.5,6 6,2.5 -6,2.5 -2.5,6 -2.5,-6 -6,-2.5 6,-2.5 Z" fill="#fff3b0" stroke="none"/>
+            <path class="sup-destello" d="M250,170 l2,5 5,2 -5,2 -2,5 -2,-5 -5,-2 5,-2 Z" fill="#fff3b0" stroke="none"/>
           </g>
           <g id="arqRollo" class="piel-parte" data-piel="arquitecto" transform="translate(-14,166) rotate(-22)">
             <rect x="0" y="-10" width="64" height="20" rx="4" fill="#3d7fd0" stroke="#133a66" stroke-width="3"/>
@@ -332,16 +361,16 @@
           <!-- Supervisor: el ojo-objetivo (carcasa, anillo de enfoque estriado, aro menta, cristal, diafragma, brillos y piloto
                REC) en el sitio del ojo derecho, y una sola ceja escrutadora sobre el ojo de carne. -->
           <g id="supLente" class="piel-parte" data-piel="supervisor" data-estado="vigilando">
-            <circle cx="166" cy="110" r="21" fill="#0b2d27" stroke="#04120f" stroke-width="3.5"/>
-            <circle id="supAnillo" cx="166" cy="110" r="18.2" fill="none" stroke="#2f7f6d" stroke-width="3" stroke-dasharray="2.4 2"/>
-            <circle cx="166" cy="110" r="15" fill="#0d3a33" stroke="#7fe3a1" stroke-width="2.4"/>
+            <circle cx="166" cy="110" r="21" fill="#c9921a" stroke="#6b4a00" stroke-width="3.5"/>
+            <circle id="supAnillo" cx="166" cy="110" r="18.2" fill="none" stroke="#fff3b0" stroke-width="3" stroke-dasharray="2.4 2"/>
+            <circle cx="166" cy="110" r="15" fill="#8a5f00" stroke="#ffe58a" stroke-width="2.4"/>
             <circle class="sup-vidrio" cx="166" cy="110" r="12.6" fill="url(#supVidrio)"/>
-            <circle id="supIris" cx="166" cy="110" r="5.8" fill="#020a09" stroke="#3fd1a0" stroke-width="1.5"/>
+            <circle id="supIris" cx="166" cy="110" r="5.8" fill="#020a09" stroke="#ffe58a" stroke-width="1.5"/>
             <circle cx="171" cy="104.5" r="3.1" fill="#fff" opacity=".92"/>
             <circle cx="161" cy="115.5" r="1.5" fill="#fff" opacity=".55"/>
             <circle id="supRec" cx="181" cy="95" r="3.6" fill="#ff4d4d" stroke="#04120f" stroke-width="1.5"/>
           </g>
-          <g id="supCejas" class="piel-parte" data-piel="supervisor" fill="none" stroke="#0b2d27" stroke-width="6" stroke-linecap="round">
+          <g id="supCejas" class="piel-parte" data-piel="supervisor" fill="none" stroke="#8a5f00" stroke-width="6" stroke-linecap="round">
             <path id="supCeja" d="M96,83 Q111,76 126,81"/>
           </g>
         </g>
