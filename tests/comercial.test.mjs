@@ -40,7 +40,7 @@ function carga({ search = '?personaje=comercial&embed=1&audio=off', embebido = t
     addEventListener: (t, f) => { if (t === 'message') oyentes.push(f); },
     matchMedia: () => ({ matches: false }), performance: { now: () => ahora }, requestAnimationFrame: (f) => frames.push(f), setTimeout: () => 0, clearTimeout() {},
     localStorage: { getItem: () => null, setItem() {} }, fetch: async (...a) => { fetches.push(a); return { ok: false, json: async () => ({}) }; },
-    DADemo: { load: () => ({}), start: async () => {}, armRetry() {}, setState() {}, stop() {}, unlock() {}, voiceId: () => '' }
+    DADemo: { load: () => ({}), start: async () => {}, armRetry() {}, setState() {}, stop() {}, unlock() {}, voiceId: (l) => 'voz-' + l }
   };
   win.window = win; win.self = win; win.top = embebido ? {} : win;
   vm.createContext(win);
@@ -66,7 +66,7 @@ test('nube.html: corbata y maletín sólo existen con personaje=comercial, en az
   assert.doesNotMatch(html, /html\[data-personaje="comercial"\] \.cuerpo-(relleno|borde)/, 'sigue siendo Admirito: blanco y verde');
   assert.doesNotMatch(html, /html\[data-personaje="comercial"\] #btnMic/, 'Comercial sí escucha: conserva el micro');
   assert.match(html, /html\.dock\[data-personaje="comercial"\] #langPills\{display:none !important\}/, 'en la portada, el idioma lo pone la página');
-  assert.match(html, /src="\/assets\/nube\.js\?v=20261020-comercial-2"/, 'versión de caché nueva');
+  assert.match(html, /src="\/assets\/nube\.js\?v=20261020-comercial-3"/, 'versión de caché nueva');
 });
 
 test('frases propias por estado, en los dos idiomas; estados desconocidos no cambian nada', () => {
@@ -112,18 +112,18 @@ test('la piel se engancha a la tabla PIELES con los ganchos genéricos del motor
   assert.match(nube, /if \(COM\) Object\.assign\(PIELES\.comercial, \{/);
   const motor = nube.slice(0, nube.indexOf('// ───────────────────────── Piel BUGITO'));
   assert.doesNotMatch(motor.replace(/\/\*[\s\S]*?\*\//, ''), /\bCOM\b|comEstado|comFrame/, 'el motor no sabe nada de Comercial');
-  // Sólo una llamada de red en la piel: la voz (api.admira.store/tts, ElevenLabs), con las voces de las demos de Admirito.
+  // Sólo una llamada de red en la piel: la voz, al cerebro (brain.digitalavatar.ai/tts), con la voz de las demos de Admirito.
   const piel = nube.slice(nube.indexOf('// ───────────────────────── Piel COMERCIAL'));
   assert.equal((piel.match(/fetch\(/g) || []).length, 1, 'una sola llamada de red: la voz');
-  assert.match(piel, /COM_TTS = 'https:\/\/api\.admira\.store\/tts'/);assert.match(piel, /es: 'dNjJKg63Fr5AXwIdkATa', en: 'qSeXEcewz7tA0Q0qk9fH'/);
+  assert.match(piel, /fetch\(API \+ '\/tts'/); assert.match(piel, /voiceId: DADemo\.voiceId\(LANG\), timestamps: true/);
 });
 
-test('la voz con audio: pide el MP3 a api.admira.store/tts con la voz de Admirito y lo guarda; con audio=off o sin red, texto', async () => {
+test('la voz con audio: pide el audio al cerebro (/tts) con la voz de Admirito y lo guarda; con audio=off o sin red, texto', async () => {
   const { win, fetches } = carga({ search: '?personaje=comercial&embed=1' });
   win.__comercial.estado('entregando', { texto: 'Propuesta lista.' });
   await new Promise((r) => setImmediate(r));
-  assert.equal(fetches.length, 1, 'una petición de voz'); assert.equal(fetches[0][0], 'https://api.admira.store/tts');
-  const body = JSON.parse(fetches[0][1].body); assert.equal(body.text, 'Propuesta lista.'); assert.equal(body.voice_id, 'dNjJKg63Fr5AXwIdkATa'); assert.equal(body.model_id, 'eleven_multilingual_v2');
+  assert.equal(fetches.length, 1, 'una petición de voz'); assert.equal(fetches[0][0], 'https://brain.digitalavatar.ai/tts');
+  const body = JSON.parse(fetches[0][1].body); assert.equal(body.text, 'Propuesta lista.'); assert.equal(body.lang, 'es'); assert.equal(body.voiceId, 'voz-es'); assert.equal(body.timestamps, true);
   assert.equal(win.__nube().piel, 'entregando');
   const callada = carga({ search: '?personaje=comercial&embed=1&audio=off' });
   callada.win.__comercial.estado('entregando', { texto: 'Propuesta lista.' });

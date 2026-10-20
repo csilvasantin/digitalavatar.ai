@@ -1306,18 +1306,18 @@
   function comPick(list) { return list[Math.floor(Math.random() * list.length)]; }
   function comNorm(t) { return String(t || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
   function comFrase(estado) { var v = comF()[estado]; return Array.isArray(v) ? comPick(v) : (typeof v === 'string' ? v : ''); }
-  // La voz de Admirito con audio de verdad (Carlos, 20-oct-2026): el texto que manda el anfitrión se sintetiza con
-  // ElevenLabs por api.admira.store/tts (la misma voz de las demos, es/en) y suena con lip-sync; si no hay audio
-  // (sin red, audio=off, bloqueado por el navegador), bocadillo y lip-sync de texto como hasta ahora. Las frases se
-  // repiten mucho: se guardan en memoria para no pedirlas dos veces. Nunca se manda el brief: sólo lo que dice Comercial.
-  var COM_TTS = 'https://api.admira.store/tts', COM_VOZ = { es: 'dNjJKg63Fr5AXwIdkATa', en: 'qSeXEcewz7tA0Q0qk9fH' }, comCache = {}, comPidiendo = 0;
+  // La voz de Admirito con audio de verdad (Carlos, 20-oct-2026): el texto que manda el anfitrión se sintetiza con la
+  // misma voz de las demos (ElevenLabs, es/en) por el cerebro, POST brain.digitalavatar.ai/tts, que ya atiende a esta
+  // nube sin credencial y devuelve el audio con las marcas de tiempo para el lip-sync. Sin audio (sin red, audio=off,
+  // bloqueado por el navegador), bocadillo y lip-sync de texto como hasta ahora. Las frases se repiten mucho: se
+  // guardan en memoria para no pedirlas dos veces. Nunca se manda el brief: sólo lo que dice Comercial.
+  var comCache = {}, comPidiendo = 0;
   function comAudio(texto) {
     var clave = LANG + '|' + texto;
     if (comCache[clave]) return Promise.resolve(comCache[clave]);
-    return fetch(COM_TTS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: texto, voice_id: COM_VOZ[LANG] || COM_VOZ.es, model_id: 'eleven_multilingual_v2', output_format: 'mp3_44100_128' }) })
-      .then(function (r) { if (!r.ok) throw new Error('tts ' + r.status); return r.blob(); })
-      .then(function (b) { return new Promise(function (ok, mal) { var f = new FileReader(); f.onload = function () { ok(String(f.result).split(',')[1]); }; f.onerror = mal; f.readAsDataURL(b); }); })
-      .then(function (b64) { comCache[clave] = b64; return b64; });
+    return fetch(API + '/tts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: texto, lang: LANG, voiceId: DADemo.voiceId(LANG), timestamps: true }) })
+      .then(function (r) { if (!r.ok) throw new Error('tts ' + r.status); return r.json(); })
+      .then(function (j) { if (!j || !j.audioBase64) throw new Error('tts sin audio'); comCache[clave] = j; return j; });
   }
   function comDecir(texto) {
     if (!texto) return;
@@ -1325,11 +1325,11 @@
     if (MUTED || !DADemo || typeof fetch !== 'function') { speakText(texto); return; }
     var mio = ++comPidiendo;
     speakText(texto);                                  // la boca empieza ya; el audio la sustituye cuando llega
-    comAudio(texto).then(function (b64) {
+    comAudio(texto).then(function (j) {
       if (mio !== comPidiendo) return;
-      var audio = DADemo.load(b64, 'audio/mpeg'); connect(audio);
-      return DADemo.start(audio).then(function () { if (mio === comPidiendo) speakAudio(audio, texto, null); })
-        .catch(function () { DADemo.armRetry(function () { DADemo.start(audio).then(function () { speakAudio(audio, texto, null); }).catch(function () {}); }); });
+      var audio = DADemo.load(j.audioBase64, j.mime || 'audio/mpeg'); connect(audio);
+      return DADemo.start(audio).then(function () { if (mio === comPidiendo) speakAudio(audio, texto, j.alignment || null); })
+        .catch(function () { DADemo.armRetry(function () { DADemo.start(audio).then(function () { speakAudio(audio, texto, j.alignment || null); }).catch(function () {}); }); });
     }).catch(function () { /* sin audio: se queda el lip-sync de texto */ });
   }
   // Lo que se le dice va al anfitrión tal cual: él sabe de briefs; aquí sólo se contesta «¿quién eres?».
