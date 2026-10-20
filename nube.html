@@ -212,6 +212,7 @@
   html[data-personaje="comercial"] .bubtail{border-top-color:#2f6db5} html[data-personaje="comercial"] .bubtail::after{border-top-color:#f4f8ff}
   html[data-personaje="comercial"] .chip:hover{color:#e8cd7b; border-color:#e8cd7b}
   html.dock[data-personaje="comercial"] #langPills{display:none !important}
+  #comMaletinTapa,#comMaletinPapel,#comTarjeta{transition:none}
   /* Piloto REC: parpadea al vigilar, rápido en alerta, fijo al enfocar y apagado sin señal; cristal empañado si no ve. */
   html[data-personaje="supervisor"] #supRec{animation:supRec 1.6s steps(1) infinite}
   @keyframes supRec{0%{opacity:1} 50%{opacity:.18}}
@@ -364,17 +365,37 @@
             <path id="arqCejaI" d="M96,80 Q111,73 126,78"/>
             <path id="arqCejaD" d="M151,78 Q166,73 181,80"/>
           </g>
-          <!-- Comercial (20-oct-2026): corbata azul bajo la boca y maletín a la derecha (las mismas piezas que
-               assets/comercial.svg de admira.biz). -->
+          <!-- Comercial (20-oct-2026): tres rasgos propios, pedidos por Carlos esa noche. La corbata azul con nudo y raya
+               bajo la boca (se levanta al proponer y da un respingo al entregar); el maletín a la derecha, que se abre al
+               entregar y deja asomar la propuesta (una hoja con el mapa); y la tarjeta de visita a la izquierda, que
+               Comercial ofrece al escuchar. Las piezas base son las de assets/comercial.svg de admira.biz. -->
           <g id="comCorbata" class="piel-parte" data-piel="comercial">
-            <path d="M122 178 L138 190 L154 178 L148 211 L138 226 L128 211Z" fill="#254c76" stroke="#132f4d" stroke-width="3" stroke-linejoin="round"/>
             <path d="M109 178 L125 191 L122 201 M167 178 L151 191 L154 201" fill="none" stroke="#254c76" stroke-width="4" stroke-linecap="round"/>
+            <path d="M122 178 L138 190 L154 178 L148 211 L138 226 L128 211Z" fill="#254c76" stroke="#132f4d" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M131 199 L146 190 M129 209 L147 198" stroke="#e8cd7b" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
+            <path d="M130 178 L138 186 L146 178 Z" fill="#132f4d"/>
           </g>
           <g id="comMaletin" class="piel-parte" data-piel="comercial">
-            <rect x="225" y="177" width="63" height="43" rx="6" fill="#254c76" stroke="#132f4d" stroke-width="4"/>
-            <path d="M243 177 V169 H270 V177" fill="none" stroke="#132f4d" stroke-width="5"/>
-            <path d="M225 191 H288" stroke="#cdb46c" stroke-width="3"/>
-            <rect x="252" y="187" width="9" height="12" rx="2" fill="#e8cd7b"/>
+            <g id="comMaletinPapel">
+              <rect x="233" y="184" width="47" height="34" rx="2" fill="#f4f8ff" stroke="#132f4d" stroke-width="2"/>
+              <path d="M239 191 H262 M239 197 H274 M239 203 H268" stroke="#6d86a3" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="268" cy="210" r="3.5" fill="#2f6db5"/><circle cx="259" cy="212" r="2.5" fill="#2f6db5"/>
+            </g>
+            <rect x="225" y="191" width="63" height="29" rx="6" fill="#254c76" stroke="#132f4d" stroke-width="4"/>
+            <path d="M225 197 H288" stroke="#cdb46c" stroke-width="3"/>
+            <g id="comMaletinTapa">
+              <path d="M225 193 V183 a6 6 0 0 1 6 -6 H282 a6 6 0 0 1 6 6 V193 Z" fill="#254c76" stroke="#132f4d" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M243 177 V169 H270 V177" fill="none" stroke="#132f4d" stroke-width="5"/>
+              <rect x="252" y="186" width="9" height="9" rx="2" fill="#e8cd7b"/>
+            </g>
+          </g>
+          <g id="comTarjeta" class="piel-parte" data-piel="comercial">
+            <g transform="rotate(-8 20 198)">
+              <rect x="-8" y="182" width="56" height="34" rx="3" fill="#f4f8ff" stroke="#132f4d" stroke-width="2.5"/>
+              <rect x="-8" y="182" width="56" height="7" rx="3" fill="#254c76"/>
+              <circle cx="2" cy="203" r="6" fill="#e8cd7b" stroke="#132f4d" stroke-width="1.5"/>
+              <path d="M13 199 H40 M13 206 H33" stroke="#6d86a3" stroke-width="2.2" stroke-linecap="round"/>
+            </g>
           </g>
           <!-- Supervisor: el ojo-objetivo (carcasa, anillo de enfoque estriado, aro menta, cristal, diafragma, brillos y piloto
                REC) en el sitio del ojo derecho, y una sola ceja escrutadora sobre el ojo de carne. -->
@@ -426,7 +447,7 @@
 
 <script src="/assets/da-context.js?v=20261018-admira-live-1"></script>
 <script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
-<script src="/assets/nube.js?v=20261020-comercial-3"></script>
+<script src="/assets/nube.js?v=20261020-comercial-4"></script>
 <script defer src="/assets/da-conversation-controls.js?v=20261007-langui-1"></script>
 </body>
 </html>

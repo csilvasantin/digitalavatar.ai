@@ -60,13 +60,18 @@ test('con ?personaje=comercial es la misma nube con la piel de Comercial; sin é
 
 test('nube.html: corbata y maletín sólo existen con personaje=comercial, en azul de oficina y oro; micro conservado', () => {
   assert.match(html, /html\[data-personaje="comercial"\] \.piel-parte\[data-piel="comercial"\]\{display:inline\}/);
-  for (const id of ['comCorbata', 'comMaletin']) assert.match(html, new RegExp(`id="${id}" class="piel-parte" data-piel="comercial"`), id);
-  assert.match(html, /id="comCorbata"[\s\S]{0,200}fill="#254c76"/, 'corbata azul');
-  assert.match(html, /id="comMaletin"[\s\S]{0,400}fill="#e8cd7b"/, 'cierre dorado del maletín');
+  for (const id of ['comCorbata', 'comMaletin', 'comTarjeta']) assert.match(html, new RegExp(`id="${id}" class="piel-parte" data-piel="comercial"`), id);
+  // Los tres rasgos (Carlos, 20-oct-2026): maletín con tapa y hoja de propuesta dentro, tarjeta de visita blanca con banda azul y sello dorado.
+  assert.match(html, /id="comMaletinTapa"/); assert.match(html, /id="comMaletinPapel"/);
+  assert.match(html, /id="comTarjeta"[\s\S]{0,300}fill="#f4f8ff"[\s\S]{0,200}fill="#254c76"[\s\S]{0,200}fill="#e8cd7b"/, 'tarjeta blanca, banda azul, sello dorado');
+  assert.match(nube, /COM\.abierto \+= \(\(e === 'entregando' \? 1 : 0\) - COM\.abierto\) \* k/, 'el maletín se abre al entregar');
+  assert.match(nube, /COM\.ofrece \+= \(\(e === 'escuchando' \? 1 : 0\) - COM\.ofrece\) \* k/, 'la tarjeta se ofrece al escuchar');
+  assert.match(html, /id="comCorbata"[\s\S]{0,400}fill="#254c76"/, 'corbata azul');
+  assert.match(html, /id="comMaletin"[\s\S]{0,1200}fill="#e8cd7b"/, 'cierre dorado del maletín');
   assert.doesNotMatch(html, /html\[data-personaje="comercial"\] \.cuerpo-(relleno|borde)/, 'sigue siendo Admirito: blanco y verde');
   assert.doesNotMatch(html, /html\[data-personaje="comercial"\] #btnMic/, 'Comercial sí escucha: conserva el micro');
   assert.match(html, /html\.dock\[data-personaje="comercial"\] #langPills\{display:none !important\}/, 'en la portada, el idioma lo pone la página');
-  assert.match(html, /src="\/assets\/nube\.js\?v=20261020-comercial-3"/, 'versión de caché nueva');
+  assert.match(html, /src="\/assets\/nube\.js\?v=20261020-comercial-4"/, 'versión de caché nueva');
 });
 
 test('frases propias por estado, en los dos idiomas; estados desconocidos no cambian nada', () => {
