@@ -163,8 +163,8 @@
   .plano{transform-box:fill-box; transform-origin:100% 50%; animation:plano 2.6s cubic-bezier(.2,.8,.3,1) forwards}
   @keyframes plano{0%{opacity:0; transform:scaleX(.05)} 12%{opacity:1} 45%{transform:scaleX(1)} 85%{opacity:1; transform:scaleX(1)} 100%{opacity:0; transform:scaleX(1)}}
   @media (prefers-reduced-motion:reduce){ .onda,.cinta,.trazo,.plano{display:none} }
-  /* Piel SUPERVISOR · ÁNGEL (Carlos, 20-oct-2026: «como un ángel en contraposición de Bugito, con corona y look divino»):
-     nube blanca y oro con aureola, corona y alitas que aletean, luz cálida radiante. Conserva el ojo-objetivo (ahora dorado,
+  /* Piel SUPERVISOR · ÁNGEL (Carlos, 20-oct-2026: «como un ángel en contraposición de Bugito, look divino»; 20-oct: sin corona):
+     nube blanca y oro con aureola y alitas que aletean, luz cálida radiante. Conserva el ojo-objetivo (ahora dorado,
      «el ojo que todo lo ve») y sus estados. Antes: */
   /* Piel SUPERVISOR (?personaje=supervisor · Carlos, 18-oct-2026: la tercera mascota del ⌘ Experto, la Insta360 del
      MacMini que vigila el MBP16 y abre incidencias en admira.app/supervisor): el mismo Admirito, en menta y teal, con
@@ -263,7 +263,6 @@
     <svg id="nube" viewBox="-30 -40 337 290" role="img" aria-label="Admirito, la nube de AdmiraNeXT" tabindex="0" xmlns="http://www.w3.org/2000/svg">
       <defs><clipPath id="bocaClip"><path id="bocaClipPath" d=""/></clipPath>
         <radialGradient id="supVidrio" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#7fc8ff"/><stop offset=".55" stop-color="#2c5d9e"/><stop offset="1" stop-color="#0d1f3d"/></radialGradient>
-        <linearGradient id="supOro" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#f5c842"/><stop offset="1" stop-color="#c9921a"/></linearGradient>
         <radialGradient id="supLuz" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fffbe6"/><stop offset="1" stop-color="#fff3c4" stop-opacity="0"/></radialGradient></defs>
       <ellipse id="sombra" cx="138.5" cy="222" rx="92" ry="9" fill="#000" opacity=".35"/>
       <g id="flota">
@@ -304,19 +303,12 @@
             <path d="M101,9 Q107,-5 121,-10" fill="none" stroke="#fff3c4" stroke-width="5" stroke-linecap="round" opacity=".85"/>
             <path d="M60,45 Q138.5,27 217,45 Q219,55 207,55 Q138.5,41 70,55 Q58,55 60,45 Z" fill="#ffb300" stroke="#5a3b00" stroke-width="5" stroke-linejoin="round"/>
           </g>
-          <!-- Supervisor ángel: aureola dorada flotando y corona de oro con gemas (lo contrario de los cuernos de Bugito).
+          <!-- Supervisor ángel: aureola dorada flotando y destellos (lo contrario de los cuernos de Bugito).
                Conserva el id supGorra (contrato de tests y nube.js). -->
           <g id="supGorra" class="piel-parte" data-piel="supervisor" stroke-linejoin="round">
             <ellipse cx="138.5" cy="-8" rx="70" ry="40" fill="url(#supLuz)" stroke="none" opacity=".8"/>
             <g id="supAureola"><ellipse cx="138.5" cy="-26" rx="58" ry="11" fill="none" stroke="#c9921a" stroke-width="9"/>
               <ellipse cx="138.5" cy="-26" rx="58" ry="11" fill="none" stroke="#ffe58a" stroke-width="5"/></g>
-            <path d="M92,44 L86,4 L108,22 L122,-6 L138.5,16 L155,-6 L169,22 L191,4 L185,44 Q138.5,36 92,44 Z" fill="url(#supOro)" stroke="#8a5f00" stroke-width="4.5"/>
-            <path d="M92,44 Q138.5,36 185,44 L186,52 Q138.5,44 91,52 Z" fill="#e0aa26" stroke="#8a5f00" stroke-width="3.5"/>
-            <circle cx="86" cy="2" r="5" fill="#fff3b0" stroke="#8a5f00" stroke-width="2.5"/><circle cx="191" cy="2" r="5" fill="#fff3b0" stroke="#8a5f00" stroke-width="2.5"/>
-            <circle cx="122" cy="-8" r="5" fill="#fff3b0" stroke="#8a5f00" stroke-width="2.5"/><circle cx="155" cy="-8" r="5" fill="#fff3b0" stroke="#8a5f00" stroke-width="2.5"/>
-            <path d="M138.5,20 L146,30 L138.5,40 L131,30 Z" fill="#5fb8ff" stroke="#1d4f86" stroke-width="2"/>
-            <circle cx="112" cy="36" r="3.6" fill="#ff6b8a" stroke="#7a1d35" stroke-width="1.4"/><circle cx="165" cy="36" r="3.6" fill="#ff6b8a" stroke="#7a1d35" stroke-width="1.4"/>
-            <path d="M100,30 L104,14" stroke="#fffbe6" stroke-width="3" stroke-linecap="round" opacity=".85"/>
             <path class="sup-destello" d="M40,-10 l3,8 8,3 -8,3 -3,8 -3,-8 -8,-3 8,-3 Z" fill="#fff3b0" stroke="none"/>
             <path class="sup-destello" d="M236,-2 l2.5,6 6,2.5 -6,2.5 -2.5,6 -2.5,-6 -6,-2.5 6,-2.5 Z" fill="#fff3b0" stroke="none"/>
             <path class="sup-destello" d="M250,170 l2,5 5,2 -5,2 -2,5 -2,-5 -5,-2 5,-2 Z" fill="#fff3b0" stroke="none"/>
