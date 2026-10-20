@@ -73,7 +73,7 @@ test('nube.html: gorra, objetivo y ceja sólo existen con personaje=supervisor, 
   assert.match(html, /html\[data-personaje="supervisor"\] body\{background:radial-gradient\(60% 45%/, 'fondo de luz divina');
   assert.match(html, /html\[data-personaje="supervisor"\] #btnMic, html\[data-personaje="supervisor"\] #btnStop/, 'mira, no escucha: sin micro');
   assert.equal((html.match(/src="\/assets\/nube\.js/g) || []).length, 1, 'el mismo motor');
-  assert.match(html, /src="\/assets\/nube\.js\?v=20261020-comercial-1"/);
+  assert.match(html, /src="\/assets\/nube\.js\?v=20261020-comercial-2"/);
   assert.equal(fs.existsSync(new URL('../supervisor.html', import.meta.url)), false, 'no hay copia de la página');
 });
 
@@ -182,7 +182,7 @@ test('la piel se engancha a la tabla PIELES con los ganchos genéricos del motor
   assert.match(nube, /if \(SUP\) Object\.assign\(PIELES\.supervisor, \{/);
   const motor = nube.slice(0, nube.indexOf('// ───────────────────────── Piel BUGITO'));
   assert.doesNotMatch(motor.replace(/\/\*[\s\S]*?\*\//, ''), /\bSUP\b|supEstado|supFrame/, 'el motor no sabe nada del Supervisor');
-  assert.doesNotMatch(nube.slice(nube.indexOf('// ───────────────────────── Piel SUPERVISOR')), /fetch\(|api\.yokup\.com/, 'la piel no lee el tablero por su cuenta');
+  assert.doesNotMatch(nube.slice(nube.indexOf('// ───────────────────────── Piel SUPERVISOR'), nube.indexOf('// ───────────────────────── Piel COMERCIAL')), /fetch\(|api\.yokup\.com/, 'la piel no lee el tablero por su cuenta');
 });
 
 test('admira.live es anfitrión de confianza: allí está la cámara del Supervisor y su cara sale junto a ella', () => {
