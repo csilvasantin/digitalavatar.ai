@@ -1,11 +1,11 @@
 {
-  "version": "v.20.10.2026.r3.23:20",
-  "builtAt": "2026-10-20T21:01:22.673637+00:00",
-  "note": "Comercial habla con la voz de Admirito: la piel comercial pide el audio al cerebro (brain.digitalavatar.ai/tts) y lo dice con lip-sync.",
+  "version": "v.20.10.2026.r4.23:58",
+  "builtAt": "2026-10-20T21:45:16.716622+00:00",
+  "note": "Comercial con sus tres rasgos: corbata con nudo y raya, maletín que se abre al entregar la propuesta y tarjeta de visita que ofrece al escuchar.",
   "novedades": [
-    "La voz de Comercial sale del cerebro (POST brain.digitalavatar.ai/tts, la misma voz ElevenLabs de las demos, con marcas de tiempo para el lip-sync) en vez de api.admira.store/tts, que es puerta de pago y pedía credencial (401). Con audio=off o sin red, texto como antes."
+    "Comercial, versión gráfica (Carlos, 20-oct-2026): la corbata azul con nudo y raya dorada se levanta al proponer y da un respingo al entregar; el maletín se abre al entregar y asoma la hoja de la propuesta con el mapa; la tarjeta de visita (blanca, banda azul, sello dorado) se ofrece al escuchar. Todo suavizado, sin saltos."
   ],
   "signature": "NeoMacStudio · MacStudio",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "29b127f (etiqueta respaldo-v.20.10.2026.r2.23-08)"
+  "rollback": "67aabff (etiqueta respaldo-v.20.10.2026.r3.23-20)"
 }

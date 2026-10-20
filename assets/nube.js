@@ -1357,11 +1357,31 @@
     return true;
   }
   // El maletín se balancea (más al entregar) y la corbata se mueve al hacer números.
+  // Los tres rasgos (Carlos, 20-oct-2026): la corbata se levanta al proponer y da un respingo al entregar; el maletín se
+  // abre al entregar y asoma la propuesta; la tarjeta de visita se ofrece al escuchar. Todo con suavizado (lerp) para
+  // que abrir, cerrar y ofrecer no sean un salto.
   function comFrame(dt) {
     if (!COM) return;
     COM.t += dt; COM.clock += dt;
-    if (el.comMaletin) { var b = COM.estado === 'entregando' ? Math.sin(COM.clock * 6) * 6 : Math.sin(COM.clock * 1.3) * 2; el.comMaletin.setAttribute('transform', 'rotate(' + b.toFixed(2) + ' 256 177)'); }
-    if (el.comCorbata) { var k = COM.estado === 'proponiendo' ? Math.sin(COM.clock * 4) * 3 : 0; el.comCorbata.setAttribute('transform', 'rotate(' + k.toFixed(2) + ' 138 178)'); }
+    var k = Math.min(1, dt * 5), e = COM.estado;
+    COM.abierto += ((e === 'entregando' ? 1 : 0) - COM.abierto) * k;
+    COM.ofrece += ((e === 'escuchando' ? 1 : 0) - COM.ofrece) * k;
+    if (el.comMaletin) {
+      var b = e === 'entregando' ? Math.sin(COM.clock * 6) * 2.5 : Math.sin(COM.clock * 1.3) * 2;
+      el.comMaletin.setAttribute('transform', 'rotate(' + b.toFixed(2) + ' 256 191)');
+      if (el.comMaletinTapa) el.comMaletinTapa.setAttribute('transform', 'rotate(' + (-105 * COM.abierto).toFixed(2) + ' 225 193)');
+      if (el.comMaletinPapel) { el.comMaletinPapel.setAttribute('transform', 'translate(0 ' + (-26 * COM.abierto).toFixed(2) + ')'); el.comMaletinPapel.setAttribute('opacity', COM.abierto.toFixed(2)); }
+    }
+    if (el.comCorbata) {
+      var c = e === 'proponiendo' ? Math.sin(COM.clock * 4) * 3 : 0;
+      if (e === 'entregando' && COM.t < 0.6) c -= Math.sin(COM.t / 0.6 * Math.PI) * 28;   // respingo
+      el.comCorbata.setAttribute('transform', 'rotate(' + c.toFixed(2) + ' 138 178)');
+    }
+    if (el.comTarjeta) {
+      var o = COM.ofrece, bob = Math.sin(COM.clock * 1.6) * 1.5;
+      el.comTarjeta.setAttribute('transform', 'translate(' + (18 * o).toFixed(2) + ' ' + (-16 * o + bob).toFixed(2) + ') rotate(' + (-10 * o).toFixed(2) + ' 20 198) scale(' + (1 + 0.12 * o).toFixed(3) + ')');
+      el.comTarjeta.setAttribute('transform-origin', '20 198');
+    }
   }
   function comMouth() {
     var e = COM.estado;
@@ -1369,7 +1389,7 @@
     else if (e === 'dudando') { mouth.ta = 0.22; mouth.tr = 1; }
   }
   window.__comercial = { estado: comEstado, frase: comFrase, ask: function (q) { if (COM) comAsk(q); } };
-  if (COM) { el.comMaletin = $('comMaletin'); el.comCorbata = $('comCorbata'); S.sleepAfter = Math.min(S.sleepAfter, 60000); }
+  if (COM) { el.comMaletin = $('comMaletin'); el.comMaletinTapa = $('comMaletinTapa'); el.comMaletinPapel = $('comMaletinPapel'); el.comCorbata = $('comCorbata'); el.comTarjeta = $('comTarjeta'); COM.abierto = 0; COM.ofrece = 0; S.sleepAfter = Math.min(S.sleepAfter, 60000); }
   if (COM) Object.assign(PIELES.comercial, {
     frame: comFrame, mouth: comMouth, ask: comAsk,
     droop: function () { return COM.estado === 'proponiendo' ? 0.18 : 0; },

@@ -73,7 +73,7 @@ test('nube.html: gorra, objetivo y ceja sólo existen con personaje=supervisor, 
   assert.match(html, /html\[data-personaje="supervisor"\] body\{background:radial-gradient\(60% 45%/, 'fondo de luz divina');
   assert.match(html, /html\[data-personaje="supervisor"\] #btnMic, html\[data-personaje="supervisor"\] #btnStop/, 'mira, no escucha: sin micro');
   assert.equal((html.match(/src="\/assets\/nube\.js/g) || []).length, 1, 'el mismo motor');
-  assert.match(html, /src="\/assets\/nube\.js\?v=20261020-comercial-3"/);
+  assert.match(html, /src="\/assets\/nube\.js\?v=20261020-comercial-4"/);
   assert.equal(fs.existsSync(new URL('../supervisor.html', import.meta.url)), false, 'no hay copia de la página');
 });
 
