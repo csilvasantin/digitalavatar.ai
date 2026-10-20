@@ -25,6 +25,9 @@
  * pícaras y colmillo; el creador de incidencias del banco de pruebas (admira.biz/bugito.html). No pregunta al
  * cerebro: sus órdenes van al anfitrión (da-bugito-lanzar) y el anfitrión le cuenta qué pasa
  * (da-bugito {estado: aburrido|tramando|lanzando|celebrando|derrotado|rechazado, incidencia, ticket}).
+ * Comercial (personaje=comercial, Carlos 20-oct-2026): Admirito con corbata y maletín, el asistente de campañas y
+ * captación de la portada de admira.biz; lo que se le dice va al anfitrión (da-comercial-texto) y él le cuenta en qué
+ * está (da-comercial {estado, texto}).
  * Arquitecto (personaje=arquitecto, «/arquitecto … admirito se disfrace de arquitecto»): Admirito con casco amarillo
  * de obra, gafas redondas, lápiz en la oreja y rollo de planos, sobre papel de plano azul; el estudio del Arquitecto
  * de admira.biz (arquitecto.html: crear, reformar e inventariar Xpacios). Tampoco pregunta al cerebro: lo que se le
@@ -68,7 +71,12 @@
       es: { tag: 'El Supervisor · el ojo que vigila el MBP16', placeholder: 'Pregúntame «¿qué ves?» o pídeme «abre la cámara»…',
         aria: 'El Supervisor: Admirito con gorra de vigilante y un ojo de cámara', chips: ['¿Qué ves?', '¿Hay incidencias?', 'Abre la cámara', '¿Quién eres?'] },
       en: { tag: 'The Supervisor · the eye on the MBP16', placeholder: 'Ask me “what do you see?” or “open the camera”…',
-        aria: 'The Supervisor: Admirito with a security cap and a camera eye', chips: ['What do you see?', 'Any incidents?', 'Open the camera', 'Who are you?'] } } }
+        aria: 'The Supervisor: Admirito with a security cap and a camera eye', chips: ['What do you see?', 'Any incidents?', 'Open the camera', 'Who are you?'] } } },
+    comercial: { textos: {
+      es: { tag: 'Comercial · Admirito con corbata y maletín', placeholder: 'Cuéntame la campaña o pulsa 🎙️: «para Café Rico, lanzar el frappé, jóvenes, 2.000 euros, del 20 al 26 de octubre»…',
+        aria: 'Comercial: Admirito con corbata y maletín', chips: ['Vender una campaña', 'Captar un comercio', 'Prepara la propuesta', '¿Quién eres?'] },
+      en: { tag: 'Commercial · Admirito with a tie and briefcase', placeholder: 'Tell me the campaign or press 🎙️: “for Café Rico, launch the frappé, young people, 2,000 euros, 20 to 26 October”…',
+        aria: 'Commercial: Admirito with a tie and briefcase', chips: ['Sell a campaign', 'Recruit a merchant', 'Prepare the proposal', 'Who are you?'] } } }
   };
   var PERSONAJE = (function () { var p = String(params.get('personaje') || '').toLowerCase(); return Object.prototype.hasOwnProperty.call(PIELES, p) && PIELES[p] ? p : 'admirito'; })();
   var PIEL = PIELES[PERSONAJE] || null;
@@ -1261,6 +1269,93 @@
   });
   // Embebido (⌘ Experto, banco de Bugito): avisa al anfitrión de que ya escucha, para que le cuente lo que ve.
   if (SUP && window.self !== window.top) { try { var hostS = DACTX.hostOrigin ? DACTX.hostOrigin() : ''; if (hostS) window.parent.postMessage({ type: 'da-supervisor-listo' }, hostS); } catch (_) {} }
+
+  // ───────────────────────── Piel COMERCIAL ─────────────────────────
+  // Carlos, 20-oct-2026: «que Comercial escuche el brief por el micro y responda con la voz de Admirito, como el
+  // Arquitecto». Comercial es Admirito con corbata y maletín: el asistente de campañas y captación de comercios de la
+  // portada de admira.biz. Mismo cuerpo, misma vida y mismo lip-sync. No pregunta al cerebro: lo que se le dice (texto o
+  // micro) va al anfitrión (da-comercial-texto), que lo interpreta como brief; y el anfitrión le cuenta en qué está
+  // (da-comercial {estado: reposo|escuchando|apuntando|proponiendo|entregando|dudando, texto, silencio}).
+  var COM_ESTADOS = ['reposo', 'escuchando', 'apuntando', 'proponiendo', 'entregando', 'dudando'];
+  var COM_FRASES = {
+    es: {
+      reposo: ['¿Vendemos una campaña o captamos un comercio?', 'Corbata puesta y maletín listo. Tú dirás.', 'Cuéntame la campaña y te preparo la propuesta.'],
+      escuchando: ['Te escucho: anunciante, objetivo, a quién llegar y presupuesto.', 'Adelante, lo apunto todo.', 'Dime la campaña como se la contarías a un cliente.'],
+      apuntando: ['Apuntado.', 'Lo tengo.', 'Anotado en el brief.'],
+      proponiendo: ['Preparo la propuesta…', 'Cifras, ubicaciones y avisos: un momento.', 'Hago números.'],
+      entregando: ['Propuesta lista: en PDF con marca o por correo.', 'Aquí la tienes: revísala y la enviamos.', 'Lista para el anunciante.'],
+      dudando: ['Me falta un dato para seguir.', 'Así no me sale: cuéntamelo de otra forma.', 'Mmm… ¿me lo repites?'],
+      pedido: 'Apuntado.', sinAnfitrion: 'Para preparar campañas necesito la portada de admira.biz: ábreme allí (Comercial).',
+      quien: '¡Hola! Soy Comercial: Admirito con corbata y maletín. Vendo campañas a anunciantes y capto comercios y pantallas para la red.',
+      ayuda: 'Comercial\nVender campañas: cuéntame anunciante, objetivo, audiencia, fechas y presupuesto; elige ubicaciones y te preparo la propuesta en PDF o por correo.\nCaptar comercios: nombre, ciudad, dirección y pantallas; te hago la ficha.'
+    },
+    en: {
+      reposo: ['Shall we sell a campaign or recruit a merchant?', 'Tie on, briefcase ready. Over to you.', 'Tell me the campaign and I will prepare the proposal.'],
+      escuchando: ['I\'m listening: advertiser, objective, who to reach and budget.', 'Go ahead, I\'m taking notes.', 'Tell me the campaign as you would tell a client.'],
+      apuntando: ['Noted.', 'Got it.', 'Written in the brief.'],
+      proponiendo: ['Preparing the proposal…', 'Figures, locations and caveats: one moment.', 'Crunching numbers.'],
+      entregando: ['Proposal ready: as a branded PDF or by email.', 'Here it is: review it and we send it.', 'Ready for the advertiser.'],
+      dudando: ['I am missing something to go on.', 'That did not come through: tell me another way.', 'Hmm… could you repeat that?'],
+      pedido: 'Noted.', sinAnfitrion: 'To prepare campaigns I need the admira.biz home page: open me there (Commercial).',
+      quien: 'Hi! I am Commercial: Admirito with a tie and briefcase. I sell campaigns to advertisers and recruit merchants and screens for the network.',
+      ayuda: 'Commercial\nSell campaigns: tell me advertiser, objective, audience, dates and budget; choose locations and I prepare the proposal as PDF or email.\nRecruit merchants: name, city, address and screens; I prepare the brief.'
+    }
+  };
+  var COM = PERSONAJE === 'comercial' ? { estado: 'reposo', t: 0, clock: 0, efectoT: 0 } : null;
+  function comF() { return COM_FRASES[LANG] || COM_FRASES.es; }
+  function comPick(list) { return list[Math.floor(Math.random() * list.length)]; }
+  function comNorm(t) { return String(t || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+  function comFrase(estado) { var v = comF()[estado]; return Array.isArray(v) ? comPick(v) : (typeof v === 'string' ? v : ''); }
+  function comDecir(texto) { if (!texto) return; stopAll(); clearHelpClass(); speakText(texto); setStatus(''); }
+  // Lo que se le dice va al anfitrión tal cual: él sabe de briefs; aquí sólo se contesta «¿quién eres?».
+  function comAsk(question) {
+    $('q').value = ''; clearHelpClass();
+    var q = String(question || '').trim(); if (!q) return;
+    if (/^(¿\s*)?(quien eres|quien sois|who are you)\b/.test(comNorm(q))) { comDecir(comF().quien); return; }
+    var host = DACTX.hostOrigin ? DACTX.hostOrigin() : '';
+    if (window.self === window.top || !host) { comDecir(comF().sinAnfitrion); return; }
+    try { window.parent.postMessage({ type: 'da-comercial-texto', texto: q.slice(0, 2000), lang: LANG }, host); } catch (_) { comDecir(comF().sinAnfitrion); return; }
+    comEstado('apuntando', { texto: comF().pedido });
+  }
+  function comEstado(estado, opt) {
+    if (!COM) return false;
+    opt = opt || {};
+    if (COM_ESTADOS.indexOf(estado) < 0) return false;
+    COM.estado = estado; COM.t = 0; COM.efectoT = 0; touch();
+    var texto = typeof opt.texto === 'string' && opt.texto.trim() ? opt.texto.trim().slice(0, 240) : comFrase(estado);
+    if (!opt.silencio) comDecir(texto);
+    if (REDUCED) return true;
+    if (estado === 'entregando') { S.happy = 2.2; kick(0.9); S.hopV = 2.4; sparkle(2); }
+    else if (estado === 'escuchando') S.tiltT = 1.4;
+    else if (estado === 'dudando') { S.tiltT = 1.4; drop(); }
+    else if (estado === 'apuntando' || estado === 'proponiendo') kick(0.4);
+    return true;
+  }
+  // El maletín se balancea (más al entregar) y la corbata se mueve al hacer números.
+  function comFrame(dt) {
+    if (!COM) return;
+    COM.t += dt; COM.clock += dt;
+    if (el.comMaletin) { var b = COM.estado === 'entregando' ? Math.sin(COM.clock * 6) * 6 : Math.sin(COM.clock * 1.3) * 2; el.comMaletin.setAttribute('transform', 'rotate(' + b.toFixed(2) + ' 256 177)'); }
+    if (el.comCorbata) { var k = COM.estado === 'proponiendo' ? Math.sin(COM.clock * 4) * 3 : 0; el.comCorbata.setAttribute('transform', 'rotate(' + k.toFixed(2) + ' 138 178)'); }
+  }
+  function comMouth() {
+    var e = COM.estado;
+    if (e === 'proponiendo') { mouth.ta = 0.14; mouth.tr = 0.95; }
+    else if (e === 'dudando') { mouth.ta = 0.22; mouth.tr = 1; }
+  }
+  window.__comercial = { estado: comEstado, frase: comFrase, ask: function (q) { if (COM) comAsk(q); } };
+  if (COM) { el.comMaletin = $('comMaletin'); el.comCorbata = $('comCorbata'); S.sleepAfter = Math.min(S.sleepAfter, 60000); }
+  if (COM) Object.assign(PIELES.comercial, {
+    frame: comFrame, mouth: comMouth, ask: comAsk,
+    droop: function () { return COM.estado === 'proponiendo' ? 0.18 : 0; },
+    gaze: function () { var e = COM.estado; return e === 'escuchando' ? [0.35, -0.15] : e === 'proponiendo' ? [0.8, 0.7] : e === 'dudando' ? [-0.2, -0.6] : null; },
+    estado: function () { return COM.estado; },
+    identidad: function (kind) { return kind === 'help' ? comF().ayuda : (kind === 'who' || kind === 'profile') ? comF().quien : ''; },
+    titulo: function (l) { return l === 'en' ? 'DigitalAvatar.ai — Commercial (Admirito with a tie and briefcase)' : 'DigitalAvatar.ai — Comercial (Admirito con corbata y maletín)'; },
+    mensaje: function (d) { comEstado(String(d.estado || ''), { texto: d.texto, silencio: d.silencio === true }); }
+  });
+  // Embebido en la portada de admira.biz: avisa al anfitrión de que ya escucha.
+  if (COM && window.self !== window.top) { try { var hostC = DACTX.hostOrigin ? DACTX.hostOrigin() : ''; if (hostC) window.parent.postMessage({ type: 'da-comercial-listo' }, hostC); } catch (_) {} }
 
   // ───────────────────────── Interacción ─────────────────────────
   function pointerAt(ev) {

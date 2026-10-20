@@ -198,6 +198,20 @@
   html[data-personaje="supervisor"] body[data-da-composer=compact] .composer .bar .qfield:focus-within{border-color:#ffd76a}
   /* El Supervisor mira, no escucha: sin micro ni corte de voz (lip-sync de texto, como Bugito); el idioma lo pone la página. */
   html[data-personaje="supervisor"] #btnMic, html[data-personaje="supervisor"] #btnStop, html.dock[data-personaje="supervisor"] #langPills{display:none !important}
+  /* Comercial (Carlos, 20-oct-2026): el mismo Admirito con corbata azul y maletín, sobre azul de oficina con el oro del
+     cierre del maletín. Papel: Comercial en la portada de admira.biz (campañas y captación de comercios). Escucha: micro sí. */
+  html[data-personaje="comercial"] .piel-parte[data-piel="comercial"]{display:inline}
+  html[data-personaje="comercial"] body{background:radial-gradient(120% 90% at 50% -10%, #1b3f6a 0%, #0a1930 62%)}
+  html[data-personaje="comercial"] #stage::before{background:radial-gradient(closest-side, rgba(91,155,255,.24), rgba(91,155,255,.06) 55%, transparent 75%)}
+  html[data-personaje="comercial"] #evo{display:none !important}
+  html[data-personaje="comercial"] .brand b{color:#e8cd7b}
+  html[data-personaje="comercial"] .tier{background:#132f4d; color:#d6e6ff; border-color:#5b9bff}
+  html[data-personaje="comercial"] #stage #caption.bocadillo{background:#f4f8ff; color:#0f2740; border-color:#2f6db5}
+  html[data-personaje="comercial"] #stage #caption.bocadillo .sp1{color:#0f2740} html[data-personaje="comercial"] #stage #caption.bocadillo .sp0{color:#6d86a3}
+  html[data-personaje="comercial"] #stage #caption.bocadillo.help{background:#f4f8ff; border-color:#2f6db5}
+  html[data-personaje="comercial"] .bubtail{border-top-color:#2f6db5} html[data-personaje="comercial"] .bubtail::after{border-top-color:#f4f8ff}
+  html[data-personaje="comercial"] .chip:hover{color:#e8cd7b; border-color:#e8cd7b}
+  html.dock[data-personaje="comercial"] #langPills{display:none !important}
   /* Piloto REC: parpadea al vigilar, rápido en alerta, fijo al enfocar y apagado sin señal; cristal empañado si no ve. */
   html[data-personaje="supervisor"] #supRec{animation:supRec 1.6s steps(1) infinite}
   @keyframes supRec{0%{opacity:1} 50%{opacity:.18}}
@@ -350,6 +364,18 @@
             <path id="arqCejaI" d="M96,80 Q111,73 126,78"/>
             <path id="arqCejaD" d="M151,78 Q166,73 181,80"/>
           </g>
+          <!-- Comercial (20-oct-2026): corbata azul bajo la boca y maletín a la derecha (las mismas piezas que
+               assets/comercial.svg de admira.biz). -->
+          <g id="comCorbata" class="piel-parte" data-piel="comercial">
+            <path d="M122 178 L138 190 L154 178 L148 211 L138 226 L128 211Z" fill="#254c76" stroke="#132f4d" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M109 178 L125 191 L122 201 M167 178 L151 191 L154 201" fill="none" stroke="#254c76" stroke-width="4" stroke-linecap="round"/>
+          </g>
+          <g id="comMaletin" class="piel-parte" data-piel="comercial">
+            <rect x="225" y="177" width="63" height="43" rx="6" fill="#254c76" stroke="#132f4d" stroke-width="4"/>
+            <path d="M243 177 V169 H270 V177" fill="none" stroke="#132f4d" stroke-width="5"/>
+            <path d="M225 191 H288" stroke="#cdb46c" stroke-width="3"/>
+            <rect x="252" y="187" width="9" height="12" rx="2" fill="#e8cd7b"/>
+          </g>
           <!-- Supervisor: el ojo-objetivo (carcasa, anillo de enfoque estriado, aro menta, cristal, diafragma, brillos y piloto
                REC) en el sitio del ojo derecho, y una sola ceja escrutadora sobre el ojo de carne. -->
           <g id="supLente" class="piel-parte" data-piel="supervisor" data-estado="vigilando">
@@ -400,7 +426,7 @@
 
 <script src="/assets/da-context.js?v=20261018-admira-live-1"></script>
 <script src="/assets/da-demo-voice.js?v=20261004-audio-3"></script>
-<script src="/assets/nube.js?v=20261018-supervisor-1"></script>
+<script src="/assets/nube.js?v=20261020-comercial-1"></script>
 <script defer src="/assets/da-conversation-controls.js?v=20261007-langui-1"></script>
 </body>
 </html>

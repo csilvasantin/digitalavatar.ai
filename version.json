@@ -1,12 +1,11 @@
 {
-  "version": "v.18.10.2026.r1.10:21",
-  "builtAt": "2026-10-18T08:21:58.682630+00:00",
-  "note": "El Supervisor tiene cara: cuarta piel de Admirito (nube.html?personaje=supervisor), con gorra de vigilante y ojo de cámara.",
+  "version": "v.20.10.2026.r1.21:46",
+  "builtAt": "2026-10-20T19:46:59.812044+00:00",
+  "note": "Comercial tiene cara: quinta piel de Admirito (nube.html?personaje=comercial), con corbata y maletín, para el asistente de campañas de admira.biz.",
   "novedades": [
-    "Supervisor, la tercera mascota del ⌘ Experto: Admirito en menta y teal con gorra de vigilante y el ojo derecho hecho objetivo de cámara, en siete estados (vigilando, enfocando, alerta, conforme, dudando, ciego y sin señal).",
-    "admira.live es anfitrión de confianza de las caras: allí vive la cámara del Supervisor y su cara sale junto a ella."
+    "Comercial, Admirito con corbata y maletín: el asistente de campañas y captación de comercios de la portada de admira.biz habla y escucha con la nube (seis estados: reposo, escuchando, apuntando, proponiendo, entregando y dudando). Lo que se le dice va al anfitrión como brief; nunca pregunta al cerebro."
   ],
-  "signature": "Morfeo · MacMini",
+  "signature": "NeoMacStudio · MacStudio",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "7f314d9 (main sin el Supervisor)"
+  "rollback": "35d4ffc (main sin Comercial)"
 }
