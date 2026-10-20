@@ -68,8 +68,9 @@ test('nube.html: gorra, objetivo y ceja sólo existen con personaje=supervisor, 
   for (const id of ['supGorra', 'supLente', 'supCejas']) assert.match(html, new RegExp(`id="${id}" class="piel-parte" data-piel="supervisor"`), id);
   for (const id of ['supAnillo', 'supIris', 'supRec']) assert.match(html, new RegExp(`id="${id}"`), id);
   assert.match(html, /html\[data-personaje="supervisor"\] #ojoD, html\[data-personaje="supervisor"\] #ojosFelices path:nth-child\(2\)\{display:none\}/, 'el ojo derecho es el objetivo');
-  assert.match(html, /rgba\(127,227,161,\.28\)/, 'el halo es el menta de la tarjeta del Supervisor');
-  assert.match(html, /html\[data-personaje="supervisor"\] body\{background:repeating-linear-gradient/, 'fondo de monitor de vigilancia');
+  assert.match(html, /rgba\(255,226,140,\.42\)/, 'el halo es dorado: el Supervisor es un ángel');
+  for (const id of ['supAlas', 'supAureola']) assert.match(html, new RegExp(`id="${id}"`), id);
+  assert.match(html, /html\[data-personaje="supervisor"\] body\{background:radial-gradient\(60% 45%/, 'fondo de luz divina');
   assert.match(html, /html\[data-personaje="supervisor"\] #btnMic, html\[data-personaje="supervisor"\] #btnStop/, 'mira, no escucha: sin micro');
   assert.equal((html.match(/src="\/assets\/nube\.js/g) || []).length, 1, 'el mismo motor');
   assert.match(html, /src="\/assets\/nube\.js\?v=20261018-supervisor-1"/);
