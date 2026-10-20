@@ -1,11 +1,11 @@
 {
-  "version": "v.20.10.2026.r1.21:46",
-  "builtAt": "2026-10-20T19:46:59.812044+00:00",
-  "note": "Comercial tiene cara: quinta piel de Admirito (nube.html?personaje=comercial), con corbata y maletín, para el asistente de campañas de admira.biz.",
+  "version": "v.20.10.2026.r2.23:08",
+  "builtAt": "2026-10-20T20:56:06.249214+00:00",
+  "note": "Comercial habla con la voz de Admirito: la piel comercial pide el audio ElevenLabs a api.admira.store/tts y lo dice con lip-sync.",
   "novedades": [
-    "Comercial, Admirito con corbata y maletín: el asistente de campañas y captación de comercios de la portada de admira.biz habla y escucha con la nube (seis estados: reposo, escuchando, apuntando, proponiendo, entregando y dudando). Lo que se le dice va al anfitrión como brief; nunca pregunta al cerebro."
+    "La piel Comercial ya tiene voz de verdad: el texto que le manda admira.biz se sintetiza con la voz de Admirito (ElevenLabs, es/en, por api.admira.store/tts), suena con lip-sync y se guarda en memoria para no pedirlo dos veces. Con audio=off o sin red, bocadillo y lip-sync de texto como antes. El brief nunca sale de la nube."
   ],
   "signature": "NeoMacStudio · MacStudio",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "35d4ffc (main sin Comercial)"
+  "rollback": "a9759d1 (etiqueta respaldo-v.20.10.2026.r1.21-46)"
 }
