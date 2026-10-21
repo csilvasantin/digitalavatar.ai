@@ -68,12 +68,12 @@ test('nube.html: gorra, objetivo y ceja sólo existen con personaje=supervisor, 
   for (const id of ['supGorra', 'supLente', 'supCejas']) assert.match(html, new RegExp(`id="${id}" class="piel-parte" data-piel="supervisor"`), id);
   for (const id of ['supAnillo', 'supIris', 'supRec']) assert.match(html, new RegExp(`id="${id}"`), id);
   assert.match(html, /html\[data-personaje="supervisor"\] #ojoD, html\[data-personaje="supervisor"\] #ojosFelices path:nth-child\(2\)\{display:none\}/, 'el ojo derecho es el objetivo');
-  assert.match(html, /rgba\(255,226,140,\.42\)/, 'el halo es dorado: el Supervisor es un ángel');
-  for (const id of ['supAlas', 'supAureola']) assert.match(html, new RegExp(`id="${id}"`), id);
-  assert.match(html, /html\[data-personaje="supervisor"\] body\{background:radial-gradient\(60% 45%/, 'fondo de luz divina');
+  assert.match(html, /rgba\(255,226,140,\.42\)/, 'el halo dorado se conserva para Angelito');
+  for (const id of ['supAlas', 'angelHalo']) assert.match(html, new RegExp(`id="${id}"`), id);
+  assert.match(html, /html\[data-personaje="angelito"\] body\{background:radial-gradient\(60% 45%/, 'fondo de luz divina');
   assert.match(html, /html\[data-personaje="supervisor"\] #btnMic, html\[data-personaje="supervisor"\] #btnStop/, 'mira, no escucha: sin micro');
   assert.equal((html.match(/src="\/assets\/nube\.js/g) || []).length, 1, 'el mismo motor');
-  assert.match(html, /src="\/assets\/nube\.js\?v=20261020-comercial-4"/);
+  assert.match(html, /src="\/assets\/nube\.js\?v=20261021-assistants-1"/);
   assert.equal(fs.existsSync(new URL('../supervisor.html', import.meta.url)), false, 'no hay copia de la página');
 });
 
@@ -200,4 +200,15 @@ test('admira.live es anfitrión de confianza: allí está la cámara del Supervi
   assert.equal(live.allowed('https://admira.live.evil.example'), false);
   assert.equal(live.allowed('http://www.admira.live'), false, 'sólo https');
   assert.equal(carga('https://evil.example/').hostOrigin(), '');
+});
+
+
+test('Supervisor verde y Angelito dorado tienen identidades separadas',()=>{
+ const green=carga({search:'?personaje=supervisor&embed=1&audio=off'});
+ const gold=carga({search:'?personaje=angelito&embed=1&audio=off'});
+ assert.equal(green.win.__nube().personaje,'supervisor');
+ assert.equal(gold.win.__nube().personaje,'angelito');
+ assert.match(html,/data-personaje="supervisor"\] \.cuerpo-relleno[^}]+fill:#bfe8d3/);
+ assert.match(html,/id="angelAureola" class="piel-parte" data-piel="angelito"/);
+ assert.match(html,/id="supGorra" class="piel-parte" data-piel="supervisor"/);
 });

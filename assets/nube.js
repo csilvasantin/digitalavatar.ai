@@ -57,6 +57,8 @@
   // ───── Pieles: la tabla. Los ganchos de cada piel se le añaden más abajo (bloque «Piel <ID>»). ─────
   var PIELES = {
     admirito: null,   // la nube de siempre
+    angelito: {textos:{es:{tag:'Angelito · la nube dorada',placeholder:'Cuéntame en qué puedo ayudarte…',aria:'Angelito dorado con aureola y alas',chips:['¿Quién eres?','¿En qué puedes ayudarme?']},en:{tag:'Angelito · the golden cloud',placeholder:'Tell me how I can help…',aria:'Golden Angelito with halo and wings',chips:['Who are you?','How can you help me?']}}},
+    creativo: {textos:{es:{tag:'Creativo · ideas, imagen y sonido',placeholder:'Cuéntame tu idea…',aria:'Creativo, el asistente de ideas y contenidos',chips:['Una idea para mi campaña','¿Quién eres?']},en:{tag:'Creative · ideas, image and sound',placeholder:'Tell me your idea…',aria:'Creative, your ideas and content assistant',chips:['An idea for my campaign','Who are you?']}}},
     bugito: { textos: {
       es: { tag: 'Bugito, el diablillo de las incidencias', placeholder: 'Pídeme un fallo: «gira la pantalla», «lanza un popup»…',
         aria: 'Bugito, el diablillo rojo de AdmiraNeXT', chips: ['Gira la pantalla', 'Cambia la resolución', 'Lanza un popup', 'Ábrela a medias', 'Vuelve a la normalidad'] },

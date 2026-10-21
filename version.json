@@ -1,11 +1,12 @@
 {
-  "version": "v.20.10.2026.r4.23:58",
-  "builtAt": "2026-10-20T21:45:16.716622+00:00",
-  "note": "Comercial con sus tres rasgos: corbata con nudo y raya, maletín que se abre al entregar la propuesta y tarjeta de visita que ofrece al escuchar.",
+  "version": "v.21.10.2026.r1.20:19",
+  "builtAt": "2026-10-21T20:19:24.795004+02:00",
+  "note": "Supervisor verde y Angelito dorado separados; Creativo disponible como personaje en la suite.",
   "novedades": [
-    "Comercial, versión gráfica (Carlos, 20-oct-2026): la corbata azul con nudo y raya dorada se levanta al proponer y da un respingo al entregar; el maletín se abre al entregar y asoma la hoja de la propuesta con el mapa; la tarjeta de visita (blanca, banda azul, sello dorado) se ofrece al escuchar. Todo suavizado, sin saltos."
+    "Supervisor verde con gorra y ojo de cámara. Angelito dorado con aureola y alas.",
+    "Los asistentes se activan en el mismo site de la suite."
   ],
-  "signature": "NeoMacStudio · MacStudio",
+  "signature": "OraculoMacMini · MacMini",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "67aabff (etiqueta respaldo-v.20.10.2026.r3.23-20)"
+  "rollback": "e46d124"
 }
