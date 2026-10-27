@@ -108,7 +108,7 @@
     roadmap: '/roadmap/',
     ayuda: '/help/'
   };
-  var VERBS = ['help', 'asistente', 'asistentes', 'nivel', 'avatar', 'avataron', 'avataroff', 'neo', 'say', 'estado', 'mcp', 'embed', 'roadmap', 'ayuda', 'limpiar', 'version', 'idioma', 'vectorial', '2d', '3d', 'realista', 'metahuman', 'good', 'better', 'best', 'embedmh', 'nube'];
+  var VERBS = ['help', 'asistente', 'asistentes', 'demo', 'nivel', 'avatar', 'avataron', 'avataroff', 'neo', 'say', 'estado', 'mcp', 'embed', 'roadmap', 'ayuda', 'limpiar', 'version', 'idioma', 'vectorial', '2d', '3d', 'realista', 'metahuman', 'good', 'better', 'best', 'embedmh', 'nube'];
   /* Extensión por página (7-oct-2026, métricas): window.DA_SHELL = {section, advanced:[{href,es,en}],
      verbs:{nombre:{es,en,run:function(args, api){}}}}. Se declara ANTES de este script. */
   var EXT = (root.DA_SHELL && typeof root.DA_SHELL === 'object') ? root.DA_SHELL : {};
@@ -225,7 +225,7 @@
   function baseHelpText() {
     if (lang() === 'en') {
       return '/help — this list\n' +
-        '/asistente <name> — open an AdmiraNeXT AI assistant (/asistente alone lists them; /<name> descripcion shows its strengths; /asistentes presentandose runs the parade)\n' +
+        '/asistente <name> — open an AdmiraNeXT AI assistant (/asistente alone lists them; /<name> descripcion shows its strengths; /asistentes presentandose or /demo asistentes runs the parade; /demo digitalavatar in English, /demo avatardigital in Spanish)\n' +
         '/avatar — status and the three categories\n' +
         '/avatar avatar — Admirito, the animated cloud (light 2D, lip-sync, lives on its own when idle)\n' +
         '/avatar human — Luna, the web host (Ready Player Me)\n' +
@@ -246,7 +246,7 @@
         'Tools: /avatar /good /better /best /nube /vectorial /2d /3d /realista /metahuman /neo /mcp /embed /embedmh /roadmap /ayuda';
     }
     return '/help — esta lista\n' +
-      '/asistente <nombre> — abre un asistente con IA de AdmiraNeXT (/asistente a secas los lista; /<nombre> descripcion enseña sus puntos fuertes; /asistentes presentandose lanza el pase)\n' +
+      '/asistente <nombre> — abre un asistente con IA de AdmiraNeXT (/asistente a secas los lista; /<nombre> descripcion enseña sus puntos fuertes; /asistentes presentandose o /demo asistentes lanza el pase; /demo digitalavatar en inglés, /demo avatardigital en castellano)\n' +
       '/avatar — estado y las tres categorías\n' +
       '/avatar avatar — Admirito, la nube animada (2D ligera, mueve los labios y hace cosas sola)\n' +
       '/avatar human — Luna, la anfitriona web (Ready Player Me)\n' +
@@ -462,6 +462,22 @@
     var verb = p.verb;
     if (verb === 'help' || verb === '?') {
       asistentes(function (A) { log(helpText(A)); });
+      return;
+    }
+    // «/demo asistentes» = «/asistentes presentandose» (Carlos, 27-oct-2026). El /demo a secas (el pitch) vive en la caja del avatar.
+    if (verb === 'demo') {
+      if (/^(asistentes|assistants|presentaci[oó]n|pase)$/i.test((p.args || '').trim())) { run('/asistentes presentandose'); return; }
+      // /demo digitalavatar = el pase en inglés; /demo avatardigital = en castellano (Carlos, 27-oct-2026).
+      var idiomaPase = /^digitalavatar$/i.test((p.args || '').trim()) ? 'en' : /^avatardigital$/i.test((p.args || '').trim()) ? 'es' : '';
+      if (idiomaPase) {
+        asistentes(function (A) {
+          if (!A) { log(lang() === 'en' ? 'The assistant list did not load.' : 'No se pudo cargar la lista de asistentes.', 'err'); return; }
+          log(idiomaPase === 'en' ? 'Parade in English: each assistant, about 15 s, says what it does.' : 'Pase en castellano: cada asistente, unos 15 s, dice a qué se dedica.');
+          setTimeout(function () { location.assign(A.urlPase(0) + '&lang=' + idiomaPase); }, 180);
+        });
+        return;
+      }
+      log(lang() === 'en' ? '/demo asistentes — the assistants parade (/demo digitalavatar in English, /demo avatardigital in Spanish). The demo pitch (/demo) is typed in the avatar text box.' : '/demo asistentes — el pase de los asistentes (/demo digitalavatar en inglés, /demo avatardigital en castellano). El pitch de demo (/demo) se escribe en la caja del avatar.');
       return;
     }
     if (verb === 'asistente' || verb === 'asistentes' || verb === 'assistant' || verb === 'assistants') {

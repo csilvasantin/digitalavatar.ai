@@ -71,7 +71,7 @@ test('nube.html: corbata y maletín sólo existen con personaje=comercial, en az
   assert.doesNotMatch(html, /html\[data-personaje="comercial"\] \.cuerpo-(relleno|borde)/, 'sigue siendo Admirito: blanco y verde');
   assert.doesNotMatch(html, /html\[data-personaje="comercial"\] #btnMic/, 'Comercial sí escucha: conserva el micro');
   assert.match(html, /html\.dock\[data-personaje="comercial"\] #langPills\{display:none !important\}/, 'en la portada, el idioma lo pone la página');
-  assert.match(html, /src="\/assets\/nube\.js\?v=20261027-asistentes-6"/, 'versión de caché nueva');
+  assert.match(html, /src="\/assets\/nube\.js\?v=20261027-asistentes-7"/, 'versión de caché nueva');
 });
 
 test('frases propias por estado, en los dos idiomas; estados desconocidos no cambian nada', () => {

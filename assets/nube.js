@@ -1330,13 +1330,15 @@
     stopAll(); clearHelpClass(); setStatus('');
     if (MUTED || !DADemo || typeof fetch !== 'function') { speakText(texto); return; }
     var mio = ++comPidiendo;
-    speakText(texto);                                  // la boca empieza ya; el audio la sustituye cuando llega
+    // El texto se ve ya en el bocadillo, pero la boca espera al audio (Carlos, 27-oct-2026: «en ocasiones aún no está
+    // hablando y la boca ya se mueve»). Solo si el audio no llega, lip-sync de texto.
+    setCaption(texto);
     comAudio(texto).then(function (j) {
       if (mio !== comPidiendo) return;
       var audio = DADemo.load(j.audioBase64, j.mime || 'audio/mpeg'); connect(audio);
       return DADemo.start(audio).then(function () { if (mio === comPidiendo) speakAudio(audio, texto, j.alignment || null); })
         .catch(function () { DADemo.armRetry(function () { DADemo.start(audio).then(function () { speakAudio(audio, texto, j.alignment || null); }).catch(function () {}); }); });
-    }).catch(function () { /* sin audio: se queda el lip-sync de texto */ });
+    }).catch(function () { if (mio === comPidiendo) speakText(texto); /* sin audio: lip-sync de texto */ });
   }
   // Lo que se le dice va al anfitrión tal cual: él sabe de briefs; aquí sólo se contesta «¿quién eres?».
   function comAsk(question) {

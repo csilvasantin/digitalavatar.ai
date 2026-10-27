@@ -1,8 +1,9 @@
 {
-  "version": "v.27.10.2026.r6.22:30",
-  "builtAt": "2026-10-27T22:30:52.742690+01:00",
-  "note": "/asistentes presentandose: pase en el que cada asistente sale unos 15 s diciendo a qué se dedica.",
+  "version": "v.27.10.2026.r7.23:18",
+  "builtAt": "2026-10-27T23:18:50.121500+01:00",
+  "note": "La boca espera al audio; /demo asistentes, /demo digitalavatar (inglés) y /demo avatardigital (castellano) lanzan el pase.",
   "novedades": [
+    "r7 (Carlos, 27-oct-2026): la boca ya no se mueve antes de que suene la voz: el texto se ve en el bocadillo mientras llega el audio y solo sin audio hay lip-sync de texto (vale para el pase y para el Comercial). «/demo asistentes» = «/asistentes presentandose»; «/demo digitalavatar» lanza el pase en inglés y «/demo avatardigital» en castellano, en el CLI y en la caja.",
     "r6 (Carlos, 27-oct-2026): «/asistentes presentandose» (CLI y caja) lanza el pase de presentación: los nueve asistentes, uno tras otro, unos 15 s cada uno (?cada=N), diciendo en primera persona a qué se dedican. Las siete nubes con la voz real de Admirito (brain /tts, la del Comercial, ahora para cualquier piel); Luna y Neo con texto en su página. Esc o la caja lo paran; al acabar vuelve Admirito.",
     "r5 (Carlos, 27-oct-2026): cada asistente lleva su ficha en assets/da-asistentes.js (quién es y 3 a 5 puntos fuertes, ES/EN). «/<nombre> descripcion» (también info, ficha, puntos fuertes, description) la enseña en el CLI y en la caja del chat, sin abrirlo; «/asistente <nombre> descripcion» igual. La guía /help/ pinta los puntos fuertes en cada tarjeta. Angelito y Creativo dicen que sus tareas propias están por definir.",
     "r4 (Carlos, 27-oct-2026): alias por asistente en assets/da-asistentes.js. Comercial = AlfredIA, Alfredito, Alfred; Admirito = Nube, Avatar; Neo = MetaHuman; Luna = Human; Bugito = Bug; Arquitecto = Architect; Creativo = Creative. Valen en la caja del chat, en el CLI y /help los enseña entre paréntesis.",
@@ -14,5 +15,5 @@
   ],
   "signature": "NeoMacStudio · MacStudio",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "f73143b (etiqueta respaldo-v.27.10.2026.r5.22-16)"
+  "rollback": "d7d3f8e (etiqueta respaldo-v.27.10.2026.r6.22-30)"
 }
