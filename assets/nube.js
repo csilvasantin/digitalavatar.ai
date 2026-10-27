@@ -65,9 +65,9 @@
       en: { tag: 'Bugito, the incident imp', placeholder: 'Ask me for a fault: “rotate the screen”, “pop up a popup”…',
         aria: 'Bugito, the little red AdmiraNeXT devil', chips: ['Rotate the screen', 'Change the resolution', 'Pop up a popup', 'Half-open it', 'Back to normal'] } } },
     arquitecto: { textos: {
-      es: { tag: 'El Arquitecto · Admirito con casco de obra', placeholder: 'Cuéntame el local o pulsa 🎙️: «crea una cafetería», «reforma la pared del fondo»…',
+      es: { tag: 'El Arquitecto · Admirito con casco de obra', placeholder: 'Cuéntame el local, escrito o con el micro: «crea una cafetería», «reforma la pared del fondo»…',
         aria: 'El Arquitecto: Admirito con casco amarillo, gafas, lápiz y rollo de planos', chips: ['Crear un Xpacio', 'Reformar este local', 'Inventariar desde una foto', '¿Quién eres?'] },
-      en: { tag: 'The Architect · Admirito in a hard hat', placeholder: 'Describe the space or press 🎙️: “create a coffee shop”, “renovate the back wall”…',
+      en: { tag: 'The Architect · Admirito in a hard hat', placeholder: 'Describe the space, typed or with the mic: “create a coffee shop”, “renovate the back wall”…',
         aria: 'The Architect: Admirito with a yellow hard hat, glasses, pencil and blueprint roll', chips: ['Create a Xpace', 'Renovate this space', 'Survey from a photo', 'Who are you?'] } } },
     supervisor: { textos: {
       es: { tag: 'El Supervisor · el ojo que vigila el MBP16', placeholder: 'Pregúntame «¿qué ves?» o pídeme «abre la cámara»…',
@@ -75,23 +75,23 @@
       en: { tag: 'The Supervisor · the eye on the MBP16', placeholder: 'Ask me “what do you see?” or “open the camera”…',
         aria: 'The Supervisor: Admirito with a security cap and a camera eye', chips: ['What do you see?', 'Any incidents?', 'Open the camera', 'Who are you?'] } } },
     comercial: { textos: {
-      es: { tag: 'Comercial · Admirito con corbata y maletín', placeholder: 'Cuéntame la campaña o pulsa 🎙️: «para Café Rico, lanzar el frappé, jóvenes, 2.000 euros, del 20 al 26 de octubre»…',
+      es: { tag: 'Comercial · Admirito con corbata y maletín', placeholder: 'Cuéntame la campaña, escrita o con el micro: «para Café Rico, lanzar el frappé, jóvenes, 2.000 euros, del 20 al 26 de octubre»…',
         aria: 'Comercial: Admirito con corbata y maletín', chips: ['Vender una campaña', 'Captar un comercio', 'Prepara la propuesta', '¿Quién eres?'] },
-      en: { tag: 'Commercial · Admirito with a tie and briefcase', placeholder: 'Tell me the campaign or press 🎙️: “for Café Rico, launch the frappé, young people, 2,000 euros, 20 to 26 October”…',
+      en: { tag: 'Commercial · Admirito with a tie and briefcase', placeholder: 'Tell me the campaign, typed or with the mic: “for Café Rico, launch the frappé, young people, 2,000 euros, 20 to 26 October”…',
         aria: 'Commercial: Admirito with a tie and briefcase', chips: ['Sell a campaign', 'Recruit a merchant', 'Prepare the proposal', 'Who are you?'] } } }
   };
   var PERSONAJE = (function () { var p = String(params.get('personaje') || '').toLowerCase(); return Object.prototype.hasOwnProperty.call(PIELES, p) && PIELES[p] ? p : 'admirito'; })();
   var PIEL = PIELES[PERSONAJE] || null;
 
   var T = {
-    es: { lang: 'es', tag: 'Admirito, la nube que habla', placeholder: 'Escribe o pulsa 🎙️ para hablar con Admirito…',
+    es: { lang: 'es', tag: 'Admirito, la nube que habla', placeholder: 'Escribe o habla con Admirito…',
       thinking: 'Pensando…', listening: 'Escuchando…', speaking: 'Hablando', cut: 'Voz cortada', net: 'Error de red: ',
       noVoice: '', audioBlocked: 'El navegador bloqueó el audio. Pulsa de nuevo para oír la respuesta.',
       micNo: 'Este navegador no tiene dictado. Escribe la pregunta.', micDenied: 'Micro bloqueado. Permite el micrófono o escribe.',
       micFail: 'No se pudo usar el micrófono. Escribe la pregunta.', micEmpty: 'No se oyó nada. Prueba otra vez o escribe.',
       loc: 'Xpacio (Admira.app)', aria: 'Admirito, la nube de AdmiraNeXT',
       chips: ['¿Quién eres?', '¿Qué ofrece esta tienda?', '¿Cómo puedo pagar?', '¿A quién pregunto?'] },
-    en: { lang: 'en', tag: 'Admirito, the talking cloud', placeholder: 'Type or press 🎙️ to talk to Admirito…',
+    en: { lang: 'en', tag: 'Admirito, the talking cloud', placeholder: 'Type or talk to Admirito…',
       thinking: 'Thinking…', listening: 'Listening…', speaking: 'Speaking', cut: 'Voice cut', net: 'Network error: ',
       noVoice: '', audioBlocked: 'The browser blocked audio. Tap again to hear the reply.',
       micNo: 'This browser has no dictation. Type the question.', micDenied: 'Microphone blocked. Allow it, or type.',

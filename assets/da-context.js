@@ -376,5 +376,5 @@
   };
   root.DAContext = api;
   // Mando remoto del MCP (digitalavatar.ai/mcp) + /help, /avatar, /idioma, /marca comunes a las tres caras.
-  try { var rs = document.createElement('script'); rs.src = '/assets/da-remote.js?v=20261007-mcp-1'; rs.defer = true; (document.head || document.documentElement).appendChild(rs); } catch (_) {}
+  try { var rs = document.createElement('script'); rs.src = '/assets/da-remote.js?v=20261027-asistentes-1'; rs.defer = true; (document.head || document.documentElement).appendChild(rs); } catch (_) {}
 })(window);

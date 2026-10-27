@@ -83,7 +83,7 @@
 <meta name="admiranext-version" content="v.07.10.2026.r14.11:05">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261007-metricas-3">
-<script defer src="/assets/da-shell.js?v=20261007-metricas-3" data-section="/ 3d" data-section-en="/ 3d"></script>
+<script defer src="/assets/da-shell.js?v=20261027-asistentes-1" data-section="/ 3d" data-section-en="/ 3d"></script>
 <script defer src="https://www.admiranext.com/assets/sello-novedades.js?v=20261006-sello-1" data-target="#daVersion" data-floating="off"></script>
 <link rel="stylesheet" href="/assets/da-conversation-controls.css?v=20261006-controls-1">
 </head>
@@ -122,7 +122,7 @@
     <div class="hintchips" id="chips"></div>
     <div class="bar">
       <input id="q" autocomplete="off">
-      <button class="iconbtn mic" id="btnMic" title="Hablar">🎙️</button>
+      <button class="iconbtn mic" id="btnMic" title="Hablar" aria-label="Micrófono"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></button>
       <button class="iconbtn stop" id="btnStop" title="Cortar la voz">■</button>
       <button class="iconbtn send" id="btnSend" title="Enviar">➤</button>
     </div>
@@ -154,7 +154,7 @@ const $ = id => document.getElementById(id);
 
 /* ---------- i18n ---------- */
 const T = {
-  es:{ lang:'es', tag:'avatar digital en tiempo real', placeholder:'Escribe o pulsa 🎙️ para hablar…',
+  es:{ lang:'es', tag:'avatar digital en tiempo real', placeholder:'Escribe o habla…',
     thinking:'Pensando…', listening:'Escuchando…', speaking:'Hablando',
     okVoice:'', noVoice:'(sin voz: falta clave TTS)', net:'Error de red: ',
     micNo:'Este navegador no tiene dictado. Escribe la pregunta.',
@@ -166,7 +166,7 @@ const T = {
     loc:'Xpacio (Admira.app)', loading:'Cargando avatar…',
     chips:['¿Quién eres?','¿Qué ofrece esta tienda?','¿Cómo puedo pagar?','¿A quién pregunto?'],   // respaldo: los del sector llegan de /metahuman/profile
     speechLang:'es-ES' },
-  en:{ lang:'en', tag:'real-time digital avatar', placeholder:'Type or press 🎙️ to talk…',
+  en:{ lang:'en', tag:'real-time digital avatar', placeholder:'Type or talk…',
     thinking:'Thinking…', listening:'Listening…', speaking:'Speaking',
     okVoice:'', noVoice:'(no voice: missing TTS key)', net:'Network error: ',
     micNo:'This browser has no dictation. Type the question.',

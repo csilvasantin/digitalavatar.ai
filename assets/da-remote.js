@@ -4,7 +4,8 @@
  *    cada ~5 s con la pestaña visible. Sala = ?sala=… (por defecto «publica»).
  *    Tipos: say {text} · ask {question} · animate {name} · tier {tier} · demo · lang {lang}
  *    · url {url} · caption {on} · custom {…} (evento window «da-remote» para extensiones).
- * 2) Comandos de chat que valen en las tres caras: /help (/ayuda) → guía digitalavatar.ai/help,
+ * 2) Comandos de chat que valen en las tres caras: /help (/ayuda) → los asistentes con IA de AdmiraNeXT
+ *    (assets/da-asistentes.js, la misma lista que el CLI) y la guía digitalavatar.ai/help, /asistente <nombre>,
  *    /avatar avatar|human|metahuman, /idioma es|en, /marca starbucks|365|<id>|off.
  *    /animacion y /demo los resuelve cada página (nube.js y el cerebro).
  */
@@ -12,6 +13,25 @@
   'use strict';
   if (window.__daRemote) return; window.__daRemote = true;
   var BRAIN = 'https://brain.digitalavatar.ai';
+  var ASISTENTES_SRC = '/assets/da-asistentes.js?v=20261027-asistentes-1';
+  function asistentes(cb) {
+    if (window.DA_ASISTENTES) { cb(window.DA_ASISTENTES); return; }
+    if (!window.__daAsistentesP) {
+      window.__daAsistentesP = new Promise(function (res) {
+        var s = document.createElement('script');
+        s.src = ASISTENTES_SRC; s.async = true;
+        s.onload = function () { res(window.DA_ASISTENTES || null); };
+        s.onerror = function () { res(null); };
+        (document.head || document.documentElement).appendChild(s);
+      });
+    }
+    window.__daAsistentesP.then(cb);
+  }
+  function abrirAsistente(a) {
+    var u = new URL(a.url, location.origin);
+    if (SALA !== 'publica' && !u.searchParams.get('sala')) u.searchParams.set('sala', SALA);
+    location.href = u.pathname + u.search;
+  }
   var params = new URLSearchParams(location.search);
   var SALA = String(params.get('sala') || 'publica').toLowerCase().replace(/[^a-z0-9_.-]/g, '').slice(0, 60) || 'publica';
   var PAGES = { avatar: '/nube.html', human: '/best.html', metahuman: '/metahuman.html' };
@@ -27,6 +47,7 @@
     var el = document.getElementById('caption') || document.getElementById('ans');
     if (!el) return;
     if (help) el.classList.add('help'); else el.classList.remove('help');
+    el.classList.remove('vacio'); // el bocadillo de la nube se esconde sin texto; con texto, se enseña
     el.innerHTML = '<span class="sp1">' + esc(text).replace(/(https:\/\/digitalavatar\.ai\/help\/?)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>') + '</span>';
     el.scrollTop = 0;
   }
@@ -56,13 +77,28 @@
   }
   function helpText() {
     return L() === 'en'
-      ? 'Full guide (commands, avatars and demos): https://digitalavatar.ai/help/\n/animacion help · /avatar avatar|human|metahuman · /demo · /idioma es|en · /marca starbucks|365|off'
-      : 'Guía completa (comandos, avatares y demos): https://digitalavatar.ai/help/\n/animacion help · /avatar avatar|human|metahuman · /demo · /idioma es|en · /marca starbucks|365|off';
+      ? 'Full guide (commands, avatars and demos): https://digitalavatar.ai/help/\n/asistente <name> · /animacion help · /avatar avatar|human|metahuman · /demo · /idioma es|en · /marca starbucks|365|off'
+      : 'Guía completa (comandos, avatares y demos): https://digitalavatar.ai/help/\n/asistente <nombre> · /animacion help · /avatar avatar|human|metahuman · /demo · /idioma es|en · /marca starbucks|365|off';
   }
   // ── Comandos de chat comunes ──
   function chat(raw) {
     var t = String(raw || '').trim(), m;
-    if (/^\/\s*(help|ayuda)\s*$/i.test(t)) { show(helpText(), true); return true; }
+    if (/^\/\s*(help|ayuda)\s*$/i.test(t)) {
+      show(helpText(), true);
+      asistentes(function (A) { show((A ? A.texto(L()) + '\n\n' : '') + helpText(), true); });
+      return true;
+    }
+    if ((m = t.match(/^\/\s*(asistente|asistentes|assistant|assistants)\s*(\S*)\s*$/i))) {
+      var quien = String(m[2] || '').toLowerCase();
+      asistentes(function (A) {
+        if (!A) { show(L() === 'en' ? 'The assistant list did not load.' : 'No se pudo cargar la lista de asistentes.', true); return; }
+        if (!quien) { show(A.texto(L()), true); return; }
+        var a = A.porId(quien);
+        if (!a) { show(L() === 'en' ? 'No assistant called «' + quien + '». /asistente lists them.' : 'No hay ningún asistente «' + quien + '». /asistente los lista.', true); return; }
+        abrirAsistente(a);
+      });
+      return true;
+    }
     if ((m = t.match(/^\/\s*avatar\s+(\S+)\s*$/i)) && !/^help$/i.test(m[1])) {
       var c = CAT[m[1].toLowerCase()];
       if (!c) { show(L() === 'en' ? 'Use /avatar avatar, /avatar human or /avatar metahuman.' : 'Usa /avatar avatar, /avatar human o /avatar metahuman.', true); return true; }

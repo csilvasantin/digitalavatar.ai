@@ -40,7 +40,7 @@
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
 <meta name="admiranext-version" content="v.07.10.2026.r14.11:05">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261007-metricas-3">
-<script defer src="/assets/da-shell.js?v=20261007-metricas-3" data-section="/ ayuda" data-section-en="/ help"></script>
+<script defer src="/assets/da-shell.js?v=20261027-asistentes-1" data-section="/ ayuda" data-section-en="/ help"></script>
 </head>
 <body>
 <div class="wrap">
@@ -56,16 +56,18 @@
     <a href="#comandos"><span lang="es">Comandos</span><span lang="en">Commands</span></a>
     <a href="#url"><span lang="es">Parámetros URL</span><span lang="en">URL parameters</span></a>
     <a href="#avatares"><span lang="es">Los tres avatares</span><span lang="en">The three avatars</span></a>
+    <a href="#asistentes"><span lang="es">Los asistentes</span><span lang="en">The assistants</span></a>
     <a href="#demos">Demos</a>
     <a href="#plataformas"><span lang="es">Plataformas</span><span lang="en">Platforms</span></a>
     <a href="#mcp">MCP</a>
   </nav>
 
   <h2 id="comandos"><span lang="es">Comandos del chat</span><span lang="en">Chat commands</span></h2>
-  <p class="lede"><span lang="es">Escríbelos en la caja «Escribe o pulsa 🎙️» del avatar y pulsa Intro. No gastan cerebro ni voz (salvo <code>/demo</code>).</span><span lang="en">Type them in the avatar's «Type or tap 🎙️» box and press Enter. They don't use the brain or voice (except <code>/demo</code>).</span></p>
+  <p class="lede"><span lang="es">Escríbelos en la caja «Escribe o habla» del avatar y pulsa Intro. No gastan cerebro ni voz (salvo <code>/demo</code>).</span><span lang="en">Type them in the avatar's «Type or talk» box and press Enter. They don't use the brain or voice (except <code>/demo</code>).</span></p>
   <table>
     <tr><th><span lang="es">Comando</span><span lang="en">Command</span></th><th><span lang="es">Qué hace</span><span lang="en">What it does</span></th></tr>
-    <tr><td><code>/help</code> · <code>/ayuda</code></td><td><span lang="es">Muestra el resumen de comandos y el enlace a esta guía.</span><span lang="en">Shows the command summary and the link to this guide.</span></td></tr>
+    <tr><td><code>/help</code> · <code>/ayuda</code></td><td><span lang="es">Muestra los asistentes con IA de AdmiraNeXT, el resumen de comandos y el enlace a esta guía.</span><span lang="en">Shows the AdmiraNeXT AI assistants, the command summary and the link to this guide.</span></td></tr>
+    <tr><td><code>/asistente</code> · <code>/asistente bugito</code></td><td><span lang="es">Lista los asistentes con IA de AdmiraNeXT o abre uno por su nombre (ver <a href="#asistentes">la lista</a>).</span><span lang="en">Lists the AdmiraNeXT AI assistants or opens one by name (see <a href="#asistentes">the list</a>).</span></td></tr>
     <tr><td><code>/animacion help</code></td><td><span lang="es">Lista los 5 bailes de Admirito.</span><span lang="en">Lists Admirito's 5 dances.</span></td></tr>
     <tr><td><code>/animacion 1</code> · <code>giro</code></td><td><span lang="es">Giro completo.</span><span lang="en">Full spin.</span></td></tr>
     <tr><td><code>/animacion 2</code> · <code>baile</code></td><td><span lang="es">Bailecito de lado a lado.</span><span lang="en">Side-to-side dance.</span></td></tr>
@@ -100,6 +102,13 @@
     <div class="card"><span class="tag">human</span><h3>Luna</h3><p lang="es">La anfitriona digital (Ready Player Me): cálida y profesional, guía por la tienda con datos reales y labios sincronizados.</p><p lang="en">The digital host (Ready Player Me): warm and professional, guides around the store with real data and lip-sync.</p><a class="go" href="/best.html">/best.html →</a></div>
     <div class="card"><span class="tag">metahuman</span><h3>Neo</h3><p lang="es">El MetaHuman de Unreal Engine 5 por Pixel Streaming: la cara fotorrealista. Si el host de render está apagado, entra Luna.</p><p lang="en">The Unreal Engine 5 MetaHuman via Pixel Streaming: the photoreal face. If the render host is off, Luna steps in.</p><a class="go" href="/metahuman.html">/metahuman.html →</a></div>
   </div>
+
+  <h2 id="asistentes"><span lang="es">Los asistentes con IA de AdmiraNeXT</span><span lang="en">The AdmiraNeXT AI assistants</span></h2>
+  <p class="lede"><span lang="es">Todos salen con <code>/help</code>, tanto en la caja del avatar como en el CLI del ⌘ Experto; <code>/asistente &lt;nombre&gt;</code> (o <code>/&lt;nombre&gt;</code> en el CLI) abre uno. La lista vive en <code>assets/da-asistentes.js</code>.</span><span lang="en">They all show up with <code>/help</code>, both in the avatar's text box and in the ⌘ Expert CLI; <code>/asistente &lt;name&gt;</code> (or <code>/&lt;name&gt;</code> in the CLI) opens one. The list lives in <code>assets/da-asistentes.js</code>.</span></p>
+  <div class="grid" id="asistentesGrid"></div>
+  <script src="/assets/da-asistentes.js?v=20261027-asistentes-1"></script>
+  <script>(function(){var g=document.getElementById('asistentesGrid'),A=window.DA_ASISTENTES;if(!g||!A)return;
+    g.innerHTML=A.lista.map(function(a){return '<div class="card"><span class="tag">/'+a.id+'</span><h3>'+a.nombre+'</h3><p lang="es">'+a.es+'</p><p lang="en">'+a.en+'</p>'+(a.casa?'<p><span lang="es">Trabaja en</span><span lang="en">Works at</span> '+a.casa+'</p>':'')+'<a class="go" href="'+a.url+'"><span lang="es">Abrir →</span><span lang="en">Open →</span></a></div>';}).join('');})();</script>
 
   <h2 id="demos">Demos <span lang="es">de cliente</span><span lang="en">for clients</span></h2>
   <div class="grid">
