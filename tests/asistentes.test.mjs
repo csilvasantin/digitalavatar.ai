@@ -29,7 +29,12 @@ test('el registro carga y cada asistente tiene id, nombre, textos ES/EN y dónde
     assert.match(a.url, /^\/[a-z-]+\.html(\?[a-z=&]+)?$/, a.id + ' abre en digitalavatar.ai');
   }
   assert.equal(A.porId('BUGITO').nombre, 'Bugito');
-  assert.equal(A.porId('alfredito'), null, 'un nombre que no existe no abre nada');
+  assert.equal(A.porId('zzz'), null, 'un nombre que no existe no abre nada');
+  for (const n of ['alfredito', 'AlfredIA', 'alfred', ' Comercial ']) assert.equal(A.porId(n).id, 'comercial', n + ' es Comercial (Carlos, 27-oct-2026)');
+  assert.equal(A.porId('metahuman').id, 'neo'); assert.equal(A.porId('nube').id, 'admirito');
+  const todos = A.lista.flatMap((a) => [a.id, ...(a.alias || [])].map((x) => x.toLowerCase()));
+  assert.equal(new Set(todos).size, todos.length, 'ningún nombre o alias repetido entre asistentes');
+  assert.match(A.texto('es'), /\/comercial — Comercial \(también AlfredIA, Alfredito/, '/help enseña los otros nombres');
   assert.match(A.texto('es'), /^Asistentes con IA de AdmiraNeXT/);
   assert.match(A.texto('en'), /^AdmiraNeXT AI assistants/);
   assert.equal(A.lineas('es').length, A.lista.length);

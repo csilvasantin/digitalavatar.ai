@@ -118,7 +118,7 @@
   var BRAIN = 'https://brain.digitalavatar.ai';
   /* Los asistentes con IA (Carlos, 27-oct-2026): una sola lista en assets/da-asistentes.js; /help la muestra,
      /asistente <nombre> o /<nombre> abren uno. Se carga una vez y se comparte con da-remote.js. */
-  var ASISTENTES_SRC = '/assets/da-asistentes.js?v=20261027-asistentes-1';
+  var ASISTENTES_SRC = '/assets/da-asistentes.js?v=20261027-asistentes-4';
   function asistentes(cb) {
     if (root.DA_ASISTENTES) { cb(root.DA_ASISTENTES); return; }
     if (!root.__daAsistentesP) {
