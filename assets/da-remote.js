@@ -33,6 +33,7 @@
     location.href = u.pathname + u.search;
   }
   var params = new URLSearchParams(location.search);
+  asistentes(function () {});
   var SALA = String(params.get('sala') || 'publica').toLowerCase().replace(/[^a-z0-9_.-]/g, '').slice(0, 60) || 'publica';
   var PAGES = { avatar: '/nube.html', human: '/best.html', metahuman: '/metahuman.html' };
   var CAT = { avatar: 'avatar', good: 'avatar', admirito: 'avatar', nube: 'avatar', human: 'human', better: 'human', luna: 'human', metahuman: 'metahuman', best: 'metahuman', neo: 'metahuman' };
@@ -87,6 +88,13 @@
       show(helpText(), true);
       asistentes(function (A) { show((A ? A.texto(L()) + '\n\n' : '') + helpText(), true); });
       return true;
+    }
+    // /<nombre> a secas (como en el CLI): abre ese asistente, salvo que sea la piel que ya está en pantalla
+    // (entonces la orden es suya: /arquitecto … o /supervisor … las atiende nube.js).
+    if ((m = t.match(/^\/\s*([a-z]+)\s*$/i)) && window.DA_ASISTENTES && window.DA_ASISTENTES.porId(m[1])) {
+      var actual = /nube\.html$/.test(location.pathname) ? (document.documentElement.getAttribute('data-personaje') || 'admirito').toLowerCase() : '';
+      var yo = m[1].toLowerCase();
+      if (yo !== actual) { abrirAsistente(window.DA_ASISTENTES.porId(yo)); return true; }
     }
     if ((m = t.match(/^\/\s*(asistente|asistentes|assistant|assistants)\s*(\S*)\s*$/i))) {
       var quien = String(m[2] || '').toLowerCase();
