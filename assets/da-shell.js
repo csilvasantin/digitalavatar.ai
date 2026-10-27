@@ -118,7 +118,7 @@
   var BRAIN = 'https://brain.digitalavatar.ai';
   /* Los asistentes con IA (Carlos, 27-oct-2026): una sola lista en assets/da-asistentes.js; /help la muestra,
      /asistente <nombre> o /<nombre> abren uno. Se carga una vez y se comparte con da-remote.js. */
-  var ASISTENTES_SRC = '/assets/da-asistentes.js?v=20261027-asistentes-5';
+  var ASISTENTES_SRC = '/assets/da-asistentes.js?v=20261027-asistentes-6';
   function asistentes(cb) {
     if (root.DA_ASISTENTES) { cb(root.DA_ASISTENTES); return; }
     if (!root.__daAsistentesP) {
@@ -225,7 +225,7 @@
   function baseHelpText() {
     if (lang() === 'en') {
       return '/help — this list\n' +
-        '/asistente <name> — open an AdmiraNeXT AI assistant (/asistente alone lists them; /<name> descripcion shows its strengths)\n' +
+        '/asistente <name> — open an AdmiraNeXT AI assistant (/asistente alone lists them; /<name> descripcion shows its strengths; /asistentes presentandose runs the parade)\n' +
         '/avatar — status and the three categories\n' +
         '/avatar avatar — Admirito, the animated cloud (light 2D, lip-sync, lives on its own when idle)\n' +
         '/avatar human — Luna, the web host (Ready Player Me)\n' +
@@ -246,7 +246,7 @@
         'Tools: /avatar /good /better /best /nube /vectorial /2d /3d /realista /metahuman /neo /mcp /embed /embedmh /roadmap /ayuda';
     }
     return '/help — esta lista\n' +
-      '/asistente <nombre> — abre un asistente con IA de AdmiraNeXT (/asistente a secas los lista; /<nombre> descripcion enseña sus puntos fuertes)\n' +
+      '/asistente <nombre> — abre un asistente con IA de AdmiraNeXT (/asistente a secas los lista; /<nombre> descripcion enseña sus puntos fuertes; /asistentes presentandose lanza el pase)\n' +
       '/avatar — estado y las tres categorías\n' +
       '/avatar avatar — Admirito, la nube animada (2D ligera, mueve los labios y hace cosas sola)\n' +
       '/avatar human — Luna, la anfitriona web (Ready Player Me)\n' +
@@ -469,6 +469,10 @@
         if (!A) { log(lang() === 'en' ? 'The assistant list did not load.' : 'No se pudo cargar la lista de asistentes.', 'err'); return; }
         var id = (p.args || '').toLowerCase().trim();
         if (!id) { log(A.texto(lang())); return; }
+        if (A.pidePase(id)) {
+          log(lang() === 'en' ? 'Parade: each assistant, about 15 s, says what it does. Esc or the text box stops it.' : 'Pase de presentación: cada asistente, unos 15 s, dice a qué se dedica. Esc o la caja lo paran.');
+          setTimeout(function () { location.assign(A.urlPase(0)); }, 180); return;
+        }
         var partes = id.match(/^(\S+)\s*(.*)$/);
         if (partes && partes[2] && A.pideFicha(partes[2])) { fichaAsistente(A, partes[1]); return; }
         abrirAsistente(A.porId(partes ? partes[1] : id), id);

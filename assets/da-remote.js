@@ -6,6 +6,7 @@
  *    · url {url} · caption {on} · custom {…} (evento window «da-remote» para extensiones).
  * 2) Comandos de chat que valen en las tres caras: /help (/ayuda) → los asistentes con IA de AdmiraNeXT
  *    (assets/da-asistentes.js, la misma lista que el CLI) y la guía digitalavatar.ai/help, /asistente <nombre>,
+ *    /asistentes presentandose (pase: cada asistente ~15 s diciendo a qué se dedica; ?presenta=<n> es su turno),
  *    /avatar avatar|human|metahuman, /idioma es|en, /marca starbucks|365|<id>|off.
  *    /animacion y /demo los resuelve cada página (nube.js y el cerebro).
  */
@@ -13,7 +14,7 @@
   'use strict';
   if (window.__daRemote) return; window.__daRemote = true;
   var BRAIN = 'https://brain.digitalavatar.ai';
-  var ASISTENTES_SRC = '/assets/da-asistentes.js?v=20261027-asistentes-5';
+  var ASISTENTES_SRC = '/assets/da-asistentes.js?v=20261027-asistentes-6';
   function asistentes(cb) {
     if (window.DA_ASISTENTES) { cb(window.DA_ASISTENTES); return; }
     if (!window.__daAsistentesP) {
@@ -31,6 +32,41 @@
     var u = new URL(a.url, location.origin);
     if (SALA !== 'publica' && !u.searchParams.get('sala')) u.searchParams.set('sala', SALA);
     location.href = u.pathname + u.search;
+  }
+  // ── Pase de presentación (Carlos, 27-oct-2026) ──
+  // /asistentes presentandose abre el turno 0; cada página con ?presenta=<n> dice su presentación (voz real en la nube,
+  // texto en Luna y Neo), espera `cada` segundos (15) y, si sigue hablando, a que acabe; luego abre el turno n+1.
+  // Al último le sigue Admirito sin pase. Cualquier tecla o clic en la caja lo para.
+  function paseCada() { return Math.min(60, Math.max(3, Number(params.get('cada')) || 15)); }
+  function urlTurno(A, i) {
+    var base = A.urlPase(i); if (!base) return '';
+    var u = new URL(base, location.origin);
+    ['sala', 'lang', 'audio', 'cada', 'brand', 'site', 'sector', 'city'].forEach(function (k) { var v = params.get(k); if (v && !u.searchParams.get(k)) u.searchParams.set(k, v); });
+    return u.pathname + u.search;
+  }
+  function iniciarPase() { asistentes(function (A) { if (A) location.href = urlTurno(A, 0); }); }
+  var pase = { timer: 0, parado: false };
+  function pararPase() { pase.parado = true; clearTimeout(pase.timer); }
+  function turnoPase(A) {
+    var i = parseInt(params.get('presenta'), 10); var a = A.lista[i]; if (!a) return;
+    document.title = (i + 1) + '/' + A.lista.length + ' · ' + document.title;
+    var texto = A.presentacion(a.id, L()) || (a.nombre + ': ' + (L() === 'en' ? a.en : a.es));
+    var t0 = Date.now(), intentos = 0;
+    (function habla() {
+      if (pase.parado) return;
+      if (!window.__nubeDecir && /nube\.html$/.test(location.pathname) && intentos++ < 30) { pase.timer = setTimeout(habla, 100); return; }
+      if (window.__nubeDecir) { show(texto); window.__nubeDecir(texto); } else { say(texto); }
+      pase.timer = setTimeout(siguiente, Math.max(0, paseCada() * 1000 - (Date.now() - t0)));
+    })();
+    function siguiente() {
+      if (pase.parado) return;
+      if (window.__nubeHablando && window.__nubeHablando() && Date.now() - t0 < (paseCada() + 20) * 1000) { pase.timer = setTimeout(siguiente, 500); return; }
+      var n = i + 1;
+      if (n < A.lista.length) { location.href = urlTurno(A, n); return; }
+      var fin = new URL('/nube.html', location.origin);
+      ['sala', 'lang', 'audio', 'brand', 'site', 'sector', 'city'].forEach(function (k) { var v = params.get(k); if (v) fin.searchParams.set(k, v); });
+      location.href = fin.pathname + fin.search;
+    }
   }
   var params = new URLSearchParams(location.search);
   asistentes(function () {});
@@ -78,8 +114,8 @@
   }
   function helpText() {
     return L() === 'en'
-      ? 'Full guide (commands, avatars and demos): https://digitalavatar.ai/help/\n/asistente <name> · /animacion help · /avatar avatar|human|metahuman · /demo · /idioma es|en · /marca starbucks|365|off'
-      : 'Guía completa (comandos, avatares y demos): https://digitalavatar.ai/help/\n/asistente <nombre> · /animacion help · /avatar avatar|human|metahuman · /demo · /idioma es|en · /marca starbucks|365|off';
+      ? 'Full guide (commands, avatars and demos): https://digitalavatar.ai/help/\n/asistente <name> · /asistentes presentandose · /animacion help · /avatar avatar|human|metahuman · /demo · /idioma es|en · /marca starbucks|365|off'
+      : 'Guía completa (comandos, avatares y demos): https://digitalavatar.ai/help/\n/asistente <nombre> · /asistentes presentandose · /animacion help · /avatar avatar|human|metahuman · /demo · /idioma es|en · /marca starbucks|365|off';
   }
   // ── Comandos de chat comunes ──
   function chat(raw) {
@@ -102,6 +138,8 @@
       var yo = m[1].toLowerCase();
       if (yo !== actual) { abrirAsistente(window.DA_ASISTENTES.porId(yo)); return true; }
     }
+    // «/asistentes presentandose» (o «asistentes pase» a secas): el pase de presentación.
+    if ((m = t.match(/^\/?\s*(asistentes|assistants)\s+(\S+)\s*[.!?¡¿]*$/i)) && window.DA_ASISTENTES && window.DA_ASISTENTES.pidePase(m[2])) { iniciarPase(); return true; }
     if ((m = t.match(/^\/\s*(asistente|asistentes|assistant|assistants)\s*(\S*)\s*(.*?)\s*$/i))) {
       var quien = String(m[2] || '').toLowerCase(), resto = String(m[3] || '');
       asistentes(function (A) {
@@ -175,6 +213,12 @@
       })
       .catch(function () {})
       .then(function () { busy = false; });
+  }
+  // El turno del pase se atiende aquí, con `params` y la cola ya definidos (el bloque de arriba solo declara funciones).
+  if (params.get('presenta') !== null) {
+    asistentes(function (A) { if (A) turnoPase(A); });
+    document.addEventListener('keydown', function (e) { var q = document.getElementById('q'); if (e.key === 'Escape' || (q && e.target === q)) pararPase(); }, true);
+    document.addEventListener('click', function (e) { if (e.target && e.target.closest && e.target.closest('#q,#btnSend,#send,#btnMic,#btnStop')) pararPase(); }, true);
   }
   if (window.self === window.top || params.get('sala')) { setTimeout(poll, 1500); setInterval(poll, 5000); document.addEventListener('visibilitychange', poll); }
 })();

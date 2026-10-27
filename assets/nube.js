@@ -750,6 +750,10 @@
   window.__nubeAsk = ask;
   DACTX.demoOnLoad(ask);
   window.__nubeSpeakText = speakText;
+  // Pase de presentación (Carlos, 27-oct-2026): la voz con audio real del Comercial (brain /tts + lip-sync) vale para
+  // cualquier piel; da-remote.js la usa para que cada asistente diga a qué se dedica, y pregunta si sigue hablando.
+  window.__nubeDecir = comDecir;
+  window.__nubeHablando = function () { return S.mode === 'speaking'; };
   window.__nubeParseAnim = parseAnimCommand;
   window.__nubeDanceHelp = danceHelpText;
 

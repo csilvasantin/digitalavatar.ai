@@ -63,6 +63,30 @@ test('cada asistente tiene ficha: quién es y al menos tres puntos fuertes, en E
   assert.match(guia, /a\.fuertes\.es\.map/, 'la guía pinta los puntos fuertes');
 });
 
+test('pase de presentación: cada asistente se presenta en primera persona (ES/EN, 25-70 palabras); la orden y el turno existen', () => {
+  const A = cargaRegistro();
+  for (const a of A.lista) {
+    for (const l of ['es', 'en']) {
+      const me = A.presentacion(a.id, l); const palabras = me.split(/\s+/).length;
+      assert.ok(palabras >= 25 && palabras <= 70, a.id + ' ' + l + ': ' + palabras + ' palabras');
+      assert.match(me, l === 'es' ? /\b(soy|Soy)\b/ : /\bI am\b/, a.id + ' habla en primera persona');
+    }
+  }
+  assert.match(A.presentacion('alfredito', 'es'), /Alfredito/, 'Comercial dice sus otros nombres');
+  assert.equal(A.urlPase(0), '/nube.html?presenta=0'); assert.equal(A.urlPase(3), '/nube.html?personaje=bugito&presenta=3'); assert.equal(A.urlPase(99), '');
+  for (const w of ['presentandose', 'presentándose', 'presentacion', 'pase', 'desfile', 'parade']) assert.ok(A.pidePase(w), w);
+  assert.ok(!A.pidePase('bugito'));
+  assert.match(nube, /window\.__nubeDecir = comDecir;/, 'la nube expone la voz con audio real');
+  assert.match(nube, /window\.__nubeHablando = function \(\) \{ return S\.mode === 'speaking'; \};/, 'y si sigue hablando');
+  assert.match(remote, /pidePase\(m\[2\]\)\) \{ iniciarPase\(\); return true; \}/, 'el chat lanza el pase');
+  assert.match(remote, /params\.get\('presenta'\) !== null/, 'el chat atiende el turno');
+  assert.match(remote, /__nubeHablando\(\) && Date\.now\(\) - t0 < \(paseCada\(\) \+ 20\) \* 1000/, 'espera a que acabe de hablar, con tope');
+  assert.ok(remote.indexOf("params.get('presenta') !== null") > remote.indexOf('var params = new URLSearchParams'), 'el turno se atiende después de definir params (27-oct-2026: antes tumbaba todo el fichero)');
+  assert.ok(!/var PASE_CADA/.test(remote), 'nada lee params al cargar, antes de que exista');
+  assert.match(shell, /A\.pidePase\(id\)/, 'el CLI lanza el pase');
+  assert.match(guia, /\/asistentes presentandose/, 'la guía lo documenta');
+});
+
 test('todas las pieles de la nube (PIELES de nube.js) y los tres avatares están en la lista', () => {
   const A = cargaRegistro();
   const bloque = nube.slice(nube.indexOf('var PIELES = {'), nube.indexOf('var PERSONAJE'));
