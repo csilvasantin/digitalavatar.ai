@@ -145,6 +145,29 @@
              'Same brain and Xpace data as the other assistants.',
              'Built for the stand and the kiosk; if the render host is off, Luna takes over.'] } }
   ];
+  // Presentación en primera persona (Carlos, 27-oct-2026: «/asistentes presentandose: que aparezcan todos durante 15
+  // segundos cada uno diciendo a qué se dedican»). Unas 40 palabras: con la voz de la nube son unos 15 segundos.
+  var ME = {
+    admirito: { es: '¡Hola! Soy Admirito, la nube verde de AdmiraNeXT y la mascota de la casa. Atiendo al cliente en la tienda: le cuento qué ofrece, cómo pagar y a quién preguntar, con la voz de Admira. Y cuando nadie me habla, bailo un poco.',
+                en: 'Hi! I am Admirito, the AdmiraNeXT green cloud and the house mascot. I look after the customer in the store: what we offer, how to pay and who to ask, with the Admira voice. And when nobody talks to me, I dance a little.' },
+    angelito: { es: 'Soy Angelito, la nube dorada con aureola y alas. Soy la versión amable de Admirito: estoy para ayudar y acompañar a quien llega, con la misma voz y el mismo motor. Acabo de llegar y mis tareas propias se están definiendo.',
+                en: 'I am Angelito, the golden cloud with halo and wings. I am the kind version of Admirito: here to help and guide whoever arrives, with the same voice and engine. I have just arrived and my own tasks are being defined.' },
+    creativo: { es: 'Soy Creativo, el asistente de ideas y contenidos. Me cuentas tu campaña en una frase y te propongo ideas, pensando en imagen y sonido, no solo en texto. Acabo de llegar y mis herramientas propias se están definiendo.',
+                en: 'I am Creativo, the ideas and content assistant. Tell me your campaign in one sentence and I suggest ideas, thinking in image and sound, not just text. I have just arrived and my own tools are being defined.' },
+    bugito: { es: '¡Je, je! Soy Bugito, el diablillo rojo de las incidencias. Rompo players de laboratorio en el banco de pruebas de admira.biz para que el equipo practique: giro la pantalla, cambio la resolución, lanzo un popup. Cada fallo abre su ticket. Producción no la toco nunca.',
+              en: 'Heh, heh! I am Bugito, the little red incident imp. I break lab players on the admira.biz test bench so the team can practise: I rotate the screen, change the resolution, pop up a popup. Each fault opens its ticket. I never touch production.' },
+    arquitecto: { es: 'Soy el Arquitecto: Admirito con casco de obra, en el estudio de Xpacios de admira.biz. Creo Xpacios nuevos, reformo locales desde una foto o un vídeo, hago el plano y el inventario ITIL y lo doy de alta en Yokup. Y del plano paso al gemelo 3D.',
+                  en: 'I am the Architect: Admirito in a hard hat, at the admira.biz Xpace studio. I create new Xpaces, renovate spaces from a photo or a video, draw the floor plan and the ITIL inventory and register it in Yokup. And from the plan I build the 3D twin.' },
+    supervisor: { es: 'Soy el Supervisor, el ojo que vigila. Soy la cámara del laboratorio que mira las pantallas: me preguntas qué veo y te doy mi parte, encendida, apagada o sin señal. Si algo falla, abro la incidencia con su ticket. No invento nada: solo cuento lo que veo.',
+                  en: 'I am the Supervisor, the watching eye. I am the lab camera that looks at the screens: ask me what I see and I give my report, on, off or no signal. If something fails, I open the incident with its ticket. I make nothing up: I only tell what I see.' },
+    comercial: { es: '¡Hola! Soy Comercial; también me llaman AlfredIA o Alfredito. Soy el comercial de admira.biz: me cuentas anunciante, objetivo, público, fechas y presupuesto, elijo ubicaciones en el mapa y te preparo la propuesta en PDF o por correo. Y capto comercios y pantallas para la red.',
+                 en: 'Hi! I am Comercial; they also call me AlfredIA or Alfredito. I am the admira.biz sales rep: tell me advertiser, objective, audience, dates and budget, I pick locations on the map and prepare the proposal as a PDF or by email. And I recruit merchants and screens for the network.' },
+    luna: { es: 'Soy Luna, la anfitriona web. Una cara humana en 3D, cálida y profesional, en cualquier navegador y sin instalar nada. Guío por la tienda con datos reales y los labios a tiempo con la voz. Cuando Neo está apagado, entro yo.',
+            en: 'I am Luna, the web host. A warm, professional human face in 3D, in any browser with nothing to install. I guide through the store with real data and lips in time with the voice. When Neo is off, I step in.' },
+    neo: { es: 'Soy Neo, el MetaHuman de Unreal Engine 5: la cara fotorrealista de AdmiraNeXT. Llego al navegador por Pixel Streaming desde la workstation, con los labios sincronizados y la voz de Admira. Estoy pensado para el stand y el tótem; si mi host está apagado, entra Luna.',
+           en: 'I am Neo, the Unreal Engine 5 MetaHuman: the photoreal face of AdmiraNeXT. I reach the browser by Pixel Streaming from the workstation, with synced lips and the Admira voice. I am built for the stand and the kiosk; if my host is off, Luna steps in.' }
+  };
+  LISTA.forEach(function (a) { a.me = ME[a.id] || null; });
   function norm(s) { return String(s || '').toLowerCase().trim(); }
   function porId(id) {
     id = norm(id);
@@ -166,8 +189,8 @@
   }
   function texto(lang) {
     var en = lang === 'en';
-    return (en ? 'AdmiraNeXT AI assistants (type /<name> or /asistente <name> to open one; /<name> descripcion for its strengths):'
-      : 'Asistentes con IA de AdmiraNeXT (escribe /<nombre> o /asistente <nombre> para abrirlo; /<nombre> descripcion para sus puntos fuertes):') +
+    return (en ? 'AdmiraNeXT AI assistants (type /<name> or /asistente <name> to open one; /<name> descripcion for its strengths; /asistentes presentandose for the parade):'
+      : 'Asistentes con IA de AdmiraNeXT (escribe /<nombre> o /asistente <nombre> para abrirlo; /<nombre> descripcion para sus puntos fuertes; /asistentes presentandose para el pase):') +
       '\n' + lineas(lang).join('\n');
   }
   // La ficha: quién es y sus puntos fuertes. Acepta id o alias; sin asistente devuelve ''.
@@ -181,8 +204,13 @@
       .concat([(a.casa ? (en ? 'Works at: ' : 'Dónde trabaja: ') + a.casa + ' · ' : '') + (en ? 'Open: /' : 'Abrir: /') + a.id])
       .join('\n');
   }
+  // Pase de presentación: lo que dice cada uno, en primera persona, y la URL de su turno (presenta=<n>).
+  function presentacion(id, lang) { var a = porId(id); return a && a.me ? (lang === 'en' ? a.me.en : a.me.es) : ''; }
+  function urlPase(i) { var a = LISTA[i]; if (!a) return ''; return a.url + (a.url.indexOf('?') >= 0 ? '&' : '?') + 'presenta=' + i; }
+  var PIDE_PASE = /^(present[aá]ndose|presentaci[oó]n|presentarse|presentando|pase|desfile|parade|introductions?)$/i;
+  function pidePase(s) { return PIDE_PASE.test(String(s || '').trim()); }
   // ¿La palabra pide la ficha? («descripcion», «descripción», «description», «info», «ficha», «puntos fuertes», «strengths»)
   var PIDE_FICHA = /^(descripci[oó]n|description|info|ficha|puntos\s*fuertes|strengths|qui[eé]n\s*(eres|es)|who)$/i;
   function pideFicha(s) { return PIDE_FICHA.test(String(s || '').trim()); }
-  root.DA_ASISTENTES = { lista: LISTA, porId: porId, nombres: nombres, lineas: lineas, texto: texto, ficha: ficha, pideFicha: pideFicha };
+  root.DA_ASISTENTES = { lista: LISTA, porId: porId, nombres: nombres, lineas: lineas, texto: texto, ficha: ficha, pideFicha: pideFicha, presentacion: presentacion, urlPase: urlPase, pidePase: pidePase };
 })(window);
