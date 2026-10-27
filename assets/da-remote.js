@@ -13,7 +13,7 @@
   'use strict';
   if (window.__daRemote) return; window.__daRemote = true;
   var BRAIN = 'https://brain.digitalavatar.ai';
-  var ASISTENTES_SRC = '/assets/da-asistentes.js?v=20261027-asistentes-4';
+  var ASISTENTES_SRC = '/assets/da-asistentes.js?v=20261027-asistentes-5';
   function asistentes(cb) {
     if (window.DA_ASISTENTES) { cb(window.DA_ASISTENTES); return; }
     if (!window.__daAsistentesP) {
@@ -93,18 +93,23 @@
     // asistente, salvo que sea la piel que ya está en pantalla (entonces la orden es suya: /arquitecto … o
     // /supervisor … las atiende nube.js). Solo la palabra sola, con signos de cierre como mucho: «¿Bugito?» vale,
     // «bugito rompe algo» es una pregunta normal.
+    // «alfredito descripcion», «/neo puntos fuertes», «¿quién es bugito?» no: solo nombre + palabra de ficha (Carlos, 27-oct-2026).
+    if ((m = t.match(/^[¿¡]*\/?\s*([a-z]+)\s+(.+?)[\s.!?¡¿]*$/i)) && window.DA_ASISTENTES && window.DA_ASISTENTES.porId(m[1]) && window.DA_ASISTENTES.pideFicha(m[2])) {
+      show(window.DA_ASISTENTES.ficha(m[1], L()), true); return true;
+    }
     if ((m = t.match(/^[¿¡]*\/?\s*([a-z]+)[\s.!?¡¿]*$/i)) && window.DA_ASISTENTES && window.DA_ASISTENTES.porId(m[1])) {
       var actual = /nube\.html$/.test(location.pathname) ? (document.documentElement.getAttribute('data-personaje') || 'admirito').toLowerCase() : '';
       var yo = m[1].toLowerCase();
       if (yo !== actual) { abrirAsistente(window.DA_ASISTENTES.porId(yo)); return true; }
     }
-    if ((m = t.match(/^\/\s*(asistente|asistentes|assistant|assistants)\s*(\S*)\s*$/i))) {
-      var quien = String(m[2] || '').toLowerCase();
+    if ((m = t.match(/^\/\s*(asistente|asistentes|assistant|assistants)\s*(\S*)\s*(.*?)\s*$/i))) {
+      var quien = String(m[2] || '').toLowerCase(), resto = String(m[3] || '');
       asistentes(function (A) {
         if (!A) { show(L() === 'en' ? 'The assistant list did not load.' : 'No se pudo cargar la lista de asistentes.', true); return; }
         if (!quien) { show(A.texto(L()), true); return; }
         var a = A.porId(quien);
         if (!a) { show(L() === 'en' ? 'No assistant called «' + quien + '». /asistente lists them.' : 'No hay ningún asistente «' + quien + '». /asistente los lista.', true); return; }
+        if (resto && A.pideFicha(resto)) { show(A.ficha(quien, L()), true); return; }
         abrirAsistente(a);
       });
       return true;

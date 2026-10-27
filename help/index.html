@@ -40,7 +40,7 @@
 <!-- da-shell: metaestilo AdmiraNeXT · interfaz cuadrática -->
 <meta name="admiranext-version" content="v.07.10.2026.r14.11:05">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261007-metricas-3">
-<script defer src="/assets/da-shell.js?v=20261027-asistentes-4" data-section="/ ayuda" data-section-en="/ help"></script>
+<script defer src="/assets/da-shell.js?v=20261027-asistentes-5" data-section="/ ayuda" data-section-en="/ help"></script>
 </head>
 <body>
 <div class="wrap">
@@ -104,11 +104,11 @@
   </div>
 
   <h2 id="asistentes"><span lang="es">Los asistentes con IA de AdmiraNeXT</span><span lang="en">The AdmiraNeXT AI assistants</span></h2>
-  <p class="lede"><span lang="es">Todos salen con <code>/help</code>, tanto en la caja del avatar como en el CLI del ⌘ Experto; <code>/asistente &lt;nombre&gt;</code> (o <code>/&lt;nombre&gt;</code> en el CLI) abre uno; en la caja del avatar basta el nombre a secas. Cada asistente responde también a sus otros nombres (Comercial es AlfredIA o Alfredito). La lista vive en <code>assets/da-asistentes.js</code>.</span><span lang="en">They all show up with <code>/help</code>, both in the avatar's text box and in the ⌘ Expert CLI; <code>/asistente &lt;name&gt;</code> (or <code>/&lt;name&gt;</code> in the CLI) opens one; in the avatar's box the bare name is enough. Each assistant also answers to its other names (Comercial is AlfredIA or Alfredito). The list lives in <code>assets/da-asistentes.js</code>.</span></p>
+  <p class="lede"><span lang="es">Todos salen con <code>/help</code>, tanto en la caja del avatar como en el CLI del ⌘ Experto; <code>/asistente &lt;nombre&gt;</code> (o <code>/&lt;nombre&gt;</code> en el CLI) abre uno; en la caja del avatar basta el nombre a secas. Cada asistente responde también a sus otros nombres (Comercial es AlfredIA o Alfredito), y <code>/&lt;nombre&gt; descripcion</code> (o <code>alfredito descripcion</code> en la caja) enseña quién es y sus puntos fuertes. La lista vive en <code>assets/da-asistentes.js</code>.</span><span lang="en">They all show up with <code>/help</code>, both in the avatar's text box and in the ⌘ Expert CLI; <code>/asistente &lt;name&gt;</code> (or <code>/&lt;name&gt;</code> in the CLI) opens one; in the avatar's box the bare name is enough. Each assistant also answers to its other names (Comercial is AlfredIA or Alfredito), and <code>/&lt;name&gt; descripcion</code> (or <code>alfredito descripcion</code> in the box) shows who it is and its strengths. The list lives in <code>assets/da-asistentes.js</code>.</span></p>
   <div class="grid" id="asistentesGrid"></div>
-  <script src="/assets/da-asistentes.js?v=20261027-asistentes-4"></script>
+  <script src="/assets/da-asistentes.js?v=20261027-asistentes-5"></script>
   <script>(function(){var g=document.getElementById('asistentesGrid'),A=window.DA_ASISTENTES;if(!g||!A)return;
-    g.innerHTML=A.lista.map(function(a){return '<div class="card"><span class="tag">/'+a.id+'</span><h3>'+a.nombre+((a.alias||[]).length?' <small style="color:var(--muted);font-weight:400">· '+a.alias.join(' · ')+'</small>':'')+'</h3><p lang="es">'+a.es+'</p><p lang="en">'+a.en+'</p>'+(a.casa?'<p><span lang="es">Trabaja en</span><span lang="en">Works at</span> '+a.casa+'</p>':'')+'<a class="go" href="'+a.url+'"><span lang="es">Abrir →</span><span lang="en">Open →</span></a></div>';}).join('');})();</script>
+    g.innerHTML=A.lista.map(function(a){return '<div class="card"><span class="tag">/'+a.id+'</span><h3>'+a.nombre+((a.alias||[]).length?' <small style="color:var(--muted);font-weight:400">· '+a.alias.join(' · ')+'</small>':'')+'</h3><p lang="es">'+(a.que?a.que.es:a.es)+'</p><p lang="en">'+(a.que?a.que.en:a.en)+'</p>'+(a.fuertes?'<p><b lang="es">Puntos fuertes</b><b lang="en">Strengths</b></p><ul style="margin:4px 0 6px 18px;padding:0;color:var(--muted);font-size:14px">'+a.fuertes.es.map(function(f){return '<li lang="es">'+f+'</li>';}).join('')+a.fuertes.en.map(function(f){return '<li lang="en">'+f+'</li>';}).join('')+'</ul>':'')+(a.casa?'<p><span lang="es">Trabaja en</span><span lang="en">Works at</span> '+a.casa+'</p>':'')+'<a class="go" href="'+a.url+'"><span lang="es">Abrir →</span><span lang="en">Open →</span></a></div>';}).join('');})();</script>
 
   <h2 id="demos">Demos <span lang="es">de cliente</span><span lang="en">for clients</span></h2>
   <div class="grid">

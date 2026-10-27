@@ -1,8 +1,9 @@
 {
-  "version": "v.27.10.2026.r4.21:37",
-  "builtAt": "2026-10-27T21:37:37.586481+01:00",
-  "note": "Cada asistente responde a sus otros nombres: Comercial es también AlfredIA o Alfredito.",
+  "version": "v.27.10.2026.r5.22:16",
+  "builtAt": "2026-10-27T22:16:19.272238+01:00",
+  "note": "Ficha de cada asistente: «/alfredito descripcion» (o cualquier otro) dice quién es y sus puntos fuertes.",
   "novedades": [
+    "r5 (Carlos, 27-oct-2026): cada asistente lleva su ficha en assets/da-asistentes.js (quién es y 3 a 5 puntos fuertes, ES/EN). «/<nombre> descripcion» (también info, ficha, puntos fuertes, description) la enseña en el CLI y en la caja del chat, sin abrirlo; «/asistente <nombre> descripcion» igual. La guía /help/ pinta los puntos fuertes en cada tarjeta. Angelito y Creativo dicen que sus tareas propias están por definir.",
     "r4 (Carlos, 27-oct-2026): alias por asistente en assets/da-asistentes.js. Comercial = AlfredIA, Alfredito, Alfred; Admirito = Nube, Avatar; Neo = MetaHuman; Luna = Human; Bugito = Bug; Arquitecto = Architect; Creativo = Creative. Valen en la caja del chat, en el CLI y /help los enseña entre paréntesis.",
     "r3 (Carlos, 27-oct-2026): en la caja del chat basta el nombre del asistente, con barra o sin ella («bugito», «Luna», «¿neo?»); una frase con más palabras sigue siendo una pregunta. Sellos en cadena: da-remote, da-context y las cuatro páginas.",
     "r2: da-context.js cambió por dentro (carga el da-remote con los asistentes) pero conservaba el sello de caché viejo, así que la caja del chat seguía con la ayuda antigua y el bocadillo escondido. Sello nuevo en nube, best, better y metahuman.",
@@ -12,5 +13,5 @@
   ],
   "signature": "NeoMacStudio · MacStudio",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "5f80282 (etiqueta respaldo-v.27.10.2026.r3.18-50)"
+  "rollback": "c22fee4 (etiqueta respaldo-v.27.10.2026.r4.21-37)"
 }
