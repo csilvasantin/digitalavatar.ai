@@ -101,6 +101,12 @@ Contract: the avatar posts `{type:"da-demo", id:"", texto:"/demo …", requestId
 
 Validation: `node --test tests/*.test.mjs` covers the legacy demo flow, alias routing, trusted ACKs, timeout/failure and the real `ask` functions of all four renderers, without calling a provider.
 
+## Los asistentes con IA de AdmiraNeXT / The AdmiraNeXT AI assistants (`/help`)
+
+ES (Carlos, 27-oct-2026): una sola lista en [`assets/da-asistentes.js`](assets/da-asistentes.js) (Admirito, Angelito, Creativo, Bugito, Arquitecto, Supervisor, Comercial, Luna y Neo, con su `url` en digitalavatar.ai y su `casa` en la suite). La muestran `/help` en el CLI del ⌘ Experto (`da-shell.js`) y `/help` en la caja del avatar (`da-remote.js`), y la pinta la guía [`/help/`](help/index.html). `/asistente <nombre>` abre uno (en el CLI también `/<nombre>`). Añadir un asistente = una línea en esa lista (y, si es una piel de la nube, su entrada en `PIELES`); la prueba `tests/asistentes.test.mjs` exige que toda piel esté en la lista. Las cajas de texto ya no llevan el micro retro 🎙️: el botón del micro es un icono SVG y el texto dice «Escribe o habla».
+
+EN: one list in `assets/da-asistentes.js`, shown by `/help` in the ⌘ Expert CLI and in the avatar's text box, and rendered on `/help/`. `/asistente <name>` opens one (`/<name>` also works in the CLI). Adding one = one line there; the test makes sure every cloud skin is listed. The text boxes no longer carry the retro mic emoji: the mic button is an SVG icon and the hint says «Type or talk».
+
 ## Pieles de Admirito / Admirito skins (`nube.html?personaje=<id>`)
 
 ES: Admirito admite disfraces con el mismo motor: la tabla `PIELES` de `assets/nube.js` (admirito por defecto, `bugito`, `arquitecto`, `supervisor` y las que vengan). Añadir una = su entrada en `PIELES` (textos y chips), sus piezas en `nube.html` (`class="piel-parte" data-piel="<id>"` + su CSS bajo `html[data-personaje="<id>"]`) y sus ganchos (`frame`, `mouth`, `droop`, `gaze`, `ask`, `identidad`, `mensaje`, `titulo`, `estado`). El anfitrión le habla con `{type:"da-<id>"}`; un `personaje` desconocido es Admirito.

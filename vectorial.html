@@ -37,7 +37,7 @@
 <meta name="admiranext-version" content="v.07.10.2026.r14.11:05">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
 <link rel="stylesheet" href="/assets/da-shell.css?v=20261007-metricas-3">
-<script defer src="/assets/da-shell.js?v=20261007-metricas-3" data-section="/ vectorial" data-section-en="/ vector"></script>
+<script defer src="/assets/da-shell.js?v=20261027-asistentes-1" data-section="/ vectorial" data-section-en="/ vector"></script>
 </head>
 <body data-da-stage>
   <!-- Conmutador de EVOLUCIÓN -->
@@ -73,7 +73,7 @@
     <div class="caption" id="caption"></div>
     <div class="bar">
       <input id="q" autocomplete="off">
-      <button class="iconbtn mic" id="btnMic" title="Hablar">🎙️</button>
+      <button class="iconbtn mic" id="btnMic" title="Hablar" aria-label="Micrófono"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></button>
       <button class="iconbtn send" id="btnSend" title="Enviar">➤</button>
     </div>
     <div class="meta"><select id="loc"></select></div>
@@ -84,9 +84,9 @@
 <script>
 const API='https://brain.digitalavatar.ai';
 const $=id=>document.getElementById(id);
-const T={ es:{lang:'es',tag:'avatar vectorial 2D',ph:'Escribe o pulsa 🎙️ para hablar…',think:'Pensando…',listen:'Escuchando…',net:'Error de red: ',loc:'Xpacio (Admira.app)',speech:'es-ES',
+const T={ es:{lang:'es',tag:'avatar vectorial 2D',ph:'Escribe o habla…',think:'Pensando…',listen:'Escuchando…',net:'Error de red: ',loc:'Xpacio (Admira.app)',speech:'es-ES',
   greet:'Hola, soy el avatar vectorial 2D. ¿En qué te ayudo?'},
-  en:{lang:'en',tag:'2D vector avatar',ph:'Type or press 🎙️ to talk…',think:'Thinking…',listen:'Listening…',net:'Network error: ',loc:'Xpacio (Admira.app location)',speech:'en-US',
+  en:{lang:'en',tag:'2D vector avatar',ph:'Type or talk…',think:'Thinking…',listen:'Listening…',net:'Network error: ',loc:'Xpacio (Admira.app location)',speech:'en-US',
   greet:'Hi, I am the 2D vector avatar. How can I help you?'} };
 let LANG=(localStorage.getItem('da_lang')==='en')?'en':'es';
 const VOICES={es:'dNjJKg63Fr5AXwIdkATa',en:'qSeXEcewz7tA0Q0qk9fH'};

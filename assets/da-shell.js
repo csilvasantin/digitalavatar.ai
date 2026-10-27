@@ -108,7 +108,7 @@
     roadmap: '/roadmap/',
     ayuda: '/help/'
   };
-  var VERBS = ['help', 'nivel', 'avatar', 'avataron', 'avataroff', 'neo', 'say', 'estado', 'mcp', 'embed', 'roadmap', 'ayuda', 'limpiar', 'version', 'idioma', 'vectorial', '2d', '3d', 'realista', 'metahuman', 'good', 'better', 'best', 'embedmh', 'nube'];
+  var VERBS = ['help', 'asistente', 'asistentes', 'nivel', 'avatar', 'avataron', 'avataroff', 'neo', 'say', 'estado', 'mcp', 'embed', 'roadmap', 'ayuda', 'limpiar', 'version', 'idioma', 'vectorial', '2d', '3d', 'realista', 'metahuman', 'good', 'better', 'best', 'embedmh', 'nube'];
   /* Extensión por página (7-oct-2026, métricas): window.DA_SHELL = {section, advanced:[{href,es,en}],
      verbs:{nombre:{es,en,run:function(args, api){}}}}. Se declara ANTES de este script. */
   var EXT = (root.DA_SHELL && typeof root.DA_SHELL === 'object') ? root.DA_SHELL : {};
@@ -116,6 +116,22 @@
   if (Array.isArray(EXT.advanced) && EXT.advanced.length) ADVANCED = EXT.advanced.concat([{group: true, es: 'DigitalAvatar', en: 'DigitalAvatar'}], ADVANCED);
   Object.keys(EXT_VERBS).forEach(function (k) { if (/^[a-z0-9-]+$/.test(k) && typeof EXT_VERBS[k].run === 'function' && VERBS.indexOf(k) < 0) VERBS.push(k); });
   var BRAIN = 'https://brain.digitalavatar.ai';
+  /* Los asistentes con IA (Carlos, 27-oct-2026): una sola lista en assets/da-asistentes.js; /help la muestra,
+     /asistente <nombre> o /<nombre> abren uno. Se carga una vez y se comparte con da-remote.js. */
+  var ASISTENTES_SRC = '/assets/da-asistentes.js?v=20261027-asistentes-1';
+  function asistentes(cb) {
+    if (root.DA_ASISTENTES) { cb(root.DA_ASISTENTES); return; }
+    if (!root.__daAsistentesP) {
+      root.__daAsistentesP = new Promise(function (res) {
+        var s = document.createElement('script');
+        s.src = ASISTENTES_SRC; s.async = true;
+        s.onload = function () { res(root.DA_ASISTENTES || null); };
+        s.onerror = function () { res(null); };
+        (document.head || document.documentElement).appendChild(s);
+      });
+    }
+    root.__daAsistentesP.then(cb);
+  }
   var HOST_PROBE = 'https://neo-digitalavatar.csilvasantin.workers.dev/images/favicon-32x32.png';
   var hostState = 'comprobando…';
   var engineState = '';
@@ -200,14 +216,16 @@
     return bar + '<div class="da-layer">' + options + advanced + expert + '</div>';
   }
 
-  function helpText() {
+  function helpText(A) {
+    var asis = A && typeof A.texto === 'function' ? A.texto(lang()) + '\n\n' : '';
     var extra = Object.keys(EXT_VERBS).filter(function (k) { return typeof EXT_VERBS[k].run === 'function'; })
       .map(function (k) { return '/' + k + ' — ' + pick(EXT_VERBS[k]); }).join('\n');
-    return (extra ? extra + '\n' : '') + baseHelpText();
+    return asis + (extra ? extra + '\n' : '') + baseHelpText();
   }
   function baseHelpText() {
     if (lang() === 'en') {
       return '/help — this list\n' +
+        '/asistente <name> — open an AdmiraNeXT AI assistant (/asistente alone lists them)\n' +
         '/avatar — status and the three categories\n' +
         '/avatar avatar — Admirito, the animated cloud (light 2D, lip-sync, lives on its own when idle)\n' +
         '/avatar human — Luna, the web host (Ready Player Me)\n' +
@@ -228,6 +246,7 @@
         'Tools: /avatar /good /better /best /nube /vectorial /2d /3d /realista /metahuman /neo /mcp /embed /embedmh /roadmap /ayuda';
     }
     return '/help — esta lista\n' +
+      '/asistente <nombre> — abre un asistente con IA de AdmiraNeXT (/asistente a secas los lista)\n' +
       '/avatar — estado y las tres categorías\n' +
       '/avatar avatar — Admirito, la nube animada (2D ligera, mueve los labios y hace cosas sola)\n' +
       '/avatar human — Luna, la anfitriona web (Ready Player Me)\n' +
@@ -442,7 +461,16 @@
     log('› ' + p.raw, 'da-in');
     var verb = p.verb;
     if (verb === 'help' || verb === '?') {
-      log(helpText());
+      asistentes(function (A) { log(helpText(A)); });
+      return;
+    }
+    if (verb === 'asistente' || verb === 'asistentes' || verb === 'assistant' || verb === 'assistants') {
+      asistentes(function (A) {
+        if (!A) { log(lang() === 'en' ? 'The assistant list did not load.' : 'No se pudo cargar la lista de asistentes.', 'err'); return; }
+        var id = (p.args || '').toLowerCase().trim();
+        if (!id) { log(A.texto(lang())); return; }
+        abrirAsistente(A.porId(id), id);
+      });
       return;
     }
     if (verb === 'limpiar' || verb === 'clear' || verb === 'cls') {
@@ -539,9 +567,22 @@
       setTimeout(function () { location.assign(GO[verb]); }, 180);
       return;
     }
-    log(lang() === 'en'
-      ? 'Unknown verb: /' + verb + ' · type /help'
-      : 'Verbo desconocido: /' + verb + ' · escribe /help', 'err');
+    asistentes(function (A) {
+      var a = A && A.porId(verb);
+      if (a) { abrirAsistente(a, verb); return; }
+      log(lang() === 'en'
+        ? 'Unknown verb: /' + verb + ' · type /help'
+        : 'Verbo desconocido: /' + verb + ' · escribe /help', 'err');
+    });
+  }
+
+  function abrirAsistente(a, id) {
+    if (!a) {
+      log(lang() === 'en' ? 'No assistant called «' + id + '» · /asistente lists them' : 'No hay ningún asistente «' + id + '» · /asistente los lista', 'err');
+      return;
+    }
+    log((lang() === 'en' ? 'Opening ' : 'Abro ') + a.nombre + ' · ' + a.url);
+    setTimeout(function () { location.assign(a.url); }, 180);
   }
 
   function boot() {
@@ -551,6 +592,7 @@
     if (script && script.getAttribute('data-da-framed') === 'on') return;
     if (document.getElementById('daTop')) return;
     root.__daShell = true;
+    asistentes(function () {});
 
     var saved = null;
     try { saved = localStorage.getItem('da_lang'); } catch (e) {}

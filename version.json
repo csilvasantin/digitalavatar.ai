@@ -1,12 +1,12 @@
 {
-  "version": "v.21.10.2026.r1.20:19",
-  "builtAt": "2026-10-21T20:19:24.795004+02:00",
-  "note": "Supervisor verde y Angelito dorado separados; Creativo disponible como personaje en la suite.",
+  "version": "v.27.10.2026.r1.18:32",
+  "builtAt": "2026-10-27T18:32:38.622165+01:00",
+  "note": "Los asistentes con IA de AdmiraNeXT salen con /help (CLI y chat) y se abren con /asistente; sin micro retro en las cajas.",
   "novedades": [
-    "Supervisor verde con gorra y ojo de cámara. Angelito dorado con aureola y alas.",
-    "Los asistentes se activan en el mismo site de la suite."
+    "Una sola lista de asistentes (assets/da-asistentes.js): Admirito, Angelito, Creativo, Bugito, Arquitecto, Supervisor, Comercial, Luna y Neo. /help la muestra en el CLI del ⌘ Experto y en la caja del avatar; /asistente <nombre> (o /<nombre> en el CLI) abre uno; la guía /help/ los pinta en tarjetas.",
+    "Sin micro retro (Carlos, 27-oct-2026): el botón del micro es un icono SVG y la caja dice «Escribe o habla». El bocadillo de la nube ya enseña el /help del chat (antes quedaba oculto)."
   ],
-  "signature": "OraculoMacMini · MacMini",
+  "signature": "NeoMacStudio · MacStudio",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "e46d124"
+  "rollback": "8eb6a9d (etiqueta respaldo-v.21.10.2026.r1.20-19)"
 }
