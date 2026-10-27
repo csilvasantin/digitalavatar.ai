@@ -56,6 +56,11 @@ test('el CLI del ⌘ Experto y el chat del avatar usan el mismo registro, con el
   assert.match(remote, /asistente\|asistentes\|assistant\|assistants/, 'el chat entiende /asistente <nombre>');
   assert.ok(guia.includes('id="asistentes"') && guia.includes('asistentesGrid'), 'la guía tiene la sección');
   assert.match(remote, /porId\(m\[1\]\)/, 'el chat abre /<nombre> a secas');
+  assert.match(remote, /\^\[¿¡\]\*\\\/\?\\s\*\(\[a-z\]\+\)/, 'el chat abre el nombre sin barra (Carlos, 27-oct-2026)');
+  const sr = (remote.match(/da-remote\.js\?v=/) || []).length; assert.ok(sr >= 0);
+  const ctx = leer('assets/da-context.js').match(/da-remote\.js\?v=([\w-]+)/)[1];
+  const ctxPaginas = new Set(['nube.html', 'metahuman.html', 'best.html', 'better.html'].map((p) => leer(p).match(/da-context\.js\?v=([\w-]+)/)[1]));
+  assert.equal(ctxPaginas.size, 1); assert.equal([...ctxPaginas][0], ctx, 'sellos en cadena: cuando cambia da-remote, cambian da-context y las páginas a la vez');
   assert.match(remote, /^\s*asistentes\(function \(\) \{\}\);/m, 'el chat precarga la lista');
 });
 
