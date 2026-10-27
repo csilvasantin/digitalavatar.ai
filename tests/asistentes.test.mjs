@@ -86,6 +86,10 @@ test('pase de presentación: cada asistente se presenta en primera persona (ES/E
   assert.match(shell, /A\.pidePase\(id\)/, 'el CLI lanza el pase');
   assert.match(shell, /verb === 'demo'[\s\S]{0,200}run\('\/asistentes presentandose'\)/, 'el CLI entiende /demo asistentes');
   assert.match(remote, /demo\\s\+\(asistentes\|assistants[^)]*\)[^{]*\{ iniciarPase\(\); return true; \}/, 'el chat entiende /demo asistentes');
+  assert.match(remote, /demo\\s\+digitalavatar[^{]*\{ iniciarPase\('en'\); return true; \}/, '/demo digitalavatar = pase en inglés');
+  assert.match(remote, /demo\\s\+avatardigital[^{]*\{ iniciarPase\('es'\); return true; \}/, '/demo avatardigital = pase en castellano');
+  assert.match(remote, /if \(lang === 'en' \|\| lang === 'es'\) u\.searchParams\.set\('lang', lang\);/, 'el idioma viaja en ?lang= por los turnos');
+  assert.match(shell, /\^digitalavatar\$\/i[\s\S]{0,80}'en'[\s\S]{0,40}\^avatardigital\$\/i[\s\S]{0,40}'es'/, 'el CLI entiende las dos órdenes');
   // La boca espera al audio (Carlos, 27-oct-2026): en comDecir el texto va al bocadillo (setCaption) y speakText solo si el audio falla.
   const decir = nube.slice(nube.indexOf('function comDecir'), nube.indexOf('function comAsk'));
   assert.ok(decir.indexOf('setCaption(texto)') > 0 && decir.indexOf('setCaption(texto)') < decir.indexOf('comAudio(texto)'), 'el texto se enseña antes de pedir el audio');

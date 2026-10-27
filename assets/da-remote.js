@@ -38,19 +38,23 @@
   // texto en Luna y Neo), espera `cada` segundos (15) y, si sigue hablando, a que acabe; luego abre el turno n+1.
   // Al último le sigue Admirito sin pase. Cualquier tecla o clic en la caja lo para.
   function paseCada() { return Math.min(60, Math.max(3, Number(params.get('cada')) || 15)); }
-  function urlTurno(A, i) {
+  function urlTurno(A, i, lang) {
     var base = A.urlPase(i); if (!base) return '';
     var u = new URL(base, location.origin);
+    if (lang === 'en' || lang === 'es') u.searchParams.set('lang', lang);
     ['sala', 'lang', 'audio', 'cada', 'brand', 'site', 'sector', 'city'].forEach(function (k) { var v = params.get(k); if (v && !u.searchParams.get(k)) u.searchParams.set(k, v); });
     return u.pathname + u.search;
   }
-  function iniciarPase() { asistentes(function (A) { if (A) location.href = urlTurno(A, 0); }); }
+  // /demo digitalavatar = el pase en inglés; /demo avatardigital = en castellano (Carlos, 27-oct-2026). El idioma viaja en ?lang= por todos los turnos.
+  function iniciarPase(lang) { asistentes(function (A) { if (A) location.href = urlTurno(A, 0, lang); }); }
+  function langPase() { var l = params.get('lang'); return l === 'en' || l === 'es' ? l : L(); }
   var pase = { timer: 0, parado: false };
   function pararPase() { pase.parado = true; clearTimeout(pase.timer); }
   function turnoPase(A) {
     var i = parseInt(params.get('presenta'), 10); var a = A.lista[i]; if (!a) return;
     document.title = (i + 1) + '/' + A.lista.length + ' · ' + document.title;
-    var texto = A.presentacion(a.id, L()) || (a.nombre + ': ' + (L() === 'en' ? a.en : a.es));
+    var lp = langPase(); if (lp !== L()) setLang(lp);
+    var texto = A.presentacion(a.id, lp) || (a.nombre + ': ' + (lp === 'en' ? a.en : a.es));
     var t0 = Date.now(), intentos = 0;
     (function habla() {
       if (pase.parado) return;
@@ -114,8 +118,8 @@
   }
   function helpText() {
     return L() === 'en'
-      ? 'Full guide (commands, avatars and demos): https://digitalavatar.ai/help/\n/asistente <name> · /asistentes presentandose (= /demo asistentes) · /animacion help · /avatar avatar|human|metahuman · /demo · /idioma es|en · /marca starbucks|365|off'
-      : 'Guía completa (comandos, avatares y demos): https://digitalavatar.ai/help/\n/asistente <nombre> · /asistentes presentandose (= /demo asistentes) · /animacion help · /avatar avatar|human|metahuman · /demo · /idioma es|en · /marca starbucks|365|off';
+      ? 'Full guide (commands, avatars and demos): https://digitalavatar.ai/help/\n/asistente <name> · /asistentes presentandose (= /demo asistentes; /demo digitalavatar in English, /demo avatardigital in Spanish) · /animacion help · /avatar avatar|human|metahuman · /demo · /idioma es|en · /marca starbucks|365|off'
+      : 'Guía completa (comandos, avatares y demos): https://digitalavatar.ai/help/\n/asistente <nombre> · /asistentes presentandose (= /demo asistentes; /demo digitalavatar en inglés, /demo avatardigital en castellano) · /animacion help · /avatar avatar|human|metahuman · /demo · /idioma es|en · /marca starbucks|365|off';
   }
   // ── Comandos de chat comunes ──
   function chat(raw) {
@@ -140,6 +144,8 @@
     }
     // «/asistentes presentandose» (o «asistentes pase» a secas) y «/demo asistentes» (Carlos, 27-oct-2026): el pase de presentación.
     if (/^\/?\s*demo\s+(asistentes|assistants|presentaci[oó]n|pase)\s*[.!?¡¿]*$/i.test(t)) { iniciarPase(); return true; }
+    if (/^\/?\s*demo\s+digitalavatar\s*[.!?¡¿]*$/i.test(t)) { iniciarPase('en'); return true; }
+    if (/^\/?\s*demo\s+avatardigital\s*[.!?¡¿]*$/i.test(t)) { iniciarPase('es'); return true; }
     if ((m = t.match(/^\/?\s*(asistentes|assistants)\s+(\S+)\s*[.!?¡¿]*$/i)) && window.DA_ASISTENTES && window.DA_ASISTENTES.pidePase(m[2])) { iniciarPase(); return true; }
     if ((m = t.match(/^\/\s*(asistente|asistentes|assistant|assistants)\s*(\S*)\s*(.*?)\s*$/i))) {
       var quien = String(m[2] || '').toLowerCase(), resto = String(m[3] || '');
