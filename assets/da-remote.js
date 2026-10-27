@@ -89,9 +89,11 @@
       asistentes(function (A) { show((A ? A.texto(L()) + '\n\n' : '') + helpText(), true); });
       return true;
     }
-    // /<nombre> a secas (como en el CLI): abre ese asistente, salvo que sea la piel que ya está en pantalla
-    // (entonces la orden es suya: /arquitecto … o /supervisor … las atiende nube.js).
-    if ((m = t.match(/^\/\s*([a-z]+)\s*$/i)) && window.DA_ASISTENTES && window.DA_ASISTENTES.porId(m[1])) {
+    // El nombre del asistente, con barra o a secas (Carlos, 27-oct-2026: «bugito» sin barra también cambia): abre ese
+    // asistente, salvo que sea la piel que ya está en pantalla (entonces la orden es suya: /arquitecto … o
+    // /supervisor … las atiende nube.js). Solo la palabra sola, con signos de cierre como mucho: «¿Bugito?» vale,
+    // «bugito rompe algo» es una pregunta normal.
+    if ((m = t.match(/^[¿¡]*\/?\s*([a-z]+)[\s.!?¡¿]*$/i)) && window.DA_ASISTENTES && window.DA_ASISTENTES.porId(m[1])) {
       var actual = /nube\.html$/.test(location.pathname) ? (document.documentElement.getAttribute('data-personaje') || 'admirito').toLowerCase() : '';
       var yo = m[1].toLowerCase();
       if (yo !== actual) { abrirAsistente(window.DA_ASISTENTES.porId(yo)); return true; }

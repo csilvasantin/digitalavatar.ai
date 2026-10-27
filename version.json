@@ -1,8 +1,9 @@
 {
-  "version": "v.27.10.2026.r2.18:38",
-  "builtAt": "2026-10-27T18:38:15.939669+01:00",
-  "note": "Asistentes en /help también en la caja del chat de verdad (sello nuevo de da-context.js) y /<nombre> a secas abre uno.",
+  "version": "v.27.10.2026.r3.18:50",
+  "builtAt": "2026-10-27T18:50:57.638200+01:00",
+  "note": "El nombre del asistente a secas («bugito», sin barra) también cambia de asistente en la caja del chat.",
   "novedades": [
+    "r3 (Carlos, 27-oct-2026): en la caja del chat basta el nombre del asistente, con barra o sin ella («bugito», «Luna», «¿neo?»); una frase con más palabras sigue siendo una pregunta. Sellos en cadena: da-remote, da-context y las cuatro páginas.",
     "r2: da-context.js cambió por dentro (carga el da-remote con los asistentes) pero conservaba el sello de caché viejo, así que la caja del chat seguía con la ayuda antigua y el bocadillo escondido. Sello nuevo en nube, best, better y metahuman.",
     "En la caja del chat vale /bugito, /arquitecto, /luna, /neo… a secas, como en el CLI (si ya es la piel en pantalla, la orden es suya).",
     "Una sola lista de asistentes (assets/da-asistentes.js): Admirito, Angelito, Creativo, Bugito, Arquitecto, Supervisor, Comercial, Luna y Neo. /help la muestra en el CLI del ⌘ Experto y en la caja del avatar; /asistente <nombre> (o /<nombre> en el CLI) abre uno; la guía /help/ los pinta en tarjetas.",
@@ -10,5 +11,5 @@
   ],
   "signature": "NeoMacStudio · MacStudio",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "e543d6c (etiqueta respaldo-v.27.10.2026.r1.18-32)"
+  "rollback": "ad6dc09 (etiqueta respaldo-v.27.10.2026.r2.18-38)"
 }
