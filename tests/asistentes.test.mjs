@@ -55,6 +55,15 @@ test('el CLI del ⌘ Experto y el chat del avatar usan el mismo registro, con el
   assert.match(remote, /\(help\|ayuda\)[\s\S]{0,200}asistentes\(function \(A\)/, '/help del chat añade la lista');
   assert.match(remote, /asistente\|asistentes\|assistant\|assistants/, 'el chat entiende /asistente <nombre>');
   assert.ok(guia.includes('id="asistentes"') && guia.includes('asistentesGrid'), 'la guía tiene la sección');
+  assert.match(remote, /porId\(m\[1\]\)/, 'el chat abre /<nombre> a secas');
+  assert.match(remote, /^\s*asistentes\(function \(\) \{\}\);/m, 'el chat precarga la lista');
+});
+
+test('las páginas con chat cargan el mismo sello de da-context.js (cambió su contenido: carga da-remote)', () => {
+  const sellos = new Set();
+  for (const p of ['nube.html', 'metahuman.html', 'best.html', 'better.html']) { const m = leer(p).match(/da-context\.js\?v=([\w-]+)/); assert.ok(m, p); sellos.add(m[1]); }
+  assert.equal(sellos.size, 1, 'un solo sello de da-context.js: ' + [...sellos].join(', '));
+  assert.notEqual([...sellos][0], '20261018-admira-live-1', 'sello nuevo: el viejo servía un da-remote sin asistentes');
 });
 
 test('las páginas cargan el mismo sello de da-shell.js', () => {

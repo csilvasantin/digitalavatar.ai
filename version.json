@@ -1,12 +1,14 @@
 {
-  "version": "v.27.10.2026.r1.18:32",
-  "builtAt": "2026-10-27T18:32:38.622165+01:00",
-  "note": "Los asistentes con IA de AdmiraNeXT salen con /help (CLI y chat) y se abren con /asistente; sin micro retro en las cajas.",
+  "version": "v.27.10.2026.r2.18:38",
+  "builtAt": "2026-10-27T18:38:15.939669+01:00",
+  "note": "Asistentes en /help también en la caja del chat de verdad (sello nuevo de da-context.js) y /<nombre> a secas abre uno.",
   "novedades": [
+    "r2: da-context.js cambió por dentro (carga el da-remote con los asistentes) pero conservaba el sello de caché viejo, así que la caja del chat seguía con la ayuda antigua y el bocadillo escondido. Sello nuevo en nube, best, better y metahuman.",
+    "En la caja del chat vale /bugito, /arquitecto, /luna, /neo… a secas, como en el CLI (si ya es la piel en pantalla, la orden es suya).",
     "Una sola lista de asistentes (assets/da-asistentes.js): Admirito, Angelito, Creativo, Bugito, Arquitecto, Supervisor, Comercial, Luna y Neo. /help la muestra en el CLI del ⌘ Experto y en la caja del avatar; /asistente <nombre> (o /<nombre> en el CLI) abre uno; la guía /help/ los pinta en tarjetas.",
     "Sin micro retro (Carlos, 27-oct-2026): el botón del micro es un icono SVG y la caja dice «Escribe o habla». El bocadillo de la nube ya enseña el /help del chat (antes quedaba oculto)."
   ],
   "signature": "NeoMacStudio · MacStudio",
   "tokens": "https://www.carlossilva.info/admira-design/tokens.css",
-  "rollback": "8eb6a9d (etiqueta respaldo-v.21.10.2026.r1.20-19)"
+  "rollback": "e543d6c (etiqueta respaldo-v.27.10.2026.r1.18-32)"
 }
