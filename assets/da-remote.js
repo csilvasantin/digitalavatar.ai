@@ -114,8 +114,8 @@
   }
   function helpText() {
     return L() === 'en'
-      ? 'Full guide (commands, avatars and demos): https://digitalavatar.ai/help/\n/asistente <name> · /asistentes presentandose · /animacion help · /avatar avatar|human|metahuman · /demo · /idioma es|en · /marca starbucks|365|off'
-      : 'Guía completa (comandos, avatares y demos): https://digitalavatar.ai/help/\n/asistente <nombre> · /asistentes presentandose · /animacion help · /avatar avatar|human|metahuman · /demo · /idioma es|en · /marca starbucks|365|off';
+      ? 'Full guide (commands, avatars and demos): https://digitalavatar.ai/help/\n/asistente <name> · /asistentes presentandose (= /demo asistentes) · /animacion help · /avatar avatar|human|metahuman · /demo · /idioma es|en · /marca starbucks|365|off'
+      : 'Guía completa (comandos, avatares y demos): https://digitalavatar.ai/help/\n/asistente <nombre> · /asistentes presentandose (= /demo asistentes) · /animacion help · /avatar avatar|human|metahuman · /demo · /idioma es|en · /marca starbucks|365|off';
   }
   // ── Comandos de chat comunes ──
   function chat(raw) {
@@ -138,7 +138,8 @@
       var yo = m[1].toLowerCase();
       if (yo !== actual) { abrirAsistente(window.DA_ASISTENTES.porId(yo)); return true; }
     }
-    // «/asistentes presentandose» (o «asistentes pase» a secas): el pase de presentación.
+    // «/asistentes presentandose» (o «asistentes pase» a secas) y «/demo asistentes» (Carlos, 27-oct-2026): el pase de presentación.
+    if (/^\/?\s*demo\s+(asistentes|assistants|presentaci[oó]n|pase)\s*[.!?¡¿]*$/i.test(t)) { iniciarPase(); return true; }
     if ((m = t.match(/^\/?\s*(asistentes|assistants)\s+(\S+)\s*[.!?¡¿]*$/i)) && window.DA_ASISTENTES && window.DA_ASISTENTES.pidePase(m[2])) { iniciarPase(); return true; }
     if ((m = t.match(/^\/\s*(asistente|asistentes|assistant|assistants)\s*(\S*)\s*(.*?)\s*$/i))) {
       var quien = String(m[2] || '').toLowerCase(), resto = String(m[3] || '');
