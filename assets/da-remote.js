@@ -13,7 +13,7 @@
   'use strict';
   if (window.__daRemote) return; window.__daRemote = true;
   var BRAIN = 'https://brain.digitalavatar.ai';
-  var ASISTENTES_SRC = '/assets/da-asistentes.js?v=20261027-asistentes-1';
+  var ASISTENTES_SRC = '/assets/da-asistentes.js?v=20261027-asistentes-4';
   function asistentes(cb) {
     if (window.DA_ASISTENTES) { cb(window.DA_ASISTENTES); return; }
     if (!window.__daAsistentesP) {
