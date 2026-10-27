@@ -118,7 +118,7 @@
   var BRAIN = 'https://brain.digitalavatar.ai';
   /* Los asistentes con IA (Carlos, 27-oct-2026): una sola lista en assets/da-asistentes.js; /help la muestra,
      /asistente <nombre> o /<nombre> abren uno. Se carga una vez y se comparte con da-remote.js. */
-  var ASISTENTES_SRC = '/assets/da-asistentes.js?v=20261027-asistentes-4';
+  var ASISTENTES_SRC = '/assets/da-asistentes.js?v=20261027-asistentes-5';
   function asistentes(cb) {
     if (root.DA_ASISTENTES) { cb(root.DA_ASISTENTES); return; }
     if (!root.__daAsistentesP) {
@@ -225,7 +225,7 @@
   function baseHelpText() {
     if (lang() === 'en') {
       return '/help — this list\n' +
-        '/asistente <name> — open an AdmiraNeXT AI assistant (/asistente alone lists them)\n' +
+        '/asistente <name> — open an AdmiraNeXT AI assistant (/asistente alone lists them; /<name> descripcion shows its strengths)\n' +
         '/avatar — status and the three categories\n' +
         '/avatar avatar — Admirito, the animated cloud (light 2D, lip-sync, lives on its own when idle)\n' +
         '/avatar human — Luna, the web host (Ready Player Me)\n' +
@@ -246,7 +246,7 @@
         'Tools: /avatar /good /better /best /nube /vectorial /2d /3d /realista /metahuman /neo /mcp /embed /embedmh /roadmap /ayuda';
     }
     return '/help — esta lista\n' +
-      '/asistente <nombre> — abre un asistente con IA de AdmiraNeXT (/asistente a secas los lista)\n' +
+      '/asistente <nombre> — abre un asistente con IA de AdmiraNeXT (/asistente a secas los lista; /<nombre> descripcion enseña sus puntos fuertes)\n' +
       '/avatar — estado y las tres categorías\n' +
       '/avatar avatar — Admirito, la nube animada (2D ligera, mueve los labios y hace cosas sola)\n' +
       '/avatar human — Luna, la anfitriona web (Ready Player Me)\n' +
@@ -469,10 +469,15 @@
         if (!A) { log(lang() === 'en' ? 'The assistant list did not load.' : 'No se pudo cargar la lista de asistentes.', 'err'); return; }
         var id = (p.args || '').toLowerCase().trim();
         if (!id) { log(A.texto(lang())); return; }
-        abrirAsistente(A.porId(id), id);
+        var partes = id.match(/^(\S+)\s*(.*)$/);
+        if (partes && partes[2] && A.pideFicha(partes[2])) { fichaAsistente(A, partes[1]); return; }
+        abrirAsistente(A.porId(partes ? partes[1] : id), id);
       });
       return;
     }
+    // «/neo descripcion», «/alfredito puntos fuertes»: la ficha va por delante de los atajos de página (neo, nube, luna…),
+    // que si no se la comerían. El registro se precarga al arrancar, así que aquí ya está.
+    if (p.args && root.DA_ASISTENTES && root.DA_ASISTENTES.porId(verb) && root.DA_ASISTENTES.pideFicha(p.args)) { fichaAsistente(root.DA_ASISTENTES, verb); return; }
     if (verb === 'limpiar' || verb === 'clear' || verb === 'cls') {
       var out = document.getElementById('daLog');
       if (out) out.replaceChildren();
@@ -569,6 +574,7 @@
     }
     asistentes(function (A) {
       var a = A && A.porId(verb);
+      if (a && p.args && A.pideFicha(p.args)) { fichaAsistente(A, verb); return; }
       if (a) { abrirAsistente(a, verb); return; }
       log(lang() === 'en'
         ? 'Unknown verb: /' + verb + ' · type /help'
@@ -576,6 +582,12 @@
     });
   }
 
+  /* «/alfredito descripcion» (Carlos, 27-oct-2026): quién es y sus puntos fuertes, sin abrirlo. */
+  function fichaAsistente(A, id) {
+    var f = A.ficha(id, lang());
+    if (!f) { log(lang() === 'en' ? 'No assistant called «' + id + '» · /asistente lists them' : 'No hay ningún asistente «' + id + '» · /asistente los lista', 'err'); return; }
+    log(f);
+  }
   function abrirAsistente(a, id) {
     if (!a) {
       log(lang() === 'en' ? 'No assistant called «' + id + '» · /asistente lists them' : 'No hay ningún asistente «' + id + '» · /asistente los lista', 'err');

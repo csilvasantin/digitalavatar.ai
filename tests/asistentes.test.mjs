@@ -40,6 +40,29 @@ test('el registro carga y cada asistente tiene id, nombre, textos ES/EN y dónde
   assert.equal(A.lineas('es').length, A.lista.length);
 });
 
+test('cada asistente tiene ficha: quién es y al menos tres puntos fuertes, en ES y EN; /<nombre> descripcion la pide', () => {
+  const A = cargaRegistro();
+  for (const a of A.lista) {
+    assert.ok(a.que && a.que.es && a.que.en, a.id + ' dice quién es');
+    for (const l of ['es', 'en']) assert.ok(Array.isArray(a.fuertes[l]) && a.fuertes[l].length >= 3, a.id + ' con 3+ puntos fuertes en ' + l);
+    assert.equal(a.fuertes.es.length, a.fuertes.en.length, a.id + ': mismos puntos en los dos idiomas');
+  }
+  const f = A.ficha('alfredito', 'es');
+  assert.match(f, /^Comercial · también AlfredIA/, 'la ficha de alfredito es la de Comercial');
+  assert.match(f, /Puntos fuertes:\n· /); assert.match(f, /Abrir: \/comercial$/);
+  assert.match(A.ficha('Neo', 'en'), /^Neo · also MetaHuman\n[\s\S]*Strengths:/);
+  assert.equal(A.ficha('zzz', 'es'), '');
+  for (const w of ['descripcion', 'Descripción', 'description', 'info', 'ficha', 'puntos fuertes', 'strengths']) assert.ok(A.pideFicha(w), w);
+  for (const w of ['crear', 'rompe algo', '']) assert.ok(!A.pideFicha(w), 'no pide ficha: ' + w);
+  assert.match(shell, /fichaAsistente\(A, verb\)/, 'el CLI atiende /<nombre> descripcion');
+  const iFicha = shell.indexOf('root.DA_ASISTENTES.pideFicha(p.args)'), iGo = shell.indexOf('if (GO[verb]) {');
+  assert.ok(iFicha > 0 && iGo > 0 && iFicha < iGo, 'la ficha va por delante de los atajos de página (neo, nube, luna…)');
+  assert.match(shell, /partes\[2\] && A\.pideFicha/, 'el CLI atiende /asistente <nombre> descripcion');
+  assert.match(remote, /pideFicha\(m\[2\]\)/, 'el chat atiende «alfredito descripcion»');
+  assert.match(remote, /resto && A\.pideFicha\(resto\)/, 'el chat atiende /asistente <nombre> descripcion');
+  assert.match(guia, /a\.fuertes\.es\.map/, 'la guía pinta los puntos fuertes');
+});
+
 test('todas las pieles de la nube (PIELES de nube.js) y los tres avatares están en la lista', () => {
   const A = cargaRegistro();
   const bloque = nube.slice(nube.indexOf('var PIELES = {'), nube.indexOf('var PERSONAJE'));
