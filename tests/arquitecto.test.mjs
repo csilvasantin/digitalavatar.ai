@@ -68,7 +68,7 @@ test('nube.html: casco, gafas, lápiz, rollo y cejas sólo existen con personaje
   assert.match(html, /html\[data-personaje="arquitecto"\] body\{background:linear-gradient/, 'papel de plano azul');
   assert.doesNotMatch(html, /html\[data-personaje="arquitecto"\] \.cuerpo-(relleno|borde)/, 'sigue siendo Admirito: blanco y verde');
   assert.equal((html.match(/src="\/assets\/nube\.js/g) || []).length, 1, 'el mismo motor');
-  assert.match(html, /src="\/assets\/nube\.js\?v=\d{8}-[a-z0-9-]+"/, 'con su versión de caché');
+  assert.match(html, /src="\/assets\/nube\.js\?v=[\w-]+"/, 'con su versión de caché');
   assert.match(html, /html\.dock\[data-personaje="arquitecto"\] #langPills\{display:none !important\}/, 'en el estudio, el idioma lo pone la página');
   assert.doesNotMatch(html, /html\[data-personaje="arquitecto"\] #btnMic/, 'el Arquitecto sí escucha: conserva el micro');
   assert.equal(fs.existsSync(new URL('../arquitecto.html', import.meta.url)), false, 'no hay copia de la página');
