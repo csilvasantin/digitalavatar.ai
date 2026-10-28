@@ -80,6 +80,7 @@ test('pase de presentación: cada asistente se presenta en primera persona (ES/E
   assert.match(nube, /window\.__nubeHablando = function \(\) \{ return S\.mode === 'speaking'; \};/, 'y si sigue hablando');
   assert.match(remote, /pidePase\(m\[2\]\)\) \{ iniciarPase\(\); return true; \}/, 'el chat lanza el pase');
   assert.match(remote, /params\.get\('presenta'\) !== null/, 'el chat atiende el turno');
+  assert.match(remote, /function turnoPase\(A\) \{[\s\S]{0,120}flechasPase\(A, i\)/, 'cada turno pinta las flechas ‹ › (28-oct-2026)');
   assert.match(remote, /__nubeHablando\(\) && Date\.now\(\) - t0 < \(paseCada\(\) \+ 20\) \* 1000/, 'espera a que acabe de hablar, con tope');
   assert.ok(remote.indexOf("params.get('presenta') !== null") > remote.indexOf('var params = new URLSearchParams'), 'el turno se atiende después de definir params (27-oct-2026: antes tumbaba todo el fichero)');
   assert.ok(!/var PASE_CADA/.test(remote), 'nada lee params al cargar, antes de que exista');
