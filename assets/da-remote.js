@@ -50,8 +50,46 @@
   function langPase() { var l = params.get('lang'); return l === 'en' || l === 'es' ? l : L(); }
   var pase = { timer: 0, parado: false };
   function pararPase() { pase.parado = true; clearTimeout(pase.timer); }
+  // Flechas ‹ › del pase (Neo, 28-oct-2026: «a la derecha y a la izquierda una flecha con la estética del asistente»):
+  // paran la cuenta y abren el turno anterior o siguiente. Toman --accent/--panel/--line de la página (cada asistente su color).
+  // También con las teclas ← → fuera de la caja de texto.
+  function irTurno(A, n) {
+    pararPase();
+    if (n >= 0 && n < A.lista.length) { location.href = urlTurno(A, n); return; }
+    if (n >= A.lista.length) location.href = '/nube.html' + (params.get('lang') ? '?lang=' + params.get('lang') : '');
+  }
+  function flechasPase(A, i) {
+    if (document.getElementById('paseFlechas')) return;
+    var en = langPase() === 'en';
+    var st = document.createElement('style');
+    st.textContent = '.pase-flecha{position:fixed;top:50%;transform:translateY(-50%);z-index:70;width:54px;height:54px;border-radius:50%;' +
+      'display:flex;align-items:center;justify-content:center;cursor:pointer;font:700 1.9rem/1 ui-sans-serif,-apple-system,system-ui,sans-serif;' +
+      'color:var(--accent,#5fd0ff);background:var(--panel,rgba(10,19,30,.72));border:1px solid var(--line,#1b3346);' +
+      'backdrop-filter:blur(12px);box-shadow:0 12px 34px rgba(0,0,0,.5);transition:border-color .2s,box-shadow .2s,opacity .2s;padding:0 0 4px}' +
+      '.pase-flecha:hover,.pase-flecha:focus-visible{border-color:var(--accent,#5fd0ff);box-shadow:0 0 18px color-mix(in srgb,var(--accent,#5fd0ff) 45%,transparent);outline:0}' +
+      '.pase-flecha.izq{left:max(14px,env(safe-area-inset-left))}.pase-flecha.der{right:max(14px,env(safe-area-inset-right))}' +
+      '.pase-flecha:disabled{opacity:.3;cursor:default;box-shadow:none}' +
+      '@media(max-width:520px){.pase-flecha{width:44px;height:44px;font-size:1.5rem}}';
+    var box = document.createElement('div'); box.id = 'paseFlechas';
+    function boton(cls, txt, label, n, off) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'pase-flecha ' + cls; b.textContent = txt;
+      b.setAttribute('aria-label', label); b.title = label; b.disabled = !!off;
+      b.addEventListener('click', function (e) { e.stopPropagation(); irTurno(A, n); });
+      box.appendChild(b);
+    }
+    var prev = A.lista[i - 1], next = A.lista[i + 1];
+    boton('izq', '\u2039', (en ? 'Previous' : 'Anterior') + (prev ? ': ' + prev.nombre : ''), i - 1, !prev);
+    boton('der', '\u203A', (en ? 'Next' : 'Siguiente') + (next ? ': ' + next.nombre : ''), i + 1, false);
+    (document.head || document.documentElement).appendChild(st); document.body.appendChild(box);
+    document.addEventListener('keydown', function (e) {
+      var t = e.target; if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      if (e.key === 'ArrowLeft' && prev) { e.preventDefault(); irTurno(A, i - 1); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); irTurno(A, i + 1); }
+    });
+  }
   function turnoPase(A) {
     var i = parseInt(params.get('presenta'), 10); var a = A.lista[i]; if (!a) return;
+    flechasPase(A, i);
     document.title = (i + 1) + '/' + A.lista.length + ' · ' + document.title;
     var lp = langPase(); if (lp !== L()) setLang(lp);
     var texto = A.presentacion(a.id, lp) || (a.nombre + ': ' + (lp === 'en' ? a.en : a.es));
