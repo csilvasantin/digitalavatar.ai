@@ -1,4 +1,5 @@
 /* DigitalAvatar.ai · nivel GOOD = Admirito, la nube (GrokBot · MacMini, 6-oct-2026).
+ * ⚠ GENERADO: la fuente está en src/nube/*.js (un archivo por bloque); edita allí y ejecuta npm run nube.
  *
  * Lo opuesto a Neo (best): 2D, SVG + JS, sin 3D ni WebGL; carga al instante.
  *  - Labios: con voz, la boca sigue la amplitud del audio (WebAudio AnalyserNode) y la forma de
