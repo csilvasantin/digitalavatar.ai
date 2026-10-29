@@ -10,6 +10,9 @@ body[data-da-composer=compact] .composer{display:flex;flex-direction:column;gap:
 body[data-da-composer=compact] .composer .hintchips{display:flex!important;gap:5px;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 1px 1px;justify-content:flex-start}
 body[data-da-composer=compact] .composer .hintchips::-webkit-scrollbar{display:none}
 body[data-da-composer=compact] .composer .chip{flex:0 0 auto;font-size:.65rem;padding:3px 9px;border-radius:999px;white-space:nowrap;background:rgba(6,12,20,.55);border:1px solid #2a4558;color:#9bb8cc}
+/* Encargo #7191 (antes #7148/#7183): con dock=1 (panel Comercial de admira.biz, ~390-420 px) los atajos van en varias líneas, enteros y sin scroll oculto. */
+html.dock body[data-da-composer=compact] .composer .hintchips{flex-wrap:wrap;overflow:visible;justify-content:flex-start;row-gap:5px}
+html.dock body[data-da-composer=compact] .composer .chip{flex:0 1 auto;max-width:100%;white-space:normal;text-align:left}
 body[data-da-composer=compact] .composer .chip:hover,body[data-da-composer=compact] .composer .chip:focus-visible{color:#c0f3e6;border-color:#c0f3e6}
 body[data-da-composer=compact] .composer .bar{display:flex;gap:6px;align-items:center;background:transparent;border:0;border-radius:0;padding:0;box-shadow:none;backdrop-filter:none}
 body[data-da-composer=compact] .composer .bar input{flex:1 1 0;min-width:0;min-height:36px;background:#0b171f;border:1px solid #35525f;border-radius:11px;padding:8px 10px;color:#f3fbff;font:13.5px/1.3 system-ui}
