@@ -317,7 +317,7 @@ fetch(API + '/locations', { cache: 'no-store' })
 
 // ── Helpers de UI ─────────────────────────────────────────────────────────────
 function setStatus(msg, cls) {
-  const s = $('status'); s.innerHTML = msg || ''; s.className = 'status' + (cls ? ' ' + cls : '');
+  const s = $('status'); s.textContent = msg || ''; s.className = 'status' + (cls ? ' ' + cls : '');
 }
 function setLiveF(on) { avF?.setLive(on); }
 function setLiveM(on) { avM?.setLive(on); }

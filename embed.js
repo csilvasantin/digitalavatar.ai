@@ -46,6 +46,9 @@ export function mount(cfg = {}) {
     accent: cfg.accent || "#78f3ff",
   };
 
+  // Texto de la config dentro del HTML del widget: escapado (29-oct-2026).
+  const H = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
   const css = `
 #da-av{position:fixed;right:20px;bottom:20px;z-index:2147483000;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 #da-bubble{position:relative;width:64px;height:64px;border-radius:50%;cursor:pointer;border:1px solid ${C.accent}66;background:radial-gradient(circle at 50% 35%,${C.accent}40,#0a1620);box-shadow:0 8px 30px rgba(0,0,0,.5),0 0 24px ${C.accent}40;display:grid;place-items:center;transition:.2s}
@@ -72,13 +75,13 @@ export function mount(cfg = {}) {
 
   const wrap = document.createElement("div"); wrap.id = "da-av";
   wrap.innerHTML = `<style>${css}</style>
-<div id="da-bubble" title="${C.title}"><span class="pulse"></span><b>🤖</b></div>
+<div id="da-bubble" title="${H(C.title)}"><span class="pulse"></span><b>🤖</b></div>
 <div id="da-panel">
   <div id="da-head"><img id="da-still" alt="" src="${SELF}assets/thumb-3d.jpg"><div id="da-ld"></div>
-    <div id="da-hdr"><div class="t"><i></i>${C.title}</div><button class="x" title="cerrar">✕</button></div>
-    <div id="da-cap">${C.greeting}</div>
+    <div id="da-hdr"><div class="t"><i></i>${H(C.title)}</div><button class="x" title="cerrar">✕</button></div>
+    <div id="da-cap">${H(C.greeting)}</div>
   </div>
-  <div id="da-bar"><input id="da-in" placeholder="${C.placeholder}"><button class="da-b" id="da-mic" title="hablar">🎙️</button><button class="da-b" id="da-send" title="enviar">➤</button></div>
+  <div id="da-bar"><input id="da-in" placeholder="${H(C.placeholder)}"><button class="da-b" id="da-mic" title="hablar">🎙️</button><button class="da-b" id="da-send" title="enviar">➤</button></div>
 </div>`;
   document.body.appendChild(wrap);
   const $ = s => wrap.querySelector(s);
