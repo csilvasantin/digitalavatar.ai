@@ -267,23 +267,8 @@
 <link rel="stylesheet" href="/assets/da-conversation-controls.css?v=76d043a620">
 </head>
 <body data-da-stage data-da-composer="compact">
-  <nav id="evo" aria-label="Evolución del avatar">
-    <a data-evo="nube" href="nube.html">Nube</a>
-    <a data-evo="vectorial" href="vectorial.html">Vectorial</a>
-    <a data-evo="2d" href="good.html">2D</a>
-    <a data-evo="3d" href="better.html">3D</a>
-    <a data-evo="foto" href="best.html">Realista</a>
-    <a data-evo="metahuman" href="metahuman.html">Metahuman</a>
-  </nav>
-  <style>
-  #evo{position:fixed;top:9px;left:50%;transform:translateX(-50%);z-index:60;display:flex;flex-wrap:wrap;gap:3px;align-items:center;justify-content:center;max-width:96vw;
-    background:rgba(6,14,24,.82);border:1px solid #1b3346;border-radius:999px;padding:4px 6px;backdrop-filter:blur(10px);
-    font-family:ui-sans-serif,-apple-system,system-ui,sans-serif;box-shadow:0 8px 26px rgba(0,0,0,.5)}
-  #evo a{display:inline-block;padding:5px 12px;border-radius:999px;font-size:.72rem;font-weight:700;text-decoration:none;color:#86a6bd;white-space:nowrap}
-  #evo a.on{background:linear-gradient(180deg,#12466a,#0c2c44);color:#bfe9ff;box-shadow:0 0 12px rgba(95,208,255,.25)}
-  @media(max-width:520px){#evo a{padding:5px 10px;font-size:.68rem}}
-  </style>
-  <script>document.querySelectorAll('#evo a').forEach(function(a){if(a.getAttribute('data-evo')==='nube')a.classList.add('on');});</script>
+  <nav id="evo" aria-label="Evolución del avatar"></nav>
+  <script src="/assets/da-evo.js?v=288c230b8f"></script>
 
   <div id="stage">
     <!-- Bocadillo (7-oct-2026): la respuesta sale encima de la nube, con pico hacia ella. -->
