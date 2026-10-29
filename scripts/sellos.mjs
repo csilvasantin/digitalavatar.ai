@@ -6,13 +6,13 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 
 const RAIZ = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
-const FUERA = new Set(['.git', 'node_modules', 'roadmap', 'web-tester', 'workers', 'unreal', 'tests', 'scripts']);
+const FUERA = new Set(['.git', 'node_modules', 'roadmap/assets', 'web-tester', 'workers', 'unreal', 'tests', 'scripts']);
 const REF = /(\/?assets\/([\w.-]+\.(?:js|css)))\?v=([\w-]+)/g;
 
 function archivos(dir = RAIZ, out = []) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (FUERA.has(e.name)) continue;
     const p = path.join(dir, e.name);
+    if (FUERA.has(e.name) || FUERA.has(path.relative(RAIZ, p))) continue;
     if (e.isDirectory()) archivos(p, out);
     else if (/\.(html|js)$/.test(e.name)) out.push(p);
   }
