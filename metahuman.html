@@ -61,6 +61,7 @@
 <link rel="stylesheet" href="/assets/da-conversation-controls.css?v=76d043a620">
 </head>
 <body data-da-composer="compact">
+<noscript><p style="position:fixed;inset:auto 0 0 0;margin:0;padding:12px 16px;background:#3a0f22;color:#ffd6e2;font:14px system-ui,sans-serif;text-align:center;z-index:99">El avatar necesita JavaScript activado. · The avatar needs JavaScript enabled.</p></noscript>
   <nav id="evo" aria-label="Evolución del avatar"></nav>
   <script src="/assets/da-evo.js?v=288c230b8f"></script>
 
@@ -96,7 +97,7 @@
         <div class="composer" id="composer">
         <div class="hintchips chips" id="daChips" role="list" aria-label="Sugerencias"></div>
         <div class="askrow bar">
-          <input id="q" type="text" data-i18n-ph="qPh" placeholder="Pregúntale algo a Neo…" autocomplete="off">
+          <input id="q" aria-label="Pregunta al avatar" type="text" data-i18n-ph="qPh" placeholder="Pregúntale algo a Neo…" autocomplete="off">
           <div class="lang-pills" id="langPills" role="group" aria-label="Idioma del avatar">
             <button type="button" data-lang="es" aria-label="Español" aria-pressed="true">ESP</button>
             <button type="button" data-lang="en" aria-label="English" aria-pressed="false">ENG</button>

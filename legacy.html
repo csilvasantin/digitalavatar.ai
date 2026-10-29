@@ -72,6 +72,7 @@
 <script defer src="/assets/da-shell.js?v=ef28091f58" data-section="/ legacy" data-section-en="/ legacy"></script>
 </head>
 <body>
+<noscript><p style="position:fixed;inset:auto 0 0 0;margin:0;padding:12px 16px;background:#3a0f22;color:#ffd6e2;font:14px system-ui,sans-serif;text-align:center;z-index:99">El avatar necesita JavaScript activado. · The avatar needs JavaScript enabled.</p></noscript>
   <div class="toggles">
     <div class="seg" id="langSeg"><button id="langEs">ES</button><button id="langEn">EN</button></div>
   </div>
@@ -109,8 +110,8 @@
     <select id="loc"></select>
     <label for="q" id="qLabel"></label>
     <textarea id="q"></textarea>
-    <div class="answer" id="answer"></div>
-    <div class="status" id="status"></div>
+    <div class="answer" id="answer" aria-live="polite"></div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
     <p class="foot" id="foot"></p>
   </div>
 

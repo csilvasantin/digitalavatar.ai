@@ -98,6 +98,7 @@
 <link rel="stylesheet" href="/assets/da-conversation-controls.css?v=76d043a620">
 </head>
 <body data-da-stage data-da-composer="compact">
+<noscript><p style="position:fixed;inset:auto 0 0 0;margin:0;padding:12px 16px;background:#3a0f22;color:#ffd6e2;font:14px system-ui,sans-serif;text-align:center;z-index:99">El avatar necesita JavaScript activado. · The avatar needs JavaScript enabled.</p></noscript>
   <!-- Conmutador de EVOLUCIÓN (good→better→best) · histórico siempre accesible -->
   <nav id="evo" aria-label="Evolución del avatar"></nav>
   <script src="/assets/da-evo.js?v=288c230b8f"></script>
@@ -127,7 +128,7 @@
       </div>
     </div>
     <div class="meta"><select id="loc"></select></div>
-    <div class="status" id="status"></div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
   </div>
 
   <div class="khint" id="khint">👆 Tócame o háblame</div>
@@ -138,7 +139,7 @@
     <div id="fallback">
       <div class="t">No se pudo cargar el avatar Ready Player Me</div>
       <div class="s">Pega la URL .glb de tu avatar RPM (créalo gratis en readyplayer.me) o usa la versión 3D, que siempre funciona.</div>
-      <input id="rpmUrl" placeholder="https://models.readyplayer.me/XXXX.glb" autocomplete="off">
+      <input id="rpmUrl" aria-label="URL del modelo Ready Player Me (.glb)" placeholder="https://models.readyplayer.me/XXXX.glb" autocomplete="off">
       <button id="rpmLoad">Cargar ese avatar</button>
       <a href="better.html">▶ Usar la versión 3D (estable)</a>
     </div>
@@ -431,10 +432,11 @@ function resetAttract(){ if(!KIOSK) return; clearTimeout(attractTimer); attractT
 function attract(){ if(!KIOSK||MUTED){ return; } if(speaking||listening){ resetAttract(); return; } const list=DACTX.idle(ATTRACT[LANG]||ATTRACT.es); speakFixed(list[attractIdx%list.length]); attractIdx++; }
 
 let recog=null, listening=false;
-function initSpeech(){ const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){ $('btnMic').disabled=true; return; }
+function micAviso(code){ if(code==='aborted') return; const en=LANG==='en'; const m=code==='unsupported'?(en?'This browser has no dictation: type your question.':'Este navegador no tiene dictado: escribe la pregunta.'):(code==='not-allowed'||code==='service-not-allowed')?(en?'Microphone blocked: allow it in the browser or type.':'Micrófono bloqueado: permítelo en el navegador o escribe.'):code==='no-speech'?(en?'I heard nothing. Try again or type.':'No te he oído. Prueba otra vez o escribe.'):(en?'The microphone failed. Type your question.':'No se pudo usar el micrófono. Escribe la pregunta.'); setStatus(m, code==='no-speech'?'warn':'err'); }
+function initSpeech(){ const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){ const b=$('btnMic'); b.disabled=true; b.title=LANG==='en'?'No dictation in this browser: type':'Sin dictado en este navegador: escribe'; return; }
   recog=new SR(); recog.interimResults=true; recog.maxAlternatives=1;
   recog.onresult=(e)=>{ let t=''; for(let i=e.resultIndex;i<e.results.length;i++) t+=e.results[i][0].transcript; $('q').value=t; if(e.results[e.results.length-1].isFinal){ stopListen(); ask(t); } };
-  recog.onerror=()=>stopListen(); recog.onend=()=>{ if(listening) stopListen(); }; }
+  recog.onerror=e=>{ stopListen(); micAviso(e&&e.error); }; recog.onend=()=>{ if(listening) stopListen(); }; }
 function startListen(){ if(!recog){ setStatus(T[LANG].micNo,'warn'); return; } try{ recog.lang=T[LANG].speechLang; recog.start(); listening=true; $('btnMic').classList.add('live'); setStatus(T[LANG].listening);}catch(e){} }
 function stopListen(){ listening=false; $('btnMic').classList.remove('live'); try{recog.stop();}catch(e){} if($('status').textContent===T[LANG].listening) setStatus(''); }
 function toggleListen(){ listening?stopListen():startListen(); }

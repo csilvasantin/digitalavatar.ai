@@ -40,6 +40,7 @@
 <script defer src="/assets/da-shell.js?v=ef28091f58" data-section="/ vectorial" data-section-en="/ vector"></script>
 </head>
 <body data-da-stage>
+<noscript><p style="position:fixed;inset:auto 0 0 0;margin:0;padding:12px 16px;background:#3a0f22;color:#ffd6e2;font:14px system-ui,sans-serif;text-align:center;z-index:99">El avatar necesita JavaScript activado. · The avatar needs JavaScript enabled.</p></noscript>
   <!-- Conmutador de EVOLUCIÓN -->
   <nav id="evo" aria-label="Evolución del avatar"></nav>
   <script src="/assets/da-evo.js?v=288c230b8f"></script>
@@ -55,12 +56,12 @@
   <div class="console">
     <div class="caption" id="caption"></div>
     <div class="bar">
-      <input id="q" autocomplete="off">
+      <input id="q" aria-label="Pregunta al avatar" autocomplete="off">
       <button class="iconbtn mic" id="btnMic" title="Hablar" aria-label="Micrófono"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></button>
       <button class="iconbtn send" id="btnSend" title="Enviar">➤</button>
     </div>
     <div class="meta"><select id="loc"></select></div>
-    <div class="status" id="status"></div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
   </div>
 
 <script src="lipsync-avatar.js"></script>
@@ -94,10 +95,11 @@ async function ask(question){ question=(question||$('q').value).trim(); if(!ques
 function greet(){ setCaption(T[LANG].greet); fetch(API+'/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:T[LANG].greet,lang:LANG,voiceId:VOICES[LANG]||''})}).then(r=>r.json()).then(j=>{ if(j.ok&&j.audioBase64){ audioEl=new Audio('data:'+(j.mime||'audio/mpeg')+';base64,'+j.audioBase64); avatar.ensureAudio(); avatar.connectAudioElement(audioEl); audioEl.play().catch(()=>{}); } }).catch(()=>{}); }
 
 let recog=null,listening=false;
-function initSpeech(){ const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){ $('btnMic').disabled=true; return; }
+function micAviso(code){ if(code==='aborted') return; const en=LANG==='en'; const m=code==='unsupported'?(en?'This browser has no dictation: type your question.':'Este navegador no tiene dictado: escribe la pregunta.'):(code==='not-allowed'||code==='service-not-allowed')?(en?'Microphone blocked: allow it in the browser or type.':'Micrófono bloqueado: permítelo en el navegador o escribe.'):code==='no-speech'?(en?'I heard nothing. Try again or type.':'No te he oído. Prueba otra vez o escribe.'):(en?'The microphone failed. Type your question.':'No se pudo usar el micrófono. Escribe la pregunta.'); setStatus(m, code==='no-speech'?'warn':'err'); }
+function initSpeech(){ const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){ const b=$('btnMic'); b.disabled=true; b.title=LANG==='en'?'No dictation in this browser: type':'Sin dictado en este navegador: escribe'; return; }
   recog=new SR(); recog.interimResults=true; recog.maxAlternatives=1;
   recog.onresult=(e)=>{ let t=''; for(let i=e.resultIndex;i<e.results.length;i++) t+=e.results[i][0].transcript; $('q').value=t; if(e.results[e.results.length-1].isFinal){ stopListen(); ask(t); } };
-  recog.onerror=()=>stopListen(); recog.onend=()=>{ if(listening) stopListen(); }; }
+  recog.onerror=e=>{ stopListen(); micAviso(e&&e.error); }; recog.onend=()=>{ if(listening) stopListen(); }; }
 function startListen(){ if(!recog){return;} try{ recog.lang=T[LANG].speech; recog.start(); listening=true; $('btnMic').classList.add('live'); setStatus(T[LANG].listen);}catch(e){} }
 function stopListen(){ listening=false; $('btnMic').classList.remove('live'); try{recog.stop();}catch(e){} if($('status').textContent===T[LANG].listen) setStatus(''); }
 

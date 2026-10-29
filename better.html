@@ -88,6 +88,7 @@
 <link rel="stylesheet" href="/assets/da-conversation-controls.css?v=76d043a620">
 </head>
 <body data-da-stage>
+<noscript><p style="position:fixed;inset:auto 0 0 0;margin:0;padding:12px 16px;background:#3a0f22;color:#ffd6e2;font:14px system-ui,sans-serif;text-align:center;z-index:99">El avatar necesita JavaScript activado. · The avatar needs JavaScript enabled.</p></noscript>
   <!-- Conmutador de EVOLUCIÓN (good→better→best) · histórico siempre accesible -->
   <nav id="evo" aria-label="Evolución del avatar"></nav>
   <script src="/assets/da-evo.js?v=288c230b8f"></script>
@@ -103,7 +104,7 @@
     <div class="caption" id="caption"></div>
     <div class="hintchips" id="chips"></div>
     <div class="bar">
-      <input id="q" autocomplete="off">
+      <input id="q" aria-label="Pregunta al avatar" autocomplete="off">
       <button class="iconbtn mic" id="btnMic" title="Hablar" aria-label="Micrófono"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></button>
       <button class="iconbtn stop" id="btnStop" title="Cortar la voz">■</button>
       <button class="iconbtn send" id="btnSend" title="Enviar">➤</button>
@@ -111,7 +112,7 @@
     <div class="meta">
       <select id="loc"></select>
     </div>
-    <div class="status" id="status"></div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
   </div>
 
   <div id="load"><div class="ring"></div><div class="lt" id="loadt">Cargando avatar…</div></div>
