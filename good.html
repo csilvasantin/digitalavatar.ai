@@ -76,6 +76,7 @@
 <script defer src="https://www.admiranext.com/assets/sello-novedades.js?v=20261006-sello-1" data-target="#daVersion" data-floating="off"></script>
 </head>
 <body>
+<noscript><p style="position:fixed;inset:auto 0 0 0;margin:0;padding:12px 16px;background:#3a0f22;color:#ffd6e2;font:14px system-ui,sans-serif;text-align:center;z-index:99">El avatar necesita JavaScript activado. · The avatar needs JavaScript enabled.</p></noscript>
   <!-- Conmutador de EVOLUCIÓN (good→better→best) · histórico siempre accesible -->
   <nav id="evo" aria-label="Evolución del avatar"></nav>
   <script src="/assets/da-evo.js?v=288c230b8f"></script>
@@ -119,8 +120,8 @@
     <select id="loc"></select>
     <label for="q" id="qLabel"></label>
     <textarea id="q"></textarea>
-    <div class="answer" id="answer"></div>
-    <div class="status" id="status"></div>
+    <div class="answer" id="answer" aria-live="polite"></div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
     <p class="foot" id="foot"></p>
   </div>
 
