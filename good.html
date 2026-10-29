@@ -189,7 +189,7 @@ avatarF.start(); avatarM.start();
 let askAudio=null, synthF=null, synthM=null;
 function setLiveF(on){ $('insF').classList.toggle('on',on); $('insF').querySelector('.lt').textContent = on?T[LANG].speaking:T[LANG].live; }
 function setLiveM(on){ $('insM').classList.toggle('on',on); $('insM').querySelector('.lt').textContent = on?T[LANG].speaking:T[LANG].live; }
-function setStatus(m,c){ const s=$('status'); s.innerHTML=m||''; s.className='status'+(c?' '+c:''); }
+function setStatus(m,c){ const s=$('status'); s.textContent=m||''; s.className='status'+(c?' '+c:''); }
 
 function setVideo(vid, gender){
   const k=vkey(gender), want='assets/avatar-'+k+'.mp4';
