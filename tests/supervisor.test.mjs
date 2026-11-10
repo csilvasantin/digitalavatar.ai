@@ -114,6 +114,29 @@ test('lo que se le dice se traduce a las órdenes del verbo /supervisor (estado 
   for (const t of ['hola', 'cuéntame un chiste', '']) assert.equal(o(t), null, t);
 });
 
+test('Monitoriza (Carlos, 10-nov-2026): chip propio, orden «monitorizar» al anfitrión (que repite el parte cada minuto) y «para» la corta', () => {
+  assert.match(nube, /chips: \['¿Qué ves\?', '¿Hay incidencias\?', 'Abre la cámara', '¿Quién eres\?', 'Monitoriza'\]/, 'el chip va al lado de «¿Quién eres?»');
+  assert.match(nube, /chips: \['What do you see\?', 'Any incidents\?', 'Open the camera', 'Who are you\?', 'Monitor'\]/);
+  const { win } = carga();
+  const o = win.__supervisor.orden;
+  for (const t of ['Monitoriza', 'monitoriza la pantalla', 'Monitor', 'vigila la pantalla', 'keep an eye on it', 'mira cada minuto', '/supervisor monitoriza']) assert.equal(o(t), 'monitorizar', t);
+  for (const t of ['Para', 'parar', 'stop', 'basta', 'deja de vigilar']) assert.equal(o(t), 'parar', t);
+  assert.equal(o('¿Qué ves?'), 'estado', 'las órdenes de siempre no cambian');
+  const s = carga();
+  s.win.__supervisor.ask('Monitoriza');
+  assert.equal(s.win.__nube().piel, 'vigilando', 'se queda de guardia');
+  assert.equal(s.win.__nube().speaking, true, 'y lo dice');
+  s.win.__supervisor.ask('Para');
+  assert.deepEqual(s.posts.filter(([m]) => m.type === 'da-supervisor-orden').map(plano), [
+    [{ type: 'da-supervisor-orden', orden: 'monitorizar', texto: 'Monitoriza', lang: 'es' }, 'https://www.admiranext.com'],
+    [{ type: 'da-supervisor-orden', orden: 'parar', texto: 'Para', lang: 'es' }, 'https://www.admiranext.com']
+  ]);
+  assert.equal(s.fetches.length, 0, 'sigue sin preguntar al cerebro');
+  const en = carga({ search: '?personaje=supervisor&embed=1&lang=en', lang: 'en' });
+  en.win.__supervisor.ask('Monitor');
+  assert.equal(en.posts.filter(([m]) => m.type === 'da-supervisor-orden').at(-1)[0].orden, 'monitorizar');
+});
+
 test('nunca pregunta al cerebro: las órdenes van al anfitrión y la charla la contesta él', () => {
   const s = carga();
   s.win.__supervisor.ask('¿Qué ves?');

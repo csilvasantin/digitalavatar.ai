@@ -71,10 +71,10 @@
       en: { tag: 'The Architect · Admirito in a hard hat', placeholder: 'Describe the space, typed or with the mic: “create a coffee shop”, “renovate the back wall”…',
         aria: 'The Architect: Admirito with a yellow hard hat, glasses, pencil and blueprint roll', chips: ['Create a Xpace', 'Renovate this space', 'Survey from a photo', 'Who are you?'] } } },
     supervisor: { textos: {
-      es: { tag: 'El Supervisor · el ojo que vigila el MBP16', placeholder: 'Pregúntame «¿qué ves?» o pídeme «abre la cámara»…',
-        aria: 'El Supervisor: Admirito con gorra de vigilante y un ojo de cámara', chips: ['¿Qué ves?', '¿Hay incidencias?', 'Abre la cámara', '¿Quién eres?'] },
-      en: { tag: 'The Supervisor · the eye on the MBP16', placeholder: 'Ask me “what do you see?” or “open the camera”…',
-        aria: 'The Supervisor: Admirito with a security cap and a camera eye', chips: ['What do you see?', 'Any incidents?', 'Open the camera', 'Who are you?'] } } },
+      es: { tag: 'El Supervisor · el ojo que vigila el MBP16', placeholder: 'Pregúntame «¿qué ves?», pídeme «abre la cámara» o «monitoriza»…',
+        aria: 'El Supervisor: Admirito con gorra de vigilante y un ojo de cámara', chips: ['¿Qué ves?', '¿Hay incidencias?', 'Abre la cámara', '¿Quién eres?', 'Monitoriza'] },
+      en: { tag: 'The Supervisor · the eye on the MBP16', placeholder: 'Ask me “what do you see?”, “open the camera” or “monitor”…',
+        aria: 'The Supervisor: Admirito with a security cap and a camera eye', chips: ['What do you see?', 'Any incidents?', 'Open the camera', 'Who are you?', 'Monitor'] } } },
     comercial: { textos: {
       es: { tag: 'Comercial · Admirito con corbata y maletín', placeholder: 'Cuéntame la campaña, escrita o con el micro: «para Café Rico, lanzar el frappé, jóvenes, 2.000 euros, del 20 al 26 de octubre»…',
         aria: 'Comercial: Admirito con corbata y maletín', chips: ['Vender una campaña', 'Captar un comercio', 'Prepara la propuesta', '¿Quién eres?'] },
@@ -1131,10 +1131,11 @@
       ciego: ['No veo bien: hay alguien delante o poca luz.', 'Apartaos un poco, que no veo la pantalla.'],
       'sin-senal': ['Sin señal: ahora mismo no estoy mirando.', 'Mi tablero no publica… no puedo decir qué pasa.'],
       pedidoEstado: 'A ver qué veo…', pedidoCamara: 'Abro la cámara con sus controles.',
+      pedidoMonitor: 'Me quedo de guardia: miro la pantalla cada minuto y te cuento qué pasa.', pedidoParar: 'Vale, dejo de vigilar.',
       sinAnfitrion: 'Desde aquí no veo nada: ábreme en el ⌘ Experto (/supervisor estado) o en el banco de admira.biz/bugito.html.',
       charla: ['Yo sólo miro: pregúntame «¿qué ves?» o pídeme «abre la cámara».', 'Para charlar está Admirito; yo vigilo la pantalla.', 'Shhh… estoy de guardia. ¿Te digo qué veo?'],
       quien: '¡Hola! Soy el Supervisor: Admirito con gorra de vigilante y un ojo de cámara. Desde la Insta360 del MacMini miro la pantalla del MBP16 del laboratorio y, si falla, abro la incidencia en admira.app/supervisor.',
-      ayuda: 'Supervisor · órdenes\n¿Qué ves? · ¿Hay incidencias? — mi parte (como /supervisor estado)\nAbre la cámara — la Insta360 con sus controles (como /supervisor)\n/quien soy — quién soy\n/animacion help — mis bailes (los de Admirito)\nMi tablero: admira.app/supervisor'
+      ayuda: 'Supervisor · órdenes\n¿Qué ves? · ¿Hay incidencias? — mi parte (como /supervisor estado)\nAbre la cámara — la Insta360 con sus controles (como /supervisor)\nMonitoriza — miro la pantalla cada minuto y te cuento qué pasa (como /supervisor cada 60) · Para — dejo de vigilar\n/quien soy — quién soy\n/animacion help — mis bailes (los de Admirito)\nMi tablero: admira.app/supervisor'
     },
     en: {
       vigilando: ['Eyes peeled.', 'Here I am, watching the MBP16.', 'If that screen fails, I write it down.'],
@@ -1146,10 +1147,11 @@
       ciego: ['I can\'t see well: someone in front or low light.', 'Step aside a little, I can\'t see the screen.'],
       'sin-senal': ['No signal: I am not watching right now.', 'My board is not publishing… I can\'t tell what is going on.'],
       pedidoEstado: 'Let me see…', pedidoCamara: 'Opening the camera with its controls.',
+      pedidoMonitor: 'On duty: I look at the screen every minute and tell you what is going on.', pedidoParar: 'OK, I stop watching.',
       sinAnfitrion: 'I can\'t see anything from here: open me in the ⌘ Expert (/supervisor status) or on the admira.biz/bugito.html bench.',
       charla: ['I only watch: ask me “what do you see?” or “open the camera”.', 'Admirito is the chatty one; I keep an eye on the screen.', 'Shhh… I\'m on duty. Shall I tell you what I see?'],
       quien: 'Hi! I\'m the Supervisor: Admirito with a security cap and a camera eye. From the Mac mini Insta360 I watch the lab MBP16 screen and, if it fails, I open the incident at admira.app/supervisor.',
-      ayuda: 'Supervisor · commands\nWhat do you see? · Any incidents? — my report (like /supervisor status)\nOpen the camera — the Insta360 with its controls (like /supervisor)\n/quien soy — who I am\n/animacion help — my dances (Admirito\'s)\nMy board: admira.app/supervisor'
+      ayuda: 'Supervisor · commands\nWhat do you see? · Any incidents? — my report (like /supervisor status)\nOpen the camera — the Insta360 with its controls (like /supervisor)\nMonitor — I look at the screen every minute and tell you what is going on (like /supervisor every 60) · Stop — I stop watching\n/quien soy — who I am\n/animacion help — my dances (Admirito\'s)\nMy board: admira.app/supervisor'
     }
   };
   var SUP = PERSONAJE === 'supervisor' ? { estado: 'vigilando', t: 0, clock: 0, ceja: 0, alto: 0, iris: 5.8, giro: 0, efectoT: 0, pintado: '' } : null;
@@ -1176,6 +1178,9 @@
   function supervisorOrden(text) {
     var n = supNorm(text), slash = /^\/\s*supervis/.test(n), t = n.replace(/^\/\s*(supervisor|supervisa)\b\s*/, '');
     if (!t) return slash ? 'camara' : null;
+    // Monitoriza (10-nov-2026): el anfitrión repite el parte cada minuto (Ojos remotos: /supervisor cada 60); «para» lo corta.
+    if (/^(para|parar|basta|stop|deja de|dejalo|ya esta)\b/.test(t)) return 'parar';
+    if (/monitoriz|monitor\b|vigila|keep an eye|^watch|cada minuto|every minute/.test(t)) return 'monitorizar';
     if (/^(estado|status|parte|report)\b|que ves|what do you see|what can you see|que pasa|como esta|incidenc|incident|tablero|board|pantalla|screen/.test(t)) return 'estado';
     if (/camara|camera|insta ?360|controles|controls|en vivo|\blive\b|^abre|^open/.test(t)) return 'camara';
     return null;
@@ -1191,6 +1196,8 @@
     if (window.self === window.top || !host) { supDecir(supF().sinAnfitrion); return; }
     try { window.parent.postMessage({ type: 'da-supervisor-orden', orden: orden, texto: q.slice(0, 500), lang: LANG }, host); } catch (_) { supDecir(supF().sinAnfitrion); return; }
     if (orden === 'estado') supEstado('enfocando', { texto: supF().pedidoEstado });
+    else if (orden === 'monitorizar') supEstado('vigilando', { texto: supF().pedidoMonitor });
+    else if (orden === 'parar') supDecir(supF().pedidoParar);
     else supDecir(supF().pedidoCamara);
   }
   // Estado que manda el anfitrión (o el propio Supervisor): entra con su gesto y dice su frase con lip-sync.
