@@ -71,10 +71,10 @@
       en: { tag: 'The Architect · Admirito in a hard hat', placeholder: 'Describe the space, typed or with the mic: “create a coffee shop”, “renovate the back wall”…',
         aria: 'The Architect: Admirito with a yellow hard hat, glasses, pencil and blueprint roll', chips: ['Create a Xpace', 'Renovate this space', 'Survey from a photo', 'Who are you?'] } } },
     supervisor: { textos: {
-      es: { tag: 'El Supervisor · el ojo que vigila el MBP16', placeholder: 'Pregúntame «¿qué ves?» o pídeme «abre la cámara»…',
-        aria: 'El Supervisor: Admirito con gorra de vigilante y un ojo de cámara', chips: ['¿Qué ves?', '¿Hay incidencias?', 'Abre la cámara', '¿Quién eres?'] },
-      en: { tag: 'The Supervisor · the eye on the MBP16', placeholder: 'Ask me “what do you see?” or “open the camera”…',
-        aria: 'The Supervisor: Admirito with a security cap and a camera eye', chips: ['What do you see?', 'Any incidents?', 'Open the camera', 'Who are you?'] } } },
+      es: { tag: 'El Supervisor · el ojo que vigila el MBP16', placeholder: 'Pregúntame «¿qué ves?», pídeme «abre la cámara» o «monitoriza»…',
+        aria: 'El Supervisor: Admirito con gorra de vigilante y un ojo de cámara', chips: ['¿Qué ves?', '¿Hay incidencias?', 'Abre la cámara', '¿Quién eres?', 'Monitoriza'] },
+      en: { tag: 'The Supervisor · the eye on the MBP16', placeholder: 'Ask me “what do you see?”, “open the camera” or “monitor”…',
+        aria: 'The Supervisor: Admirito with a security cap and a camera eye', chips: ['What do you see?', 'Any incidents?', 'Open the camera', 'Who are you?', 'Monitor'] } } },
     comercial: { textos: {
       es: { tag: 'Comercial · Admirito con corbata y maletín', placeholder: 'Cuéntame la campaña, escrita o con el micro: «para Café Rico, lanzar el frappé, jóvenes, 2.000 euros, del 20 al 26 de octubre»…',
         aria: 'Comercial: Admirito con corbata y maletín', chips: ['Vender una campaña', 'Captar un comercio', 'Prepara la propuesta', '¿Quién eres?'] },
