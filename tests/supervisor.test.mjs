@@ -108,8 +108,9 @@ test('frases honestas: la alerta sólo cita incidencia si el anfitrión trae un 
 test('lo que se le dice se traduce a las órdenes del verbo /supervisor (estado o cámara) o es charla', () => {
   const { win } = carga();
   const o = win.__supervisor.orden;
-  for (const t of ['¿Qué ves?', 'que ves', '¿Hay incidencias?', 'What do you see?', 'Any incidents?', '/supervisor estado', '/supervisor status', '¿cómo está la pantalla?'])
+  for (const t of ['¿Qué ves?', 'que ves', '¿Hay incidencias?', 'What do you see?', 'Any incidents?', '/supervisor estado', '/supervisor status', 'tablero'])
     assert.equal(o(t), 'estado', t);
+  assert.equal(o('¿cómo está la pantalla?'), 'pregunta', 'desde el 10-nov-2026 una pregunta sobre la pantalla la contesta el anfitrión con la foto');
   for (const t of ['Abre la cámara', 'Open the camera', '/supervisor', 'quiero ver la Insta360', 'la cámara en vivo']) assert.equal(o(t), 'camara', t);
   for (const t of ['hola', 'cuéntame un chiste', '']) assert.equal(o(t), null, t);
 });
@@ -135,6 +136,22 @@ test('Monitoriza (Carlos, 10-nov-2026): chip propio, orden «monitorizar» al an
   const en = carga({ search: '?personaje=supervisor&embed=1&lang=en', lang: 'en' });
   en.win.__supervisor.ask('Monitor');
   assert.equal(en.posts.filter(([m]) => m.type === 'da-supervisor-orden').at(-1)[0].orden, 'monitorizar');
+});
+
+test('preguntas libres (Carlos, 10-nov-2026 13:05): lo que parece una pregunta va al anfitrión como «pregunta» con su texto; la charla sigue siendo charla', () => {
+  const { win } = carga();
+  const o = win.__supervisor.orden;
+  for (const t of ['¿Cuánta gente hay en la pantalla?', 'cuantas personas ves', 'dime qué pone en la pizarra', 'How many people are on the screen?', 'is there anyone in front', 'lee el texto de la pantalla']) assert.equal(o(t), 'pregunta', t);
+  for (const t of ['¿Qué ves?', '¿Hay incidencias?', 'que ves ahora', '/supervisor estado']) assert.equal(o(t), 'estado', t + ' sigue siendo el parte');
+  for (const t of ['Abre la cámara', 'Monitoriza', 'Para']) assert.notEqual(o(t), 'pregunta', t);
+  for (const t of ['hola', 'cuéntame un chiste', 'gracias', '']) assert.equal(o(t), null, t + ' es charla');
+  const s = carga();
+  s.win.__supervisor.ask('¿Cuánta gente hay en la pantalla?');
+  assert.equal(s.win.__nube().piel, 'enfocando', 'mira para contestar');
+  assert.deepEqual(s.posts.filter(([m]) => m.type === 'da-supervisor-orden').map(plano), [
+    [{ type: 'da-supervisor-orden', orden: 'pregunta', texto: '¿Cuánta gente hay en la pantalla?', lang: 'es' }, 'https://www.admiranext.com']
+  ]);
+  assert.equal(s.fetches.length, 0, 'sigue sin preguntar al cerebro: contesta el anfitrión con la foto');
 });
 
 test('nunca pregunta al cerebro: las órdenes van al anfitrión y la charla la contesta él', () => {

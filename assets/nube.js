@@ -1131,11 +1131,11 @@
       ciego: ['No veo bien: hay alguien delante o poca luz.', 'Apartaos un poco, que no veo la pantalla.'],
       'sin-senal': ['Sin señal: ahora mismo no estoy mirando.', 'Mi tablero no publica… no puedo decir qué pasa.'],
       pedidoEstado: 'A ver qué veo…', pedidoCamara: 'Abro la cámara con sus controles.',
-      pedidoMonitor: 'Me quedo de guardia: miro la pantalla cada minuto y te cuento qué pasa.', pedidoParar: 'Vale, dejo de vigilar.',
+      pedidoMonitor: 'Me quedo de guardia: miro la pantalla cada minuto y te cuento qué pasa.', pedidoParar: 'Vale, dejo de vigilar.', pedidoPregunta: 'Miro y te contesto…',
       sinAnfitrion: 'Desde aquí no veo nada: ábreme en el ⌘ Experto (/supervisor estado) o en el banco de admira.biz/bugito.html.',
       charla: ['Yo sólo miro: pregúntame «¿qué ves?» o pídeme «abre la cámara».', 'Para charlar está Admirito; yo vigilo la pantalla.', 'Shhh… estoy de guardia. ¿Te digo qué veo?'],
       quien: '¡Hola! Soy el Supervisor: Admirito con gorra de vigilante y un ojo de cámara. Desde la Insta360 del MacMini miro la pantalla del MBP16 del laboratorio y, si falla, abro la incidencia en admira.app/supervisor.',
-      ayuda: 'Supervisor · órdenes\n¿Qué ves? · ¿Hay incidencias? — mi parte (como /supervisor estado)\nAbre la cámara — la Insta360 con sus controles (como /supervisor)\nMonitoriza — miro la pantalla cada minuto y te cuento qué pasa (como /supervisor cada 60) · Para — dejo de vigilar\n/quien soy — quién soy\n/animacion help — mis bailes (los de Admirito)\nMi tablero: admira.app/supervisor'
+      ayuda: 'Supervisor · órdenes\n¿Qué ves? · ¿Hay incidencias? — mi parte (como /supervisor estado)\nAbre la cámara — la Insta360 con sus controles (como /supervisor)\nMonitoriza — miro la pantalla cada minuto y te cuento qué pasa (como /supervisor cada 60) · Para — dejo de vigilar\nPregúntame lo que quieras sobre lo que veo («¿cuánta gente hay en la pantalla?»): miro la foto y te contesto\n/quien soy — quién soy\n/animacion help — mis bailes (los de Admirito)\nMi tablero: admira.app/supervisor'
     },
     en: {
       vigilando: ['Eyes peeled.', 'Here I am, watching the MBP16.', 'If that screen fails, I write it down.'],
@@ -1147,11 +1147,11 @@
       ciego: ['I can\'t see well: someone in front or low light.', 'Step aside a little, I can\'t see the screen.'],
       'sin-senal': ['No signal: I am not watching right now.', 'My board is not publishing… I can\'t tell what is going on.'],
       pedidoEstado: 'Let me see…', pedidoCamara: 'Opening the camera with its controls.',
-      pedidoMonitor: 'On duty: I look at the screen every minute and tell you what is going on.', pedidoParar: 'OK, I stop watching.',
+      pedidoMonitor: 'On duty: I look at the screen every minute and tell you what is going on.', pedidoParar: 'OK, I stop watching.', pedidoPregunta: 'Let me look and answer…',
       sinAnfitrion: 'I can\'t see anything from here: open me in the ⌘ Expert (/supervisor status) or on the admira.biz/bugito.html bench.',
       charla: ['I only watch: ask me “what do you see?” or “open the camera”.', 'Admirito is the chatty one; I keep an eye on the screen.', 'Shhh… I\'m on duty. Shall I tell you what I see?'],
       quien: 'Hi! I\'m the Supervisor: Admirito with a security cap and a camera eye. From the Mac mini Insta360 I watch the lab MBP16 screen and, if it fails, I open the incident at admira.app/supervisor.',
-      ayuda: 'Supervisor · commands\nWhat do you see? · Any incidents? — my report (like /supervisor status)\nOpen the camera — the Insta360 with its controls (like /supervisor)\nMonitor — I look at the screen every minute and tell you what is going on (like /supervisor every 60) · Stop — I stop watching\n/quien soy — who I am\n/animacion help — my dances (Admirito\'s)\nMy board: admira.app/supervisor'
+      ayuda: 'Supervisor · commands\nWhat do you see? · Any incidents? — my report (like /supervisor status)\nOpen the camera — the Insta360 with its controls (like /supervisor)\nMonitor — I look at the screen every minute and tell you what is going on (like /supervisor every 60) · Stop — I stop watching\nAsk me anything about what I see (“how many people are on the screen?”): I look at the photo and answer\n/quien soy — who I am\n/animacion help — my dances (Admirito\'s)\nMy board: admira.app/supervisor'
     }
   };
   var SUP = PERSONAJE === 'supervisor' ? { estado: 'vigilando', t: 0, clock: 0, ceja: 0, alto: 0, iris: 5.8, giro: 0, efectoT: 0, pintado: '' } : null;
@@ -1181,8 +1181,12 @@
     // Monitoriza (10-nov-2026): el anfitrión repite el parte cada minuto (Ojos remotos: /supervisor cada 60); «para» lo corta.
     if (/^(para|parar|basta|stop|deja de|dejalo|ya esta)\b/.test(t)) return 'parar';
     if (/monitoriz|monitor\b|vigila|keep an eye|^watch|cada minuto|every minute/.test(t)) return 'monitorizar';
-    if (/^(estado|status|parte|report)\b|que ves|what do you see|what can you see|que pasa|como esta|incidenc|incident|tablero|board|pantalla|screen/.test(t)) return 'estado';
+    // El parte de siempre: «¿qué ves?», «¿hay incidencias?», /supervisor estado, el tablero.
+    if (/^(estado|status|parte|report)\b|que ves|what do you see|what can you see|incidenc|incident|tablero|board/.test(t)) return 'estado';
     if (/camara|camera|insta ?360|controles|controls|en vivo|\blive\b|^abre|^open/.test(t)) return 'camara';
+    // Pregunta libre (10-nov-2026 13:05): lo que parece una pregunta sobre lo que ve va al anfitrión, que la contesta mirando la foto.
+    if (/\?|^[¿]?(que|cuant|cuanta|cuantos|cuantas|hay|donde|quien|quienes|como|cual|cuales|ves|dime|describe|cuenta|mira|lee|what|how|is there|are there|where|who|which|tell me|count|read)\b/.test(t) && t.split(/\s+/).length >= 2) return 'pregunta';
+    if (/que pasa|como esta|pantalla|screen/.test(t)) return 'estado';
     return null;
   }
   function supDecir(texto) { if (!texto) return; stopAll(); clearHelpClass(); speakText(texto); setStatus(''); }
@@ -1198,6 +1202,7 @@
     if (orden === 'estado') supEstado('enfocando', { texto: supF().pedidoEstado });
     else if (orden === 'monitorizar') supEstado('vigilando', { texto: supF().pedidoMonitor });
     else if (orden === 'parar') supDecir(supF().pedidoParar);
+    else if (orden === 'pregunta') supEstado('enfocando', { texto: supF().pedidoPregunta });
     else supDecir(supF().pedidoCamara);
   }
   // Estado que manda el anfitrión (o el propio Supervisor): entra con su gesto y dice su frase con lip-sync.
